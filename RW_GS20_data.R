@@ -1,4 +1,4 @@
-# Rwanda GeoSurvey 2020 250m resolution GS data setup
+# Rwanda GeoSurvey 2019 250m resolution GS data setup
 # M. Walsh, July 2020
 
 # Required packages
