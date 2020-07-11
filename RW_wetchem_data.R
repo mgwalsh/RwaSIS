@@ -44,12 +44,13 @@ gsdat <- as.data.frame(cbind(geos, geosgrid))
 dir.create("Results", showWarnings = F)
 write.csv(gsdat, "./Results/RW_soil_data.csv", row.names = F)
 
-# GeoSurvey map widgets ---------------------------------------------------
-# soil sampling locations
+# Soil sample locations ---------------------------------------------------
 w <- leaflet() %>%
   setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 9) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
 w ## plot widget 
-saveWidget(w, 'RW_soil_sample.html', selfcontained = T) ## save widget
+saveWidget(w, 'RW_soil_sample_locs.html', selfcontained = T) ## save widget
+
+
 
