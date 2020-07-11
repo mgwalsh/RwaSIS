@@ -187,7 +187,7 @@ gspred <- as.data.frame(cbind(gs_val, gspred))
 # stacking model validation labels and features
 gs_val <- as.data.frame(gs_val)
 lval <- as.vector(t(gs_val[labs]))
-fval <- gspred[,59:63] ## subset validation features
+fval <- gspred[,61:65] ## subset validation features
 
 # Model stacking ----------------------------------------------------------
 # start doParallel to parallelize model fitting
@@ -242,5 +242,5 @@ gspre <- extract(gspreds, gsdat)
 gsout <- as.data.frame(cbind(gsdat, gspre))
 gsout$mzone <- ifelse(gsout$mk == 1, "Y", "N")
 confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y")
-fname <- paste("./Results/","TZ_", labs, "_out.csv", sep = "")
+fname <- paste("./Results/","RW_", labs, "_out.csv", sep = "")
 write.csv(gsout, fname, row.names = F)
