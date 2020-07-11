@@ -232,15 +232,6 @@ plot(mask, axes=F)
 # Write prediction grids --------------------------------------------------
 gspreds <- stack(preds, 1-st.pred, mask)
 names(gspreds) <- c("gl1","gl2","rf","gb","nn","st","mk")
-fname <- paste("./Results/","TZ_", labs, "_preds_2019.tif", sep = "")
+fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 
-# Write output data frame -------------------------------------------------
-coordinates(gsdat) <- ~x+y
-projection(gsdat) <- projection(grids)
-gspre <- extract(gspreds, gsdat)
-gsout <- as.data.frame(cbind(gsdat, gspre))
-gsout$mzone <- ifelse(gsout$mk == 1, "Y", "N")
-confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y")
-fname <- paste("./Results/","RW_", labs, "_out.csv", sep = "")
-write.csv(gsout, fname, row.names = F)
