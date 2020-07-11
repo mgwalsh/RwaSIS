@@ -1,4 +1,4 @@
-# Stacked predictions of Rwanda GeoSurvey observations
+# Stacked land cover predictions of Rwanda GeoSurvey observations
 # M. Walsh, April 2019
 
 # Required packages
