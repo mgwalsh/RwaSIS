@@ -1,4 +1,4 @@
-# Rwanda GeoSurvey 2019 250m resolution GS data setup
+# Rwanda GeoSurvey 2019/2020 250m resolution GS data setup
 # M. Walsh, July 2020
 
 # Required packages
@@ -112,7 +112,7 @@ w <- leaflet() %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
 w ## plot widget 
-saveWidget(w, 'RW_GS19.html', selfcontained = T) ## save widget
+saveWidget(w, 'RW_GS20.html', selfcontained = T) ## save widget
 
 # number of building tags
 b <- leaflet() %>%
@@ -120,7 +120,7 @@ b <- leaflet() %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(bcoord$lon, bcoord$lat, clusterOptions = markerClusterOptions())
 b ## plot widget 
-saveWidget(b, 'RW_GS19_buildings.html', selfcontained = T) ## save widget
+saveWidget(b, 'RW_GS20_buildings.html', selfcontained = T) ## save widget
 
 # GeoSurvey contributions -------------------------------------------------
 gscon <- as.data.frame(table(gsdat$observer))
