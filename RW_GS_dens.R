@@ -132,7 +132,7 @@ gb <- train(gf_cal, cp_cal,
 
 # model outputs & predictions
 print(gb) ## RMSEs accross tuning parameters
-gb.pred <- exp(predict(grids, gb))-1 ## spatial predictions
+gb.pred <- predict(grids, gb) ## spatial predictions
 stopCluster(mc)
 saveRDS(gb, "./Results/gb_bdens.rds")
 
@@ -156,8 +156,7 @@ nn <- train(gf_cal, cp_cal,
 
 # model outputs & predictions
 print(nn) ## RMSEs accross tuning parameters
-plot(varImp(nn)) ## relative variable importance
-nn.pred <- exp(predict(grids, nn))-1 ## spatial predictions
+nn.pred <- predict(grids, nn) ## spatial predictions
 stopCluster(mc)
 saveRDS(nn, "./Results/nn_bdens.rds")
 
@@ -195,21 +194,21 @@ saveRDS(cu, "./Results/cu_bdens.rds")
 
 # Model stacking ----------------------------------------------------------
 # negative binomial model
-summary(st1 <- glm.nb(bcount ~ gl1+gl2+rf+gb+nn, gspred))
+summary(st1 <- glm.nb(bcount ~ gl1+gl2+rf+gb+nn+cu, gspred))
 (est1 <- cbind(Estimate = coef(st1), confint(st1))) ## standard 95% confidence intervals
 st1.pred <- predict(preds, st1, type="response")
 plot(st1.pred, axes=F)
 
 # poisson model
-summary(st2 <- glm(bcount ~ gl1+gl2+rf+gb+nn, family=poisson, gspred))
+summary(st2 <- glm(bcount ~ gl1+gl2+rf+gb+nn+cu, family=poisson, gspred))
 (est2 <- cbind(Estimate = coef(st2), confint(st2))) ## standard 95% confidence intervals
 st2.pred <- predict(preds, st2, type="response")
 plot(st2.pred, axes=F)
 
 # Write prediction grids --------------------------------------------------
 gspreds <- stack(gl1.pred, gl2.pred, rf.pred, gb.pred, nn.pred, st1.pred, st2.pred)
-names(gspreds) <- c("gl1","gl2","rf","gb","nn","st1","st2")
-writeRaster(gspreds, filename="./Results/RW_bcount_2019.tif", datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)## ... change feature names here
+names(gspreds) <- c("gl1","gl2","rf","gb","nn","cu","st1","st2")
+writeRaster(gspreds, filename="./Results/RW_bcount_2020.tif", datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)## ... change feature names here
 
 # Write output data frame -------------------------------------------------
 coordinates(gsdat) <- ~x+y
