@@ -18,7 +18,7 @@ suppressPackageStartupMessages({
 # Data setup --------------------------------------------------------------
 # Run this first: https://github.com/mgwalsh/Cropland-Atlas/blob/master/RW_GS20_data.R
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
-gsdat <- gsdat[complete.cases(gsdat[ ,c(11:13,19:60)]),] ## removes incomplete cases
+gsdat <- gsdat[complete.cases(gsdat[ ,c(19:60)]),] ## removes incomplete cases
 
 # set calibration/validation set randomization seed
 seed <- 12358
