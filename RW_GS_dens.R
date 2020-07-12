@@ -2,7 +2,7 @@
 # M. Walsh, April 2019
 
 # Required packages
-# install.packages(c("devtools","caret","MASS","randomForest","gbm","nnet","plyr","doParallel")), dependencies=T)
+# install.packages(c("devtools","caret","MASS","randomForest","gbm","nnet","Cubist","plyr","doParallel")), dependencies=T)
 suppressPackageStartupMessages({
   require(devtools)
   require(caret)
@@ -10,6 +10,7 @@ suppressPackageStartupMessages({
   require(randomForest)
   require(gbm)
   require(nnet)
+  require(Cubist)
   require(plyr)
   require(doParallel)
 })
@@ -169,6 +170,28 @@ coordinates(gs_val) <- ~x+y
 projection(gs_val) <- projection(preds)
 gspred <- extract(preds, gs_val)
 gspred <- as.data.frame(cbind(gs_val, gspred))
+
+# Committee trees <Cubist> ------------------------------------------------
+# start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# control setup
+set.seed(1385321)
+tc <- trainControl(method = "cv", allowParallel = T)
+
+# model training
+cu <- train(gf_cal, cp_cal, 
+            method = "cubist",
+            preProc = c("center","scale"), 
+            trControl = tc,
+            metric ="RMSE")
+
+# model outputs & predictions
+print(cu) ## RMSEs at default tuning parameters
+cu.pred <- predict(grids, cu) ## spatial predictions
+stopCluster(mc)
+saveRDS(cu, "./Results/cu_bdens.rds")
 
 # Model stacking ----------------------------------------------------------
 # negative binomial model
