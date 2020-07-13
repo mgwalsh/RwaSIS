@@ -207,7 +207,7 @@ st2.pred <- predict(preds, st2, type="response")
 plot(st2.pred, axes=F)
 
 # Write prediction grids --------------------------------------------------
-gspreds <- stack(gl1.pred, gl2.pred, rf.pred, gb.pred, nn.pred, st1.pred, st2.pred)
+gspreds <- stack(gl1.pred, gl2.pred, rf.pred, gb.pred, nn.pred, cu.pred, st1.pred, st2.pred)
 names(gspreds) <- c("gl1","gl2","rf","gb","nn","cu","st1","st2")
 writeRaster(gspreds, filename="./Results/RW_bcount_2020.tif", datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)## ... change feature names here
 
