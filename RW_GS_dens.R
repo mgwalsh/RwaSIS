@@ -218,7 +218,7 @@ gspre <- extract(gspreds, gsdat)
 gsout <- as.data.frame(cbind(gsdat, gspre))
 write.csv(gsout, "./Results/RW_bcount_out.csv", row.names = F)
 
-# Prediction plot checks
+# Quantile regression checks ----------------------------------------------
 require(devtools)
 require(quantreg)
 
