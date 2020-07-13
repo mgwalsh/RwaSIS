@@ -160,16 +160,6 @@ nn.pred <- predict(grids, nn) ## spatial predictions
 stopCluster(mc)
 saveRDS(nn, "./Results/nn_bdens.rds")
 
-# Model stacking setup ----------------------------------------------------
-preds <- stack(gl1.pred, gl2.pred, rf.pred, gb.pred, nn.pred)
-names(preds) <- c("gl1","gl2","rf","gb","nn")
-
-# extract model predictions
-coordinates(gs_val) <- ~x+y
-projection(gs_val) <- projection(preds)
-gspred <- extract(preds, gs_val)
-gspred <- as.data.frame(cbind(gs_val, gspred))
-
 # Committee trees <Cubist> ------------------------------------------------
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -191,6 +181,17 @@ print(cu) ## RMSEs at default tuning parameters
 cu.pred <- predict(grids, cu) ## spatial predictions
 stopCluster(mc)
 saveRDS(cu, "./Results/cu_bdens.rds")
+
+# Model stacking setup ----------------------------------------------------
+preds <- stack(gl1.pred, gl2.pred, rf.pred, gb.pred, nn.pred, cu.pred)
+names(preds) <- c("gl1","gl2","rf","gb","nn","cu")
+plot(preds, axes = F)
+
+# extract model predictions
+coordinates(gs_val) <- ~x+y
+projection(gs_val) <- projection(preds)
+gspred <- extract(preds, gs_val)
+gspred <- as.data.frame(cbind(gs_val, gspred))
 
 # Model stacking ----------------------------------------------------------
 # negative binomial model
