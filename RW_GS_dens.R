@@ -1,5 +1,5 @@
-# Stacked predictions of Rwanda 2019 GeoSurvey building density observations
-# M. Walsh, April 2019
+# Stacked predictions of Rwanda 2020 GeoSurvey building density observations
+# M. Walsh, July 2020
 
 # Required packages
 # install.packages(c("devtools","caret","MASS","randomForest","gbm","nnet","Cubist","plyr","doParallel")), dependencies=T)
