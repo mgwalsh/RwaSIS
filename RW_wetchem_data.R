@@ -52,5 +52,3 @@ w <- leaflet() %>%
 w ## plot widget 
 saveWidget(w, 'RW_soil_sample_locs.html', selfcontained = T) ## save widget
 
-
-
