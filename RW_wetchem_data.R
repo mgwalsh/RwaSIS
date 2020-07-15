@@ -12,8 +12,8 @@ suppressPackageStartupMessages({
 
 # Data downloads -----------------------------------------------------------
 # Create a data folder in  your current working directory
-dir.create("wetchem", showWarnings=F)
-setwd("./wetchem")
+dir.create("Wetchem", showWarnings=F)
+setwd("./Wetchem")
 
 # download soil data
 download("https://osf.io/djcfz?raw=1", "RW_wetchem.zip", mode = "wb")
