@@ -1,5 +1,5 @@
-# Rwanda GeoSurvey 2019/2020 250m resolution GS data setup
-# M. Walsh, July 2020
+# Rwanda GeoSurvey 2019 250m resolution GS data setup
+# M. Walsh, April 2019
 
 # Required packages
 # install.packages(c("downloader","rgdal","jsonlite","raster","leaflet","htmlwidgets","wordcloud")), dependencies=TRUE)
@@ -15,12 +15,12 @@ suppressPackageStartupMessages({
 
 # Data downloads -----------------------------------------------------------
 # set working directory
-dir.create("RW_GS20", showWarnings = F)
-setwd("./RW_GS20")
+dir.create("RW_GS19", showWarnings = F)
+setwd("./RW_GS19")
 dir.create("Results", showWarnings = F)
 
 # download GeoSurvey data
-download("https://osf.io/vy5cq?raw=1", "RW_geos_2019.csv.zip", mode = "wb")
+download("https://www.dropbox.com/s/oqao51hxxvc09ec/RW_geos_2019.csv.zip?raw=1", "RW_geos_2019.csv.zip", mode = "wb")
 unzip("RW_geos_2019.csv.zip", overwrite = T)
 geos <- read.table("RW_geos_2019.csv", header = T, sep = ",")
 
@@ -30,7 +30,7 @@ unzip("RWA_level5.zip", overwrite = T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
 # download raster stack
-download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
+download("https://osf.io/xts2y?raw=1", "RW_250m_2020.zip", mode = "wb")
 unzip("RW_250m_2020.zip", overwrite = T)
 glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
@@ -112,7 +112,7 @@ w <- leaflet() %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
 w ## plot widget 
-saveWidget(w, 'RW_GS20.html', selfcontained = T) ## save widget
+saveWidget(w, 'RW_GS19.html', selfcontained = T) ## save widget
 
 # number of building tags
 b <- leaflet() %>%
@@ -120,7 +120,7 @@ b <- leaflet() %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(bcoord$lon, bcoord$lat, clusterOptions = markerClusterOptions())
 b ## plot widget 
-saveWidget(b, 'RW_GS20_buildings.html', selfcontained = T) ## save widget
+saveWidget(b, 'RW_GS19_buildings.html', selfcontained = T) ## save widget
 
 # GeoSurvey contributions -------------------------------------------------
 gscon <- as.data.frame(table(gsdat$observer))
