@@ -15,8 +15,8 @@ suppressPackageStartupMessages({
 
 # Data downloads -----------------------------------------------------------
 # set working directory
-dir.create("RW_GS19", showWarnings = F)
-setwd("./RW_GS19")
+dir.create("RW_GS20", showWarnings = F)
+setwd("./RW_GS20")
 dir.create("Results", showWarnings = F)
 
 # download GeoSurvey data
