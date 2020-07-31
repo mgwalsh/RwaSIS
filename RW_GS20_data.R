@@ -1,5 +1,5 @@
 # Rwanda GeoSurvey 2019 250m resolution GS data setup
-# M. Walsh, April 2019
+# M. Walsh, April 2019 (2020 update)
 
 # Required packages
 # install.packages(c("downloader","rgdal","jsonlite","raster","leaflet","htmlwidgets","wordcloud")), dependencies=TRUE)
