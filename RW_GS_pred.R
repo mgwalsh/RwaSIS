@@ -65,7 +65,7 @@ stopCluster(mc)
 fname <- paste("./Results/", labs, "_gm0.rds", sep = "")
 saveRDS(gm0, fname)
 
-# Central place theory model <mgcv> ---------------------------------------
+# Central place theory model <MASS> ---------------------------------------
 # select central place covariates
 gf_cpv <- gs_cal[,25:38]
 
@@ -79,20 +79,20 @@ tc <- trainControl(method = "cv", classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = T)
 
 # model training
-gm1 <- train(gf_cpv, lcal, 
-             method = "gam",
+gl1 <- train(gf_cpv, lcal, 
+             method = "glmStepAIC",
              family = "binomial",
              preProc = c("center","scale"), 
              trControl = tc,
              metric ="ROC")
 
 # model outputs & predictions
-summary(gm1)
-print(gm1) ## ROC's accross cross-validation
-gm1.pred <- predict(grids, gm1, type = "prob") ## spatial predictions
+summary(gl1)
+print(gl1) ## ROC's accross cross-validation
+gl1.pred <- predict(grids, gl1, type = "prob") ## spatial predictions
 stopCluster(mc)
-fname <- paste("./Results/", labs, "_gm1.rds", sep = "")
-saveRDS(gm1, fname)
+fname <- paste("./Results/", labs, "_gl1.rds", sep = "")
+saveRDS(gl1, fname)
 
 # GLM with all covariates <MASS> -------------------------------------------
 # start doParallel to parallelize model fitting
@@ -105,20 +105,20 @@ tc <- trainControl(method = "cv", classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = T)
 
 # model training
-gl <- train(fcal, lcal, 
-            method = "glmStepAIC",
-            family = "binomial",
-            preProc = c("center","scale"), 
-            trControl = tc,
-            metric ="ROC")
+gl2 <- train(fcal, lcal, 
+             method = "glmStepAIC",
+             family = "binomial",
+             preProc = c("center","scale"), 
+             trControl = tc,
+             metric ="ROC")
 
 # model outputs & predictions
-summary(gl)
-print(gl) ## ROC's accross cross-validation
-gl.pred <- predict(grids, gl, type = "prob") ## spatial predictions
+summary(gl2)
+print(gl2) ## ROC's accross cross-validation
+gl2.pred <- predict(grids, gl, type = "prob") ## spatial predictions
 stopCluster(mc)
-fname <- paste("./Results/", labs, "_gl.rds", sep = "")
-saveRDS(gl, fname)
+fname <- paste("./Results/", labs, "_gl2.rds", sep = "")
+saveRDS(gl2, fname)
 
 # Random forest <randomForest> --------------------------------------------
 # start doParallel to parallelize model fitting
@@ -260,7 +260,7 @@ plot(mask, axes=F)
 
 # Write prediction grids --------------------------------------------------
 gspreds <- stack(preds, 1-st.pred, mask)
-names(gspreds) <- c("gm0","gm1","gl","rf","gb","nn","st","mk")
+names(gspreds) <- c("gm0","gl1","gl2","rf","gb","nn","st","mk")
 fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 
