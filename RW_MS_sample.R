@@ -32,7 +32,7 @@ grids <- stack(glist)
 # create a ROI image based on ROI mask
 cpt <- 1    ## set land mask to 1
 roi <- overlay(grids, fun=function(x) {return(ifelse(x[1] >= cpt, 1, 0))})
-plot(roi, axes=F, legend=F)
+# plot(roi, axes=F, legend=F)
 
 # extract ROI coordinates
 coord <- coordinates(roi)
@@ -43,7 +43,7 @@ rmask <- index[which(index$index == 1),]
 # Geographically balanced sampling ----------------------------------------
 # set sampling parameters
 N <- nrow(rmask) ## ROI size (in 250 m pixels)
-n <- round(N/16*0.15,0) ## set sample size (number of sampling locations)
+n <- round(N/16*0.2,0) ## set sample size (number of sampling locations)
 p <- rep(n/N,N)  ## inclusion probabilities
 
 # draw geographically balanced sample
@@ -65,7 +65,7 @@ gadm <- sloc %over% shape
 sloc <- as.data.frame(sloc)
 samp <- cbind(gadm[ ,c(4,6,8,10,12)], sloc)
 colnames(samp) <- c("region","district","L3","L4","L5","lon","lat")
-write.csv(samp, "RW_MS_samp15.csv", row.names = F)
+write.csv(samp, "RW_MS_sample.csv", row.names = F)
 
 # Sampling map widget -----------------------------------------------------
 # render map
