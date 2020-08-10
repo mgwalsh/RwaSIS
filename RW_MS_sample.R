@@ -14,17 +14,17 @@ suppressPackageStartupMessages({
 
 # Data setup --------------------------------------------------------------
 # create a data folder in your current working directory
-dir.create("RW_GS_sample", showWarnings=F)
-setwd("./RW_GS_sample")
+dir.create("RW_MS_sample", showWarnings=F)
+setwd("./RW_MS_sample")
 
 # download GADM-L5 shapefile (courtesy: http://www.gadm.org)
 download("https://www.dropbox.com/s/8rbdzrheyi60ide/GADM.zip?raw=1", "GADM.zip", mode="wb")
 unzip("GADM.zip", overwrite=T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
-# download ROI mask
-download("https://www.dropbox.com/s/q95220fsv5b0fs9/RWA.zip?raw=1", "RWA.zip", mode="wb")
-unzip("RWA.zip", overwrite=T)
+# download cropland mask
+download("https://osf.io/bmysp?raw=1", "RW_CP_mask.zip", mode="wb")
+unzip("RW_CP_mask.zip", overwrite=T)
 glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
 
