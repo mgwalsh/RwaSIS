@@ -1,9 +1,8 @@
 # Spatially balanced sampling setup for soil and cropping system surveys of Rwanda
 # M. Walsh, August 2020
 
-# install.packages(c("downloader","rgdal","raster","BalancedSampling","leaflet","htmlwidgets"), dependencies=T)
+# install.packages(c("rgdal","raster","BalancedSampling","leaflet","htmlwidgets"), dependencies=T)
 suppressPackageStartupMessages({
-  require(downloader)
   require(rgdal)
   require(raster)
   require(sp)
