@@ -18,12 +18,12 @@ dir.create("RW_MS_sample", showWarnings=F)
 setwd("./RW_MS_sample")
 
 # download GADM-L5 shapefile (courtesy: http://www.gadm.org)
-download("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_level5.zip", mode="wb")
+download.file("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_level5.zip", mode="wb")
 unzip("RWA_level5.zip", overwrite=T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
 # download cropland mask
-download("https://osf.io/bmysp?raw=1", "RW_CP_mask.zip", mode="wb")
+download.file("https://osf.io/bmysp?raw=1", "RW_CP_mask.zip", mode="wb")
 unzip("RW_CP_mask.zip", overwrite=T)
 glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
