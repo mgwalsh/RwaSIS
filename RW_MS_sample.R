@@ -63,7 +63,7 @@ sloc <- spTransform(xy, CRS(proj4string(shape)))
 gadm <- sloc %over% shape
 sloc <- as.data.frame(sloc)
 samp <- cbind(gadm[ ,c(4,6,8,10,12)], sloc)
-colnames(samp) <- c("region","district","L3","L4","L5","lon","lat")
+colnames(samp) <- c("province","district","sector","cell","village","lon","lat")
 write.csv(samp, "RW_MS_sample.csv", row.names = F)
 
 # Sampling map widget -----------------------------------------------------
