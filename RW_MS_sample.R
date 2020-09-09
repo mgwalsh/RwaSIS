@@ -58,7 +58,7 @@ xy <- data.frame(cbind(x,y))
 
 # Define unique grid ID's (GID)
 # Specify pixel scale (res.pixel, in m)
-res.x <- 10000
+res.pixel <- 10000
 
 # Grid ID (GID) definition
 xgid <- ceiling(abs(xy$x)/res.pixel)
