@@ -31,7 +31,7 @@ grids <- stack(glist)
 # create a ROI image based on ROI mask
 cpt <- 1    ## set land mask to 1
 roi <- overlay(grids, fun=function(x) {return(ifelse(x[1] >= cpt, 1, 0))})
-# plot(roi, axes=F, legend=F)
+plot(roi, axes=F, legend=F)
 
 # extract ROI coordinates
 coord <- coordinates(roi)
