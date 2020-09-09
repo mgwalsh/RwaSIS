@@ -56,6 +56,18 @@ x <- rmask[rsamp,1]
 y <- rmask[rsamp,2]
 xy <- data.frame(cbind(x,y))
 
+# Define unique grid ID's (GID)
+# Specify pixel scale (res.pixel, in m)
+res.pixel <- 1000
+
+# Grid ID (GID) definition
+xgid <- ceiling(abs(xy$x)/res.pixel)
+ygid <- ceiling(abs(xy$y)/res.pixel)
+gidx <- ifelse(xy$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
+gidy <- ifelse(xy$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
+GID <- paste(gidx, gidy, sep="")
+xy <- cbind(GID, xy)
+
 # attach GADM-L5 and above unit names from shape
 coordinates(xy) <- ~x+y
 crs(xy) <- "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"
@@ -63,7 +75,7 @@ sloc <- spTransform(xy, CRS(proj4string(shape)))
 gadm <- sloc %over% shape
 sloc <- as.data.frame(sloc)
 samp <- cbind(gadm[ ,c(4,6,8,10,12)], sloc)
-colnames(samp) <- c("province","district","sector","cell","village","lon","lat")
+colnames(samp) <- c("province","district","sector","cell","village","gid","lon","lat")
 write.csv(samp, "RW_MS_sample.csv", row.names = F)
 
 # Sampling map widget -----------------------------------------------------
