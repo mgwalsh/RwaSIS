@@ -243,7 +243,7 @@ gsout <- as.data.frame(cbind(gsdat, gspre))
 # estimate & plot
 par(pty="s")
 par(mfrow=c(1,1), mar=c(5,5,1,1))
-plot(pH~st, xlab="Ensemble prediction", ylab="pH", cex.lab=1.3, 
+plot(pH~st, xlab="Ensemble prediction", ylab="pH (water)", cex.lab=1.3, 
      xlim=c(3,9), ylim=c(3,9), gsout)
 stQ <- rq(pH~st, tau=c(0.05,0.5,0.95), data=gsout)
 print(stQ)
