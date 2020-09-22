@@ -232,7 +232,7 @@ fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 
 # Uncertainty estimates via quantile regression ---------------------------
-# note that this is just an example for pH ... generalize & move this to a seperate script
+# note that this is just an example for pH ... generalize & move to a seperate script
 require(quantreg)
 
 coordinates(gsdat) <- ~x+y
