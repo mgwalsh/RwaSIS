@@ -247,7 +247,7 @@ plot(pH~st, xlab="Ensemble prediction", ylab="pH", cex.lab=1.3,
      xlim=c(3,9), ylim=c(3,9), gsout)
 stQ <- rq(pH~st, tau=c(0.05,0.5,0.95), data=gsout)
 print(stQ)
-curve(stQ$coefficients[2]*x+stQ$coefficients[1], add=T, from=3, to=9, col="blue", lwd=1)
-curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=3, to=9, col="red", lwd=1)
-curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=3, to=9, col="blue", lwd=1)
+curve(stQ$coefficients[2]*x+stQ$coefficients[1], add=T, from=3, to=9, col="blue", lwd=2)
+curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=3, to=9, col="red", lwd=2)
+curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=3, to=9, col="blue", lwd=2)
 
