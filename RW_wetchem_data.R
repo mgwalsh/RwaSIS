@@ -40,7 +40,7 @@ geos <- cbind(geos, geos.proj)
 coordinates(geos) <- ~x+y
 projection(geos) <- projection(grids)
 
-# extract gridded variables at GeoSurvey locations
+# extract gridded variables at survey locations
 geosgrid <- extract(grids, geos)
 gsdat <- as.data.frame(cbind(geos, geosgrid))
 
