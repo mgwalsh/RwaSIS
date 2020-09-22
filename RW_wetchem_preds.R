@@ -231,3 +231,25 @@ names(gspreds) <- c("gm","gl1","gl2","rf","gb","cu","st")
 fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 
+
+# Output dataframe --------------------------------------------------------
+# coordinates(gsdat) <- ~x+y
+# projection(gsdat) <- projection(grids)
+gspre <- extract(gspreds, gsdat)
+gsout <- as.data.frame(cbind(gsdat, gspre))
+
+# Quantile regression (plot)
+require(quantreg)
+
+par(pty="s")
+par(mfrow=c(1,1), mar=c(5,5,1,1))
+plot(bcount~st, xlab="Ensemble prediction", ylab="GeoSurvey building density", cex.lab=1.3, 
+     xlim=c(-1,300), ylim=c(-1,300), gsout)
+stQ <- rq(bcount~st, tau=c(0.05,0.5,0.95), data=gsout)
+print(stQ)
+curve(stQ$coefficients[2]*x+stQ$coefficients[1], add=T, from=0, to=300, col="blue", lwd=1)
+curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=0, to=300, col="red", lwd=1)
+curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=0, to=300, col="blue", lwd=1)
+abline(c(0,1), col="grey", lwd=2)
+
+
