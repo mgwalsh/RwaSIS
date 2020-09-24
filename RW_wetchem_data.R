@@ -25,8 +25,6 @@ geos <- merge(prof, samp, by="pid")
 # download raster stack
 download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
 unzip("RW_250m_2020.zip", overwrite = T)
-
-# download GeoSurvey predictions
 download("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip", mode = "wb")
 unzip("RW_GS_preds.zip", overwrite = T)
 glist <- list.files(pattern="tif", full.names = T)
