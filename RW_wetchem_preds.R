@@ -36,7 +36,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:46,50:77]
 
 # Spatial trend model <mgcv> -----------------------------------------------
-# select central place covariates
+# select locational covariates
 gf_cpv <- gs_cal[,47:49]
 
 # start doParallel to parallelize model fitting
@@ -250,4 +250,35 @@ print(stQ)
 curve(stQ$coefficients[2]*x+stQ$coefficients[1], add=T, from=3, to=9, col="blue", lwd=2)
 curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=3, to=9, col="red", lwd=2)
 curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=3, to=9, col="blue", lwd=2)
+
+# Spatial residual --------------------------------------------------------
+# note that this is just an example for pH ... generalize & move to a seperate script
+
+# calculate spatial residual
+gsout$lres <- gsout$pH - gsout$st
+
+# select locational covariates
+gf_loc <- gsout[,47:49]
+
+# start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# control setup
+set.seed(1385321)
+tc <- trainControl(method = "cv", allowParallel = T)
+
+# model training
+sres <- train(gf_loc, gsout$lres, 
+              method = "gam",
+              preProc = c("center","scale"), 
+              metric = "RMSE",
+              trControl = tc)
+
+# model outputs & predictions
+summary(sres)
+sres.pred <- predict(grids, sres) ## spatial predictions
+stopCluster(mc)
+fname <- paste("./Results/", labs, "_sres.rds", sep = "")
+saveRDS(sres, fname)
 
