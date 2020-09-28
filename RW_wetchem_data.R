@@ -22,7 +22,7 @@ prof <- read.table("Profiles.csv", header = T, sep = ",")
 samp <- read.table("Samples.csv", header = T, sep = ",")
 geos <- merge(prof, samp, by="pid")
 
-# download raster stacks
+# download and assemble raster stacks
 download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
 unzip("RW_250m_2020.zip", overwrite = T)
 download("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip", mode = "wb")
