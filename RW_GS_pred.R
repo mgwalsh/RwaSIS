@@ -35,7 +35,7 @@ labs <- c("CP") ## insert other labels (BP,WP ...) here!
 lcal <- as.vector(t(gs_cal[labs]))
 
 # raster calibration features
-fcal <- gs_cal[,19:38,42:66]
+fcal <- gs_cal[,19:38,42:67]
 
 # Spatial trend model <mgcv> -----------------------------------------------
 # select central place covariates
@@ -115,7 +115,7 @@ gl2 <- train(fcal, lcal,
 # model outputs & predictions
 summary(gl2)
 print(gl2) ## ROC's accross cross-validation
-gl2.pred <- predict(grids, gl, type = "prob") ## spatial predictions
+gl2.pred <- predict(grids, gl2, type = "prob") ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gl2.rds", sep = "")
 saveRDS(gl2, fname)
@@ -203,8 +203,8 @@ fname <- paste("./Results/", labs, "_nn.rds", sep = "")
 saveRDS(nn, fname)
 
 # Model stacking setup ----------------------------------------------------
-preds <- stack(1-gm0.pred, 1-gm1.pred, 1-gl.pred, 1-rf.pred, 1-gb.pred, 1-nn.pred)
-names(preds) <- c("gm0","gm1","gl","rf","gb","nn")
+preds <- stack(1-gm0.pred, 1-gl1.pred, 1-gl2.pred, 1-rf.pred, 1-gb.pred, 1-nn.pred)
+names(preds) <- c("gm0","gl1","gl2","rf","gb","nn")
 plot(preds, axes = F)
 
 # extract model predictions
@@ -216,7 +216,7 @@ gspred <- as.data.frame(cbind(gs_val, gspred))
 # stacking model validation labels and features
 gs_val <- as.data.frame(gs_val)
 lval <- as.vector(t(gs_val[labs]))
-fval <- gspred[,67:72] ## subset validation features
+fval <- gspred[,68:73] ## subset validation features
 
 # Model stacking ----------------------------------------------------------
 # start doParallel to parallelize model fitting
