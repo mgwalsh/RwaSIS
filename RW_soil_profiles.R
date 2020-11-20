@@ -38,7 +38,7 @@ projection(sprof) <- projection(shape)
 gadm <- sprof %over% shape
 sprof <- as.data.frame(sprof)
 sprof <- cbind(gadm[ ,c(4,6,8,10,12)], sprof)
-# colnames(geos) <- c("region","district","sector","cell", "village","time","observer","id","lat","lon","BP","CP","TP","WP","bloc","cgrid")
+colnames(sprof) <- c("region","district","sector","cell", "village","fid","profils","profils_id","profils_num","profils_type","lon","lat","planchette","commune")
 
 # project soil profile coords to grid CRS
 sprof.proj <- as.data.frame(project(cbind(sprof$lon, sprof$lat), "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"))
@@ -47,7 +47,17 @@ sprof <- cbind(sprof, sprof.proj)
 coordinates(sprof) <- ~x+y
 projection(sprof) <- projection(grids)
 
-# extract gridded variables at soil profile locations
+# extract cropland mask at soil profile locations
 sprofgrid <- extract(grids, sprof)
 spdat <- as.data.frame(cbind(sprof, sprofgrid))
+
+# Map widget --------------------------------------------------------------
+# number of soil profiles
+w <- leaflet() %>%
+  setView(lng = mean(spdat$lon), lat = mean(spdat$lat), zoom = 9) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addCircleMarkers(spdat$lon, spdat$lat, clusterOptions = markerClusterOptions())
+w ## plot widget 
+saveWidget(w, 'RW_SP18.html', selfcontained = T) ## save widget
+
 
