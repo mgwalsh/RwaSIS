@@ -1,4 +1,4 @@
-# Rwanda "CPR" soil profile locations (2018)
+# Rwanda "CPR" cropland soil profile locations (2018)
 # Soil profile location data courtesy of Rwanda Agricultural Bureau (RAB) 
 # M. Walsh, November 2020
 
