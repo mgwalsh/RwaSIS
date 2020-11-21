@@ -65,7 +65,7 @@ projection(sprof) <- projection(grids)
 sprofgrid <- extract(grids, sprof)
 spdat <- as.data.frame(cbind(sprof, sprofgrid))
 spdat <- spdat[ which(spdat$RW_CP_mask==1), ] ## selects only cropland locations
-spdat <- spdat[c(1:5,11:12,15)]
+spdat <- spdat[c(1:5,11:12,15)] ## selects columns compatible with the GeoSurvey sampling frame
 write.csv(spdat, "./soil_profiles.csv", row.names = F)
 
 # Map widget --------------------------------------------------------------
