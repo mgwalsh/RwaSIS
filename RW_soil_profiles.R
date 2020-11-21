@@ -33,7 +33,7 @@ glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
 
 # Data setup --------------------------------------------------------------
-# attach GADM-L5 admin unit names from shape
+# attach GADM-L5 admin unit names from admin shape
 coordinates(sprof) <- ~lon+lat
 projection(sprof) <- projection(shape)
 gadm <- sprof %over% shape
@@ -46,11 +46,11 @@ sprof.proj <- as.data.frame(project(cbind(sprof$lon, sprof$lat), "+proj=laea +el
 colnames(sprof.proj) <- c("x","y")
 sprof <- cbind(sprof, sprof.proj)
 
-# Define unique grid ID's (GID) -------------------------------------------
+# Define unique grid ID's (gid) -------------------------------------------
 # Specify pixel scale (res.pixel, in m)
 res.pixel <- 10000
 
-# Grid ID (GID) definition
+# grid ID (gid) definition
 xgid <- ceiling(abs(sprof$x)/res.pixel)
 ygid <- ceiling(abs(sprof$y)/res.pixel)
 gidx <- ifelse(sprof$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
