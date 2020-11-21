@@ -17,7 +17,7 @@ setwd("./RW_soil_profiles")
 
 # Data downloads ----------------------------------------------------------
 # download CPR profile locations
-# note I have dropped 5 of the original profile locations because their georeference fell outside of Rwanda
+# note I have dropped 5 of the origin profile locations because their georeference fell outside of Rwanda
 download.file("https://osf.io/y7bts?raw=1", "RW_soil_profiles.csv")
 sprof <- read.table("RW_soil_profiles.csv", header = T, sep = ",")
 
