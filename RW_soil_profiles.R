@@ -17,6 +17,7 @@ setwd("./RW_soil_profiles")
 
 # Data downloads ----------------------------------------------------------
 # download CPR profile locations
+# note I have dropped 5 profile locations because their georeference fell outside of Rwanda
 download.file("https://osf.io/y7bts?raw=1", "RW_soil_profiles.csv")
 sprof <- read.table("RW_soil_profiles.csv", header = T, sep = ",")
 
@@ -51,6 +52,9 @@ projection(sprof) <- projection(grids)
 sprofgrid <- extract(grids, sprof)
 spdat <- as.data.frame(cbind(sprof, sprofgrid))
 
+# write data frame --------------------------------------------------------
+write.csv(spdat, "./soil_profiles.csv", row.names = F)
+
 # Map widget --------------------------------------------------------------
 # number of soil profiles
 w <- leaflet() %>%
@@ -59,5 +63,4 @@ w <- leaflet() %>%
   addCircleMarkers(spdat$lon, spdat$lat, clusterOptions = markerClusterOptions())
 w ## plot widget 
 saveWidget(w, 'RW_SP18.html', selfcontained = T) ## save widget
-
 
