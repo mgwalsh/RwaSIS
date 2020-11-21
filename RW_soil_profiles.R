@@ -2,7 +2,7 @@
 # Soil profile location data courtesy of Rwanda Agricultural Bureau (RAB) 
 # M. Walsh, November 2020
 
-# install.packages(c("rgdal","raster","BalancedSampling","leaflet","htmlwidgets"), dependencies=T)
+# install.packages(c("rgdal","raster","leaflet","htmlwidgets"), dependencies=T)
 suppressPackageStartupMessages({
   require(rgdal)
   require(raster)
@@ -45,14 +45,25 @@ colnames(sprof) <- c("region","district","sector","cell", "village","fid","profi
 sprof.proj <- as.data.frame(project(cbind(sprof$lon, sprof$lat), "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"))
 colnames(sprof.proj) <- c("x","y")
 sprof <- cbind(sprof, sprof.proj)
+
+# Define unique grid ID's (GID) -------------------------------------------
+# Specify pixel scale (res.pixel, in m)
+res.pixel <- 10000
+
+# Grid ID (GID) definition
+xgid <- ceiling(abs(sprof$x)/res.pixel)
+ygid <- ceiling(abs(sprof$y)/res.pixel)
+gidx <- ifelse(sprof$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
+gidy <- ifelse(sprof$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
+gid <- paste(gidx, gidy, sep="")
+sprof <- cbind(sprof, gid)
+
+# Write data frame --------------------------------------------------------
+# extract cropland mask at soil profile locations
 coordinates(sprof) <- ~x+y
 projection(sprof) <- projection(grids)
-
-# extract cropland mask at soil profile locations
 sprofgrid <- extract(grids, sprof)
 spdat <- as.data.frame(cbind(sprof, sprofgrid))
-
-# write data frame --------------------------------------------------------
 write.csv(spdat, "./soil_profiles.csv", row.names = F)
 
 # Map widget --------------------------------------------------------------
