@@ -28,13 +28,13 @@ glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
 
 # Sample setup ------------------------------------------------------------
-# create a ROI image based on cropland mask and distance to nearest buildings grids
-cp <- 1  ## set cropland mask to 1 (present)
+# create a RoI image based on cropland mask and distance to nearest buildings
+cp <- 1    ## set cropland mask to 1 (present)
 bd <- 0.5  ## set maximum distance to the nearest "buildings" (in km)
 roi <- overlay(grids, fun=function(x) 
-{return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))})
+{return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))}) ## extracts RoI
 
-# extract ROI coordinates
+# extract RoI coordinates
 coord <- coordinates(roi)
 index <- extract(roi, coord)
 index <- as.data.frame(cbind(coord, index))
@@ -48,8 +48,8 @@ p <- rep(n/N,N)  ## inclusion probabilities
 
 # draw geographically balanced sample
 set.seed(6405)                      ## sets repeatable randomization seed
-B <- cbind(p, rmask[,1], rmask[,2]) ## specifies balancing variables
-rsamp <- cube(p, B)                 ## samples from population
+B <- cbind(p, rmask[,1], rmask[,2]) ## specifies spatial balancing variables
+rsamp <- cube(p, B)                 ## samples from RoI
 
 # Write files -------------------------------------------------------------
 # extract sample coordinates
