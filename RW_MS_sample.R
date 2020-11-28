@@ -30,9 +30,9 @@ grids <- stack(glist)
 # Sample setup ------------------------------------------------------------
 # create a ROI image based on cropland mask and distance to nearest buildings grids
 cp <- 1  ## set cropland mask to 1 (present)
-bd <- 1  ## set maximum distance to the nearest "buildings" (in km)
+bd <- 0.5  ## set maximum distance to the nearest "buildings" (in km)
 roi <- overlay(grids, fun=function(x) 
-{return(ifelse(x[1] >= cp && x[2] > 0 && x[2] <= bd, 1, 0))})
+{return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))})
 
 # extract ROI coordinates
 coord <- coordinates(roi)
