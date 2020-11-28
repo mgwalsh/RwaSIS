@@ -21,9 +21,9 @@ download.file("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", 
 unzip("RWA_level5.zip", overwrite=T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
-# download cropland mask
-download.file("https://osf.io/bmysp?raw=1", "RW_CP_mask.zip")
-unzip("RW_CP_mask.zip", overwrite=T)
+# download GeoSurvey prediction layers
+download.file("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip")
+unzip("RW_GS_preds.zip", overwrite=T)
 glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
 
