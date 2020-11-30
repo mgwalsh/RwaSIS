@@ -26,9 +26,9 @@ download.file("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", 
 unzip("RWA_level5.zip", overwrite=T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
-# download current GeoSurvey cropland mask
-download.file("https://osf.io/bmysp?raw=1", "RW_CP_mask.zip")
-unzip("RW_CP_mask.zip", overwrite=T)
+# download GeoSurvey prediction layers
+download.file("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip")
+unzip("RW_GS_preds.zip", overwrite=T)
 glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
 
@@ -64,7 +64,7 @@ coordinates(sprof) <- ~x+y
 projection(sprof) <- projection(grids)
 sprofgrid <- extract(grids, sprof)
 spdat <- as.data.frame(cbind(sprof, sprofgrid))
-spdat <- spdat[ which(spdat$RW_CP_mask==1), ] ## selects only cropland locations
+spdat <- spdat[ which(spdat$CM20==1), ] ## selects profiles in only cropland mask locations
 spdat <- spdat[c(1:5,11:12,15)] ## selects columns compatible with the GeoSurvey sampling frame
 write.csv(spdat, "./soil_profiles.csv", row.names = F)
 
