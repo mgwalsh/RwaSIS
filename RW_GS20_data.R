@@ -105,13 +105,15 @@ gsdat <- gsdat[ which(gsdat$ccount < 17), ]
 write.csv(bcoord, "./Results/RW_bcoord.csv", row.names = F)
 write.csv(gsdat, "./Results/RW_gsdat_2019.csv", row.names = F)
 
-# Cropland area estimate --------------------------------------------------
-landa <- 2374169 ## hectares of total land area ... minus water bodies
-N <- nrow(gsdat)*16 ## total possible cropland grid count
-n <- sum(gsdat$ccount) ## observed cropland grid count
+# Cropland area estimates -------------------------------------------------
+landa <- 2374169 ## hectares of total land area
+N <- nrow(gsdat)*16 ## total possible cropland grid count from GS
+n <- sum(gsdat$ccount) ## observed cropland grid count from GS
 p <- n/N ## estimate of cropland proportion of total land area
-a <- landa*p ## cropland area estimate (ha)
-a
+a <- landa*p ## estimate of cropland area (ha)
+ci <- qnorm(0.975)*sqrt(p*(1-p)/nrow(gsdat)) ## 95% confidence interval
+lo <- landa*(p-ci) ## lower estimate cropland area (ha)
+hi <- landa*(p+ci) ## upper estimate cropland area (ha)
 
 # GeoSurvey map widgets ---------------------------------------------------
 # number of GeoSurvey quadrats
