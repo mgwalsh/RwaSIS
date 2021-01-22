@@ -107,7 +107,7 @@ write.csv(gsdat, "./Results/RW_gsdat_2019.csv", row.names = F)
 
 # Cropland area estimates -------------------------------------------------
 # Cropland area proportion
-l <- 2374169 ## total land area (ha)
+l <- 2374169 ## total land area of Rwanda (ha) ... excluding all of the water bodies
 N <- nrow(gsdat)*16 ## total possible cropland grid count from GS
 n <- sum(gsdat$ccount) ## observed cropland grid count from GS
 p <- n/N ## estimate of cropland proportion of total land area
