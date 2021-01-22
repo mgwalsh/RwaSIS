@@ -115,8 +115,8 @@ a <- l*p ## estimate of cropland area (ha)
 
 # 95% confidence intervals
 ci <- qnorm(0.975)*sqrt(p*(1-p)/nrow(gsdat)) ## 95% confidence interval
-lo <- landa*(p-ci) ## lower estimate cropland area (ha)
-hi <- landa*(p+ci) ## upper estimate cropland area (ha)
+lo <- l*(p-ci) ## lower estimate cropland area (ha)
+hi <- l*(p+ci) ## upper estimate cropland area (ha)
 
 # GeoSurvey map widgets ---------------------------------------------------
 # number of GeoSurvey quadrats
