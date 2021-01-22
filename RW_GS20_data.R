@@ -107,11 +107,11 @@ write.csv(gsdat, "./Results/RW_gsdat_2019.csv", row.names = F)
 
 # Cropland area estimates -------------------------------------------------
 # Cropland area proportion
-landa <- 2374169 ## hectares of total land area
+l <- 2374169 ## total land area (ha)
 N <- nrow(gsdat)*16 ## total possible cropland grid count from GS
 n <- sum(gsdat$ccount) ## observed cropland grid count from GS
 p <- n/N ## estimate of cropland proportion of total land area
-a <- landa*p ## estimate of cropland area (ha)
+a <- l*p ## estimate of cropland area (ha)
 
 # 95% confidence intervals
 ci <- qnorm(0.975)*sqrt(p*(1-p)/nrow(gsdat)) ## 95% confidence interval
