@@ -28,11 +28,11 @@ glist <- list.files(pattern="tif", full.names=T)
 grids <- stack(glist)
 
 # Sample setup ------------------------------------------------------------
-# create a RoI image based on cropland mask and distance to nearest buildings
+# create a ROI image based on cropland mask and distance to nearest buildings
 cp <- 1    ## set cropland mask to 1 (present)
 bd <- 0.5  ## set maximum distance to the nearest "buildings" (in km)
 roi <- overlay(grids, fun=function(x) 
-{return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))}) ## extracts RoI
+{return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))}) ## extracts ROI
 
 # extract RoI coordinates
 coord <- coordinates(roi)
