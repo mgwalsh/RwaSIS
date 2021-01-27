@@ -34,7 +34,7 @@ bd <- 0.5  ## set maximum distance to the nearest "buildings" (in km)
 roi <- overlay(grids, fun=function(x) 
 {return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))}) ## extracts ROI
 
-# extract RoI coordinates
+# extract ROI coordinates
 coord <- coordinates(roi)
 index <- extract(roi, coord)
 index <- as.data.frame(cbind(coord, index))
