@@ -58,7 +58,7 @@ y <- rmask[rsamp,2]
 xy <- data.frame(cbind(x,y))
 
 # Define unique grid ID's (GID)
-# Specify pixel scale (res.pixel, in m)
+# Specify GID scale (res.pixel, in m)
 res.pixel <- 10000
 
 # Grid ID (GID) definition
