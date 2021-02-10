@@ -1,0 +1,138 @@
+---
+title: RwaSIS cropland sampling frame
+author: M.G. Walsh, J. Rutebuka and R. Manners
+date: "`r format(Sys.time(), '%d, %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: style.css
+---
+
+# Introduction
+
+This notebook describes setting up a representative and completely reproducible [sampling frame](https://en.wikipedia.org/wiki/Sampling_frame) that provides spatially/geographically balanced coverage across the croplands of Rwanda. Croplands are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution remote-sensing [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (~2.37 Mha). Selecting an appropriate sampling frame for ground observations and measurements and/or experiments is a critical planning step for the RwaSIS project, because it determines both the main and recurrent costs of any adaptive mapping or monitoring program as well as the resulting precision and accuracy of inferences and predictions that are made about cropland condition and productivity over time. A geographically consistent sampling frame for field surveys and experiments should therefore always be defined in terms of the immediate needs and constraints of the measurement, mapping and monitoring tasks at hand, but within a long-term planning context.
+
+# RwaSIS cropland sampling frame R-script
+
+These are the R-packages that you may want to run, reproduce or adapt the spatially balanced sampling script that we are proposing.
+
+```{r}
+# install.packages(c("rgdal","raster","BalancedSampling","DT","leaflet","htmlwidgets"), dependencies=T)
+suppressPackageStartupMessages({
+  require(rgdal)
+  require(raster)
+  require(sp)
+  require(BalancedSampling)
+  require(DT)
+  require(leaflet)
+  require(htmlwidgets)
+})
+```
+
+The following chunk downloads the needed and publicly available geotiffs and shape file that define the RwaSIS project's main ROI constraints (i.e, cropland && distance to buildings < 0.5 km).
+
+```{r}
+# Data setup --------------------------------------------------------------
+# create a data folder in your current working directory
+dir.create("RW_MS_sample", showWarnings=F)
+setwd("./RW_MS_sample")
+
+# download GADM-L5 shapefile (courtesy: http://www.gadm.org)
+download.file("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_level5.zip")
+unzip("RWA_level5.zip", overwrite=T)
+shape <- shapefile("gadm36_RWA_5.shp")
+
+# download GeoSurvey prediction layers
+download.file("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip")
+unzip("RW_GS_preds.zip", overwrite=T)
+glist <- list.files(pattern="tif", full.names=T)
+grids <- stack(glist)
+```
+
+The subsequent chunk then then sets-up the layers for drawing a spatially balanced trial location sampling frame from the ROI. We use the `overlay` and `lcube` functions from the `raster` (to create the ROI) and `BalancedSampling` (to sample the ROI) libraries in R [(R Core Team)](https://cran.univ-paris1.fr/web/packages/dplR/vignettes/intro-dplR.pdf) to draw a spatially representative sample. The method implements the cube method of [Deville and Tillé (2004)](https://academic.oup.com/biomet/article-abstract/91/4/893/459329?redirectedFrom=fulltext), which allows sampling based on the relevant inclusion probabilities while aiming for balance and spread with respect to speciﬁed covariates and/or constraints. 
+
+```{r}
+# Sample setup ------------------------------------------------------------
+# create a ROI image based on cropland mask and distance to nearest buildings
+cp <- 1    ## set cropland mask to 1 (present)
+bd <- 0.5  ## set maximum distance to the nearest "buildings" (in km) ... for logistical reasons
+roi <- overlay(grids, fun=function(x) 
+{return(ifelse(x[4] == cp && x[2] <= bd, 1, 0))}) ## extracts the ROI
+
+# extract ROI coordinates
+coord <- coordinates(roi)
+index <- extract(roi, coord)
+index <- as.data.frame(cbind(coord, index))
+rmask <- index[which(index$index == 1),]
+```
+
+Potential survey sites falling within the ROI were selected purely for spatial balance, which entails that the mean coordinates of sample sites are close to the mean coordinates of all points in the sample frame and have adequate spatial spread. This ensures that the observations are spread out rather than clustered with respect to the spatial coordinates, see [Grafström and Schelin (2014)](https://cran.r-project.org/web/packages/BalancedSampling/index.html). This next chunk then draws the spatially balanced sample of the proposed cropland sampling locations.
+
+```{r}
+# Spatially balanced sampling ---------------------------------------------
+# set sampling parameters
+N <- nrow(rmask) ## ROI size (in 250 m pixels)
+n <- round(N/16*0.15,0) ## set sample size (number of sampling locations)
+p <- rep(n/N,N)  ## inclusion probabilities
+
+# draw geographically balanced sample
+set.seed(6405)                      ## sets repeatable randomization seed
+B <- cbind(p, rmask[,1], rmask[,2]) ## specifies spatial balancing variables
+rsamp <- cube(p, B)                 ## samples from ROI
+```
+
+The proposed location coordinates and grid ID's (GID's see in the chunk below) can be exported as a GPS readable file (see the options at e.g, [GPSBabel](https://www.gpsbabel.org)), with which field crews can navigate to the planned survey locations.
+
+```{r}
+# Write files -------------------------------------------------------------
+# extract sample coordinates
+x <- rmask[rsamp,1]
+y <- rmask[rsamp,2]
+xy <- data.frame(cbind(x,y))
+
+# Define unique grid ID's (GID)
+# Specify GID scale (res.pixel, in m)
+res.pixel <- 10000
+
+# Grid ID (GID) definition
+xgid <- ceiling(abs(xy$x)/res.pixel)
+ygid <- ceiling(abs(xy$y)/res.pixel)
+gidx <- ifelse(xy$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
+gidy <- ifelse(xy$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
+GID <- paste(gidx, gidy, sep="")
+xy <- cbind(GID, xy)
+
+# attach GADM-L5 and above unit names from shape
+coordinates(xy) <- ~x+y
+crs(xy) <- "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"
+sloc <- spTransform(xy, CRS(proj4string(shape)))
+gadm <- sloc %over% shape
+sloc <- as.data.frame(sloc)
+samp <- cbind(gadm[ ,c(4,6,8,10,12)], sloc)
+colnames(samp) <- c("province","district","sector","cell","village","gid","lon","lat")
+write.csv(samp, "RW_cropland_sample.csv", row.names = F)
+```
+
+This is the corresponding output data frame `samp` of the proposed sampling locations with their corresponding lon/lat coordinates, which can be sorted by various administrative units and/or `GID`. The data frame is also written as a csv file `RW_cropland_sample.csv` into your working directory, which you can use as waypoint input to a GPS (see e.g: [GPSBabel](https://www.gpsbabel.org)) for in-the-field navigation.  
+\
+```{r, echo=FALSE}
+datatable(samp)
+```
+\
+You can also generate a zoomable map of the proposed survey locations with the `leaflet` package. This shows the proposed distribution of the survey sites, which will help with navigation and operational planning on the ground.
+
+```{r}
+# Sampling map widget -----------------------------------------------------
+# render map
+w <- leaflet() %>%
+  setView(lng = mean(samp$lon), lat = mean(samp$lat), zoom = 8) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addCircleMarkers(samp$lon, samp$lat, clusterOptions = markerClusterOptions())
+saveWidget(w, "RwaSIS_cropland_sample.html", selfcontained = T) ## save map widget
+w ## plot widget 
+```
+
+# Follow-up on the ground
+
+Note that follow-up on the ground will be needed to actually install survey locations and/or field trials. This will require negogiations with farmers, government, private sector and civil society representatives at the proposed locations and perhaps also a pre-survey of the prevailing cropping systems and soil condition for such surveys or experiments. We will provide additional guidance about the relevant field procedures and potential experimental setups ... stay tuned.
