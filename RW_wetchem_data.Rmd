@@ -1,0 +1,83 @@
+---
+title: RwaSIS predictive soil mapping 
+author: M.G. Walsh
+date: "`r format(Sys.time(), '%d, %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: style.css
+---
+
+# Introduction
+
+This notebook sets up previous, georeferenced soil and remote sensing data of Rwanda for spatial analyses and predictions. We focus on *Croplands*, which are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution remote-sensing [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (~2.37 Mha). 
+
+While these legacy data were not collected on a replicable geostatistical sampling frame, they provide an inital indication of where specific soil problems or nutrient deficiencies may be prevalent, warranting potentially different management inteventions. As new data become available over the course of the project, we will update data sources and analysis workflows.
+
+# Data setup
+
+```{r}
+# Required packages
+suppressPackageStartupMessages({
+  require(downloader)
+  require(rgdal)
+  require(raster)
+  require(leaflet)
+  require(htmlwidgets)
+})
+```
+
+
+```{r}
+# Data downloads -----------------------------------------------------------
+# Create a data folder in  your current working directory
+dir.create("Wetchem", showWarnings=F)
+setwd("./Wetchem")
+
+# download soil data
+download("https://osf.io/djcfz?raw=1", "RW_wetchem.zip", mode = "wb")
+unzip("RW_wetchem.zip", overwrite = T)
+prof <- read.table("Profiles.csv", header = T, sep = ",")
+samp <- read.table("Samples.csv", header = T, sep = ",")
+geos <- merge(prof, samp, by="pid")
+
+# download and assemble raster stacks
+download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
+unzip("RW_250m_2020.zip", overwrite = T)
+download("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip", mode = "wb")
+unzip("RW_GS_preds.zip", overwrite = T)
+glist <- list.files(pattern="tif", full.names = T)
+grids <- stack(glist)
+```
+
+
+```{r}
+# Data setup --------------------------------------------------------------
+# project GeoSurvey coords to grid CRS
+geos.proj <- as.data.frame(project(cbind(geos$lon, geos$lat), "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"))
+colnames(geos.proj) <- c("x","y")
+geos <- cbind(geos, geos.proj)
+coordinates(geos) <- ~x+y
+projection(geos) <- projection(grids)
+
+# extract gridded variables at survey locations
+geosgrid <- extract(grids, geos)
+gsdat <- as.data.frame(cbind(geos, geosgrid))
+```
+
+
+```{r}
+# Write data frame --------------------------------------------------------
+dir.create("Results", showWarnings = F)
+write.csv(gsdat, "./Results/RW_soil_data.csv", row.names = F)
+
+# Soil sample locations ---------------------------------------------------
+w <- leaflet() %>%
+  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 9) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
+w ## plot widget 
+saveWidget(w, 'RW_soil_sample_locs.html', selfcontained = T) ## save widget
+```
+
