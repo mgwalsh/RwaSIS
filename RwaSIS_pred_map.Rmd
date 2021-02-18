@@ -17,7 +17,7 @@ The subsequent sections demonstrate a relatively generic prediction and mapping 
 
 # General data setup
 
-For each predictive soil map, you'll intially need a data setup. If you are using [R](https://www.r-project.org/) you'd need to use the packages indicated in the chunk directly below. This allows you to assemble the different dataframes and rasters allowing you to generate spatial predictions via machine learning and/or other algorithms.
+For each predictive soil map, you'll intially need a data setup. If you are using [R](https://www.r-project.org/), you will need to use the packages indicated in the chunk directly below. This allows you to assemble the different dataframes and rasters allowing you to generate spatial predictions via machine learning and/or other algorithms.
 
 ```{r}
 # Required packages
@@ -130,10 +130,9 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:46,50:77]
 ```
 
-
+## Spatial trend model <mgcv>
 
 ```{r}
-# Spatial trend model <mgcv> -----------------------------------------------
 # select locational covariates
 gf_cpv <- gs_cal[,47:49]
 
@@ -158,8 +157,11 @@ gm.pred <- predict(grids, gm) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
+```
 
-# Central place theory model <glm> -----------------------------------------
+# Central place theory model <glm>
+
+```{r}
 # select central place covariates
 gf_cpv <- gs_cal[,33:46]
 
@@ -185,8 +187,11 @@ gl1.pred <- predict(grids, gl1) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gl1.rds", sep = "")
 saveRDS(gl1, fname)
+```
 
-# GLM with all covariates -------------------------------------------------
+## GLM with all covariates
+
+```{r}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -209,8 +214,11 @@ gl2.pred <- predict(grids, gl2) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gl2.rds", sep = "")
 saveRDS(gl2, fname)
+```
 
-# Random forest <randomForest> --------------------------------------------
+## Random forest <randomForest>
+
+```{r}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -235,8 +243,11 @@ rf.pred <- predict(grids, rf) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_rf.rds", sep = "")
 saveRDS(rf, fname)
+```
 
-# Generalized boosting <gbm> ----------------------------------------------
+## Generalized boosting <gbm>
+
+```{r}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -263,8 +274,11 @@ gb.pred <- predict(grids, gb) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gb.rds", sep = "")
 saveRDS(gb, fname)
+```
 
-# Cubist <Cubist> ---------------------------------------------------------
+## Cubist <Cubist>
+
+```{r}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
