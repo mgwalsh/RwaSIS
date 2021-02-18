@@ -19,7 +19,7 @@ In the last section of the notebook, we produce uncertainty estimates of the soi
 
 # General data setup
 
-For each predictive soil map, you'll intially need a data setup. If you are using [R](https://www.r-project.org/), you will need to use the packages indicated in the chunk directly below. This allows you to assemble the different dataframes and rasters allowing you to generate spatial predictions via machine learning and/or other algorithms.
+For each predictive soil map, you'll intially need a data setup. If you are using [R](https://www.r-project.org/), you will need to use the packages indicated in the chunk directly below. This allows you to assemble the different dataframes and rasters providing a lot of options to generate spatial predictions via machine learning and/or geostatistical algorithms. We encourage and challenge you to explore the options!
 
 ```{r}
 # Required packages
@@ -97,9 +97,9 @@ The following chunks predict topsoil soil pH values using different machine lear
 
 ```
 
-The main idea is to initially run a number of contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the various models are ensembled (combined/stacked) on a validation dataset. When applied over time and space, this is a form of [Reinforcement learning]() 
+The main idea is to initially run a number of contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the model fitting process various models are ensembled (combined/stacked) on an *"independent"* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions. 
 
-To run this section of the notebook, you will need to install and load some additional R-packages. You can always alter these and/or automatically add different and/or additional ML them using `caret`  package see at: [caret]()
+To run this section of the notebook for Rwanda, you will need to install and load some additional R-packages. You can always alter these and/or automatically add different and/or additional MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html).
 
 ```{r}
 # Required packages
