@@ -73,7 +73,7 @@ geosgrid <- extract(grids, geos)
 gsdat <- as.data.frame(cbind(geos, geosgrid))
 ```
 
-This chunk writes out the dataframe `RW_soil_data.csv` into your `./Results directory` if you'd like to process it in software other than R.
+This chunk writes out the dataframe `RW_soil_data.csv` into your `./Results` directory if you'd like to process it in software other than R.
 
 ```{r}
 # Write data frame --------------------------------------------------------
