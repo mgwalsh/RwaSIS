@@ -340,7 +340,9 @@ fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 ```
 
+# Uncertainty estimates
 
+```{r}
 # Uncertainty estimates via quantile regression ---------------------------
 # note that this is just an example for pH ... generalize & move to a seperate script
 require(quantreg)
@@ -360,7 +362,11 @@ print(stQ)
 curve(stQ$coefficients[2]*x+stQ$coefficients[1], add=T, from=3, to=9, col="blue", lwd=2)
 curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=3, to=9, col="red", lwd=2)
 curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=3, to=9, col="blue", lwd=2)
+```
 
+
+
+```{r}
 # Spatial residual --------------------------------------------------------
 # note that this is just an example for pH ... generalize & move to a seperate script
 
@@ -391,5 +397,5 @@ sres.pred <- predict(grids, sres) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_sres.rds", sep = "")
 saveRDS(sres, fname)
-
+```
 
