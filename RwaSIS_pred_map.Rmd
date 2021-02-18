@@ -1,6 +1,6 @@
 ---
 title: RwaSIS predictive soil mapping workflows 
-author: M.G. Walsh, R. Manners and J. Chamberlin
+author: M.G. Walsh, B.A. Walsh, R. Manners and J. Chamberlin
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
