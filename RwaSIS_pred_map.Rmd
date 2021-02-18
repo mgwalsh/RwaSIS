@@ -145,7 +145,7 @@ fcal <- gs_cal[,24:46,50:77]
 
 ## Spatial trend model [mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf)
 
-This a simple spatially smoothed function of the pH values at different sampling locations in Rwanda based on georeference. 
+This a simple spatially smoothed function of the pH values at different sampling locations in Rwanda based on their georeference. 
 
 ```{r}
 # select locational covariates
@@ -231,7 +231,7 @@ fname <- paste("./Results/", labs, "_gl2.rds", sep = "")
 saveRDS(gl2, fname)
 ```
 
-## Random forest <randomForest>
+## Random forest [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf)
 
 ```{r}
 # start doParallel to parallelize model fitting
