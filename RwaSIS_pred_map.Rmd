@@ -57,7 +57,7 @@ glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
 ```
 
-This following chunk sets up the data in a dataframe that will generate the the training and validation data for the different MLAs we shall apply to the spatial prediction of soil properties.
+This following chunk sets up the data in a dataframe that will subsequently generate the the training and validation data for the different MLAs we shall apply to the spatial prediction of soil properties.
 
 ```{r}
 # Data setup --------------------------------------------------------------
@@ -99,9 +99,9 @@ knitr::include_graphics("figures/training_validation.png")
 ```
 \
 
-The main idea is to initially run a number of contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the model fitting process, the various models are ensembled (combined/stacked) on an *"independent"* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions. 
+The main idea is to initially run a number of contrasting models with [10-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the model fitting process, the various models are ensembled (combined/stacked) on an *"independent"* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions. 
 
-To run this section of the notebook for Rwanda, you will need to install and load some additional R-packages. You can always alter these and/or automatically add different and/or additional MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html).
+To run this section of the notebook for Rwanda, you will need to install and load some additional R-packages. You can always alter these and/or automatically adjust and/or add other MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html).
 
 ```{r}
 # Required packages
@@ -119,7 +119,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-
+The following chunk clears some of the objects in memory, removes incomplete cases (if any), sets-up labels and features, and creates a randomized partion between the training and validation dataframes. Everything is paralalized to facilitate the use of local or cloud-based computing resources.
 
 ```{r}
 # Data setup --------------------------------------------------------------
@@ -145,7 +145,7 @@ fcal <- gs_cal[,24:46,50:77]
 
 ## Spatial trend model [mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf)
 
-This a simple spatially smoothed generalized additive model using the `gam` function on the pH values at different sampling locations in Rwanda based only on their georeference. It is essentially equivalent to an ordinary kriging model ... but simpler to compute.
+This a simple spatially smoothed *generalized additive model* applying the `gam` function on the pH values at different sampling locations in Rwanda based only on their georeference. It is similar to an ordinary kriging model ... but it is simpler and faster to compute in this context.
 
 ```{r}
 # select locational covariates
@@ -260,7 +260,7 @@ fname <- paste("./Results/", labs, "_rf.rds", sep = "")
 saveRDS(rf, fname)
 ```
 
-## Generalized boosting <gbm>
+## Generalized boosting [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf)
 
 ```{r}
 # start doParallel to parallelize model fitting
@@ -335,6 +335,7 @@ lval <- as.vector(t(gs_val[labs]))
 fval <- gspred[,78:83] ## subset validation features
 ```
 
+This chunk actually does the model stacking with `glmStepAIC` function from the `MASS` library. You could explore other options here, but we find ...
 
 ```{r}
 # Stacked model -------------------------------------------------------------
