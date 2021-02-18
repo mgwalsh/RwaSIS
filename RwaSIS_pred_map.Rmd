@@ -57,7 +57,7 @@ glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
 ```
 
-This following chunk sets up the data in a dataframe, which is ready generating the training and validation data for the different MLAs we shall apply to the spatial prediction of soil properties.
+This following chunk sets up the data in a dataframe that will generate the the training and validation data for the different MLAs we shall apply to the spatial prediction of soil properties.
 
 ```{r}
 # Data setup --------------------------------------------------------------
