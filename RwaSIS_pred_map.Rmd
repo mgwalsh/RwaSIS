@@ -11,9 +11,9 @@ output:
 
 # Introduction
 
-The initial section of this notebook sets up georeferenced soil and remote sensing data of Rwanda for spatial analyses and predictions. We focus on *Croplands*, which are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution remote-sensing [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (of ~2.37 Mha). 
+The first section of this notebook sets up georeferenced soil and remote sensing data of Rwanda for spatial analyses and predictions. We focus on *Croplands*, which are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution remote-sensing [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (of ~2.37 Mha). 
 
-The subsequent sections demonstrate a relatively generic prediction and mapping workflows, which use ensembles of different and complimentary machine learning (ML) algorithms (see e.g. the various review articles at: [Emsemble models](https://www.sciencedirect.com/topics/computer-science/ensemble-modeling)) using remote sensing and GIS. While the *"legacy data"* used in this example were not collected on a replicable geostatistical sampling frame, they provide an inital indication of where specific soil problems or nutrient deficiencies may be prevalent in Rwanda; thus, warranting potentially different management inteventions. As new RwaSIS project data become available over the course of the project, we will update the relevant data sources and soil mapping workflows. 
+The subsequent sections demonstrate a relatively generic prediction and mapping workflow, which uses ensembles of different and complimentary machine learning (ML) algorithms (see e.g. the various review articles at: [Emsemble models](https://www.sciencedirect.com/topics/computer-science/ensemble-modeling)) using the various remote sensing and GIS layers. While the *"legacy data"* used in this example were not collected on a replicable geostatistical sampling frame, they provide an inital indication of where specific soil problems or nutrient deficiencies may be prevalent in Rwanda; thus, warranting potentially different research approaches. As new RwaSIS project data become available over the course of the project, we will update the relevant data sources and soil mapping workflows. 
 
 # General data setup
 
@@ -88,6 +88,7 @@ w ## plot widget
 ```
 
 # Machine-learning mapping models
+
 
 
 ```{r}
@@ -283,8 +284,12 @@ cu.pred <- predict(grids, cu) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_cu.rds", sep = "")
 saveRDS(cu, fname)
+```
 
-# Model stacking setup ----------------------------------------------------
+# Model stacking
+
+```{r}
+# Stacking setup ------------------------------------------------------------
 preds <- stack(gm.pred, gl1.pred, gl2.pred, rf.pred, gb.pred, cu.pred)
 names(preds) <- c("gm","gl1","gl2","rf","gb","cu")
 plot(preds, axes = F)
@@ -299,9 +304,11 @@ gspred <- as.data.frame(cbind(gs_val, gspred))
 gs_val <- as.data.frame(gs_val)
 lval <- as.vector(t(gs_val[labs]))
 fval <- gspred[,78:83] ## subset validation features
+```
 
-# Model stacking
 
+```{r}
+# Stacked model -------------------------------------------------------------
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -325,12 +332,14 @@ saveRDS(st, fname)
 ```
 
 
-
+```{r}
 # Write prediction grids --------------------------------------------------
 gspreds <- stack(preds, st.pred)
 names(gspreds) <- c("gm","gl1","gl2","rf","gb","cu","st")
 fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
+```
+
 
 # Uncertainty estimates via quantile regression ---------------------------
 # note that this is just an example for pH ... generalize & move to a seperate script
