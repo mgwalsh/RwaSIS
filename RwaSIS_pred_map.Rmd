@@ -233,6 +233,9 @@ saveRDS(gl2, fname)
 
 ## Random forest [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf)
 
+The below is a ...
+
+
 ```{r}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -261,6 +264,8 @@ saveRDS(rf, fname)
 ```
 
 ## Generalized boosting [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf)
+
+This next chunk represents one of bagging techniques that are coommonly used for ...
 
 ```{r}
 # start doParallel to parallelize model fitting
