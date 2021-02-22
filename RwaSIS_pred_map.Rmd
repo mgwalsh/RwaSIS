@@ -57,14 +57,14 @@ glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
 ```
 
-This following chunk sets up the data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). The processed Rwanda remote sensing and GIS data were derived from and reused from the primary open sources. You can download those at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the currently included variables are provided in the table below:
+The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the chunk above) were derived from and reused from their primary open sources. You can download those at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the covariates included in the `grids` raster stack and their sources are provided in the table immediately below:
 
 \
 ```{r, echo=FALSE}
 
 ```
 \
-These covariables may change over time and we will update them when and where needed.
+These covariates may change over time and we will update them when and where needed. The following chunk then sets up the legacy soil property data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
 
 ```{r}
 # Data setup --------------------------------------------------------------
@@ -96,7 +96,7 @@ saveWidget(w, 'RW_soil_sample_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
 
-# Machine-learning-based mapping workflows
+# Machine-learning-based predictive mapping
 
 The following chunks predict topsoil soil pH values using different machine learning models with varying remote sensing and GIS (covariate) inputs. The general MLA prediction workflow is shown in the figure below:
 
@@ -105,8 +105,7 @@ The following chunks predict topsoil soil pH values using different machine lear
 knitr::include_graphics("figures/training_validation.png")
 ```
 \
-
-The main idea is to initially run a number of potentially contrasting models with [10-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the model fitting processes, the various models are ensembled (combined/stacked) on an *"independent"* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained. 
+The main idea is to initially run a number of potentially contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the model fitting processes, the various models are ensembled (combined/stacked) on an *"independent"* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained. 
 
 To run this section of the notebook, you may need to install and load some additional R-packages. You can always alter these and/or automatically adjust and/or add other MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html).
 
@@ -150,7 +149,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:46,50:77]
 ```
 
-Note that we are using soil pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable to be predicted. You may want to transform those `labs` prior to model fitting, and perhaps also tune the repsective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
+Note that we are using topsoil (0-20 cm) pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable to be predicted. You may want to transform those `labs` prior to model fitting, and perhaps also tune the repsective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
 
 ## Spatial trend model [mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf)
 
