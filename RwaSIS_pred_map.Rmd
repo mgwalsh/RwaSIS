@@ -143,7 +143,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:46,50:77]
 ```
 
-Note that we are using soil pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc) as labels `labs` to be predicted. You may want to transform those `labs` prior to model fitting, and perhaps also additionally tune the repsective models to better fit the distributional assumptions of indiviual soil properties.
+Note that we are using soil pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels `labs` to be predicted. You may want to transform those `labs` prior to model fitting, and perhaps also tune the repsective models to better represent the distributional attributes of the indiviual soil properties.
 
 ## Spatial trend model [mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf)
 
