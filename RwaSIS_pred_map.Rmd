@@ -57,7 +57,7 @@ glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
 ```
 
-This following chunk sets up the data in a dataframe that will subsequently generate the the training and validation data for the different MLAs we shall apply to the spatial prediction of soil properties. Data courtesy [CROPNUTS](https://cropnuts.com/).
+This following chunk sets up the data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). The processed Rwanda remote sensing and GIS data were derived and reused from primary open sources. You can download those at [RwaSIS](https://osf.io/hp6v7/).
 
 ```{r}
 # Data setup --------------------------------------------------------------
