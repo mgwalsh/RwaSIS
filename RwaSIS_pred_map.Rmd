@@ -33,7 +33,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-The following chunk then downloads the data needed for running this particular example. Specifically, it assembles georeferenced field observations of soil measurements, e.g. (pH, soil carbon and soil nutrient composition) and links these to remote sensing and GIS images represented by `grids`. We initially focus on predicting the topsoil pH measurements here, but the approach is applicable to any given measured and  [Georeferenced](https://en.wikipedia.org/wiki/Georeferencing) soil property under consideration. 
+The following chunk then downloads the data needed for running this particular example. Specifically, it assembles georeferenced field observations of soil measurements, e.g. (pH, soil carbon and soil nutrient composition) and links these to remote sensing and GIS images represented by `grids`. We initially focus on predicting the topsoil pH measurements here, but the approach is applicable to any given  [Georeferenced](https://en.wikipedia.org/wiki/Georeferencing) soil property or measurement under consideration. 
 
 ```{r}
 # Data downloads -----------------------------------------------------------
@@ -89,7 +89,7 @@ write.csv(gsdat, "./Results/RW_soil_data.csv", row.names = F)
 
 # Soil sample locations ---------------------------------------------------
 w <- leaflet() %>%
-  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 9) %>%
+  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
 saveWidget(w, 'RW_soil_sample_locs.html', selfcontained = T) ## save widget
@@ -102,12 +102,12 @@ The following chunks predict topsoil soil pH values using different machine lear
 
 \
 ```{r MLA, echo=FALSE, fig.align="center", fig.cap="Reinforcement machine learning cycle.", out.width = '60%'}
-knitr::include_graphics("figures/training_validation.png")
+knitr::include_graphics("./figures/training_validation.png")
 ```
 \
-The main idea is to initially run a number of potentially contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end the model fitting processes, the various models are ensembled (combined/stacked) on an *"independent"* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained. 
+The main idea is to initially run a number of potentially contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model fitting processes, the various models are ensembled (combined/stacked) on an *independent* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained. 
 
-To run this section of the notebook, you may need to install and load some additional R-packages. You can always alter these and/or automatically adjust and/or add other MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html).
+To run this section of the notebook, you may need to install and load some of the additional R-packages needed to run the example. You can always alter these and/or automatically adjust and/or add other MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html), as you see fit.
 
 ```{r}
 # Required packages
@@ -350,7 +350,7 @@ lval <- as.vector(t(gs_val[labs]))
 fval <- gspred[,78:83] ## subset validation features
 ```
 
-This chunk actually does the model stacking with `glmStepAIC` function from the `MASS` library. You could explore other options here, but we find ...
+This chunk does the model stacking with `glmStepAIC` function from the `MASS` library. You could explore other options here, but we find that this gives reasonably ...
 
 ```{r}
 # Stacked model -------------------------------------------------------------
