@@ -347,7 +347,7 @@ gspred <- as.data.frame(cbind(gs_val, gspred))
 # stacking model validation labels and features
 gs_val <- as.data.frame(gs_val)
 lval <- as.vector(t(gs_val[labs]))
-fval <- gspred[,78:83] ## subset validation features
+fval <- gspred[,80:85] ## subset validation features
 ```
 
 This chunk does the model stacking with `glmStepAIC` function from the `MASS` library. You could explore other options here, but we find that this gives reasonably ...
