@@ -121,7 +121,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-The following chunk scrubs some of the objects in memory, removes incomplete cases (if any), sets-up labels and features, and creates a randomized partion between the training and validation dataframes. Everything is paralalized to facilitate efficient use of local or cloud-based computing resources. Note that there are other options available for this (e.g. [foreach](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html), among others)
+The following chunk scrubs some of the objects in memory, removes incomplete cases (if there are any), sets-up labels and features, and creates a randomized partion between the training and validation dataframes. Everything is paralalized to facilitate efficient use of local or cloud-based computing resources. Note that there are other options available for this (e.g. [foreach](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html), among others)
 
 ```{r}
 # Data setup --------------------------------------------------------------
@@ -145,9 +145,9 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:46,50:77]
 ```
 
-Note that we are using topsoil (0-20 cm) pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable to be predicted. You may want to transform those `labs` prior to model fitting, and perhaps also tune the repsective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
+Note that we are using topsoil (0-20 cm) pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable that is to be predicted. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respsective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
 
-## Spatial trend model [mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf)
+## Spatial trend model ([mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf))
 
 This a simple spatially smoothed *generalized additive model* applying the `gam` function on the pH values at different sampling locations in Rwanda, based only on their georeference. It is similar to ordinary kriging with cross-validation ... but it is simpler and much faster to compute in this context.
 
@@ -177,7 +177,7 @@ fname <- paste("./Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
-## Central place model [MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf)
+## Central place model ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
 Central places are influential variables where human impacts occur. They are correlated with both extraction and deposition of soil nutrients and toxic elements, soil erosion and deposition, acidification and many other soil disturbance processess. The model below focuses on central place indicators such as distances to roads and settlements, surface water sources, cell towers and electricity networks among others.
 
@@ -207,7 +207,7 @@ fname <- paste("./Results/", labs, "_gl1.rds", sep = "")
 saveRDS(gl1, fname)
 ```
 
-## GLM with all covariates
+## GLM with all spatial covariates ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
 ```{r, message=FALSE}
 # start doParallel to parallelize model fitting
@@ -232,10 +232,9 @@ fname <- paste("./Results/", labs, "_gl2.rds", sep = "")
 saveRDS(gl2, fname)
 ```
 
-## Random forest [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf)
+## Random forest ([randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf))
 
 The below is a ...
-
 
 ```{r, message=FALSE}
 # start doParallel to parallelize model fitting
@@ -264,7 +263,7 @@ fname <- paste("./Results/", labs, "_rf.rds", sep = "")
 saveRDS(rf, fname)
 ```
 
-## Generalized boosting [gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf)
+## Generalized boosting ([gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf))
 
 This next chunk represents one of bagging techniques that are coommonly used for ...
 
@@ -297,7 +296,7 @@ fname <- paste("./Results/", labs, "_gb.rds", sep = "")
 saveRDS(gb, fname)
 ```
 
-## Cubist <Cubist>
+## Cubist ([Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf))
 
 ```{r, message=FALSE}
 # start doParallel to parallelize model fitting
