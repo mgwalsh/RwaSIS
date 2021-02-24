@@ -99,12 +99,8 @@ w ## plot widget
 # Machine-learning-based predictive mapping
 
 The following chunks predict topsoil soil pH values using different machine learning models with varying remote sensing and GIS (covariate) inputs. The general MLA prediction workflow is shown in the figure below:
+...
 
-\
-```{r MLA, echo=FALSE, fig.align="center", fig.cap="Reinforcement machine learning cycle.", out.width = '60%'}
-knitr::include_graphics("./figures/training_validation.png")
-```
-\
 The main idea is to initially run a number of potentially contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model fitting processes, the various models are ensembled (combined/stacked) on an *independent* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained. 
 
 To run this section of the notebook, you may need to install and load some of the additional R-packages needed to run the example. You can always alter these and/or automatically adjust and/or add other MLAs using `caret` package see at: [caret](https://topepo.github.io/caret/index.html), as you see fit.
@@ -155,9 +151,9 @@ Note that we are using topsoil (0-20 cm) pH as an example in ths context. You ca
 
 This a simple spatially smoothed *generalized additive model* applying the `gam` function on the pH values at different sampling locations in Rwanda, based only on their georeference. It is similar to ordinary kriging with cross-validation ... but it is simpler and much faster to compute in this context.
 
-```{r}
+```{r, message=FALSE}
 # select locational covariates
-gf_cpv <- gs_cal[,47:49]
+gf_cpv <- gs_cal[,49:51]
 
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -175,18 +171,17 @@ gm <- train(gf_cpv, lcal,
             trControl = tc)
 
 # model outputs & predictions
-summary(gm)
 gm.pred <- predict(grids, gm) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
-# Central place model [MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf)
+## Central place model [MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf)
 
 Central places are influential variables where human impacts occur. They are correlated with both extraction and deposition of soil nutrients and toxic elements, soil erosion and deposition, acidification and many other soil disturbance processess. The model below focuses on central place indicators such as distances to roads and settlements, surface water sources, cell towers and electricity networks among others.
 
-```{r}
+```{r, message=FALSE}
 # select central place covariates
 gf_cpv <- gs_cal[,33:46]
 
@@ -206,8 +201,6 @@ gl1 <- train(gf_cpv, lcal,
              metric = "RMSE")
 
 # model outputs & predictions
-summary(gl1)
-print(gl1) ## ROC's accross cross-validation
 gl1.pred <- predict(grids, gl1) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gl1.rds", sep = "")
@@ -216,7 +209,7 @@ saveRDS(gl1, fname)
 
 ## GLM with all covariates
 
-```{r}
+```{r, message=FALSE}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -233,8 +226,6 @@ gl2 <- train(fcal, lcal,
              metric ="RMSE")
 
 # model outputs & predictions
-summary(gl2)
-print(gl2)
 gl2.pred <- predict(grids, gl2) ## spatial predictions
 stopCluster(mc)
 fname <- paste("./Results/", labs, "_gl2.rds", sep = "")
@@ -246,7 +237,7 @@ saveRDS(gl2, fname)
 The below is a ...
 
 
-```{r}
+```{r, message=FALSE}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -277,7 +268,7 @@ saveRDS(rf, fname)
 
 This next chunk represents one of bagging techniques that are coommonly used for ...
 
-```{r}
+```{r, message=FALSE}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -308,7 +299,7 @@ saveRDS(gb, fname)
 
 ## Cubist <Cubist>
 
-```{r}
+```{r, message=FALSE}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -336,7 +327,7 @@ saveRDS(cu, fname)
 # Stacking setup ------------------------------------------------------------
 preds <- stack(gm.pred, gl1.pred, gl2.pred, rf.pred, gb.pred, cu.pred)
 names(preds) <- c("gm","gl1","gl2","rf","gb","cu")
-plot(preds, axes = F)
+# plot(preds, axes = F)
 
 # extract model predictions
 coordinates(gs_val) <- ~x+y
