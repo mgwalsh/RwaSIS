@@ -1,6 +1,6 @@
 ---
 title: RwaSIS predictive soil mapping workflows 
-author: M.G. Walsh, B.A. Walsh, R. Manners and J. Chamberlin
+author: M.G. Walsh, R. Manners, B.A. Walsh and J. Chamberlin
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -57,7 +57,7 @@ glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
 ```
 
-The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the chunk above) were derived from and reused from their primary open sources. You can download those at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the covariates included in the `grids` raster stack and their sources are provided in the table immediately below:
+The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the chunk above) were derived from and reused from their primary open sources. You can download the `grid` raster stack at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the covariates included in the `grids` and their sources are provided in the table immediately below:
 
 \
 ```{r, echo=FALSE}
@@ -364,7 +364,9 @@ fname <- paste("./Results/", labs, "_st.rds", sep = "")
 saveRDS(st, fname)
 ```
 
+## Write the prediction grids
 
+This chunk writes out the 7 prediction rasters that you can import as geotif files into any GIS sytem for visualizations, reports and/or further processing. 
 
 ```{r}
 # Write prediction grids --------------------------------------------------
@@ -374,9 +376,11 @@ fname <- paste("./Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 ```
 
-# Prediction uncertainty estimates
+# Prediction uncertainty estimates ([quantreg](https://cran.r-project.org/web/packages/quantreg/quantreg.pdf))
 
-```{r}
+There are numerous ways to quantify the uncertainty inherent in these predictions. ...
+
+```{r, }
 # Uncertainty estimates via quantile regression ---------------------------
 # note that this is just an example for pH ... generalize & move to a seperate script
 require(quantreg)
@@ -397,39 +401,3 @@ curve(stQ$coefficients[2]*x+stQ$coefficients[1], add=T, from=3, to=9, col="blue"
 curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=3, to=9, col="red", lwd=2)
 curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=3, to=9, col="blue", lwd=2)
 ```
-
-
-
-```{r}
-# Spatial residual --------------------------------------------------------
-# note that this is just an example for pH ... generalize & move to a seperate script
-
-# calculate spatial residual
-gsout$lres <- gsout$pH - gsout$st
-
-# select locational covariates
-gf_loc <- gsout[,47:49]
-
-# start doParallel to parallelize model fitting
-mc <- makeCluster(detectCores())
-registerDoParallel(mc)
-
-# control setup
-set.seed(1385321)
-tc <- trainControl(method = "cv", allowParallel = T)
-
-# model training
-sres <- train(gf_loc, gsout$lres, 
-              method = "gam",
-              preProc = c("center","scale"), 
-              metric = "RMSE",
-              trControl = tc)
-
-# model outputs & predictions
-summary(sres)
-sres.pred <- predict(grids, sres) ## spatial predictions
-stopCluster(mc)
-fname <- paste("./Results/", labs, "_sres.rds", sep = "")
-saveRDS(sres, fname)
-```
-
