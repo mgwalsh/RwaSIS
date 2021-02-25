@@ -98,8 +98,7 @@ w ## plot widget
 
 # Machine-learning-based predictive mapping
 
-The following chunks predict topsoil soil pH values using different machine learning models with varying remote sensing and GIS (covariate) inputs. The general MLA prediction workflow is shown in the figure below:
-...
+The following chunks predict topsoil soil pH values using different machine learning models with varying remote sensing and GIS (covariate) inputs. The general MLA prediction workflow is shown in the figure below: ...
 
 The main idea is to initially run a number of potentially contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model fitting processes, the various models are ensembled (combined/stacked) on an *independent* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained. 
 
@@ -121,7 +120,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-The following chunk scrubs some of the objects in memory, removes incomplete cases (if there are any), sets-up labels and features, and creates a randomized partion between the training and validation dataframes. Everything is paralalized to facilitate efficient use of local or cloud-based computing resources. Note that there are other options available for this (e.g. [foreach](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html), among others)
+The following chunk scrubs some of the objects in memory, removes incomplete cases (if there are any), sets-up labels and features, and creates a randomized partion between the training and validation dataframes. Everything is parallelized to facilitate efficient use of either local or cloud-based computing resources. Note that there are other options available for this (e.g. [foreach](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html), among others).
 
 ```{r}
 # Data setup --------------------------------------------------------------
@@ -142,7 +141,7 @@ labs <- c("pH") ## insert other labels (e.g. "C","N","P","K" ...) here!
 lcal <- as.vector(t(gs_cal[labs]))
 
 # raster calibration features
-fcal <- gs_cal[,24:46,50:77]
+fcal <- gs_cal[,24:48,52:79]
 ```
 
 Note that we are using topsoil (0-20 cm) pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable that is to be predicted. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respsective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
@@ -151,7 +150,7 @@ Note that we are using topsoil (0-20 cm) pH as an example in ths context. You ca
 
 This a simple spatially smoothed *generalized additive model* applying the `gam` function on the pH values at different sampling locations in Rwanda, based only on their georeference. It is similar to ordinary kriging with cross-validation ... but it is simpler and much faster to compute in this context.
 
-```{r, message=FALSE}
+```{r, results='hide'}
 # select locational covariates
 gf_cpv <- gs_cal[,49:51]
 
@@ -179,11 +178,11 @@ saveRDS(gm, fname)
 
 ## Central place model ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
-Central places are influential variables where human impacts occur. They are correlated with both extraction and deposition of soil nutrients and toxic elements, soil erosion and deposition, acidification and many other soil disturbance processess. The model below focuses on central place indicators such as distances to roads and settlements, surface water sources, cell towers and electricity networks among others.
+Central places are influential variables in places where human impacts occur. They are correlated with both extraction and deposition of soil nutrients and toxic elements, soil erosion and deposition, acidification and many other soil disturbance processess. The model below focuses on central place indicators such as distances to roads and settlements, surface water sources, cell towers and electricity networks among others.
 
-```{r, message=FALSE}
+```{r, results = 'hide'}
 # select central place covariates
-gf_cpv <- gs_cal[,33:46]
+gf_cpv <- gs_cal[,35:48,67]
 
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -191,7 +190,7 @@ registerDoParallel(mc)
 
 # control setup
 set.seed(1385321)
-tc <- trainControl(method = "cv", classProbs = T, allowParallel = T)
+tc <- trainControl(method = "cv", allowParallel = T)
 
 # model training
 gl1 <- train(gf_cpv, lcal, 
@@ -209,7 +208,7 @@ saveRDS(gl1, fname)
 
 ## GLM with all spatial covariates ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
-```{r, message=FALSE}
+```{r, results='hide'}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -236,7 +235,7 @@ saveRDS(gl2, fname)
 
 The below is a ...
 
-```{r, message=FALSE}
+```{r, results='hide'}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -267,7 +266,7 @@ saveRDS(rf, fname)
 
 This next chunk represents one of bagging techniques that are coommonly used for ...
 
-```{r, message=FALSE}
+```{r, results='hide'}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -298,7 +297,7 @@ saveRDS(gb, fname)
 
 ## Cubist ([Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf))
 
-```{r, message=FALSE}
+```{r, results='hide'}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
@@ -357,7 +356,6 @@ st <- train(fval, lval,
             trControl = tc,
             metric = "RMSE")
 
-print(st)
 summary(st)
 st.pred <- predict(preds, st) ## spatial predictions
 stopCluster(mc)
