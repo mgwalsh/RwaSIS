@@ -64,7 +64,7 @@ The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the
 
 ```
 \
-These covariates may change over time and we will update them when and where needed. The following chunk then sets up the legacy soil property data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
+These covariates will change over time and we will update them when and where needed. The following chunk then sets up the legacy soil property data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
 
 ```{r}
 # Data setup --------------------------------------------------------------
