@@ -60,7 +60,7 @@ grids <- stack(glist)
 The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the chunk above) were derived from and reused from their primary open sources. You can download the `grid` raster stack at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the covariates included in the `grids` and their sources are provided in the table immediately below:
 
 \
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='asis'}
 download("https://osf.io/e2x4s?raw=1", "Grid variables.csv", mode = "wb")
 vars <- read.table("Grid variables.csv", header = T, sep = ",")
 datatable(vars)
@@ -146,7 +146,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:48,52:79]
 ```
 
-Note that we are using topsoil (0-20 cm) pH as an example in ths context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable that is to be predicted. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respsective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
+Note that we are using topsoil (0-20 cm) pH as an example in this context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` variable that is to be predicted. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
 
 ## Spatial trend model ([mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf))
 
