@@ -35,7 +35,7 @@ suppressPackageStartupMessages({
 
 The following chunk then downloads the data needed for running this particular example. Specifically, it assembles georeferenced field observations of soil measurements, e.g. (pH, soil carbon and soil nutrient composition) and links these to remote sensing and GIS images represented by `grids`. We focus on predicting the topsoil pH measurements here, but the approach is applicable to any given  [Georeferenced](https://en.wikipedia.org/wiki/Georeferencing) soil property or measurement under consideration. 
 
-```{r}
+```{r, messages=FALSE}
 # Data downloads -----------------------------------------------------------
 # Create a data folder in  your current working directory
 dir.create("Wetchem", showWarnings=F)
@@ -61,10 +61,12 @@ The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the
 
 \
 ```{r, echo=FALSE}
-
+download("https://osf.io/e2x4s?raw=1", "Grid variables.csv", mode = "wb")
+vars <- read.table("Grid variables.csv", header = T, sep = ",")
+datatable(vars)
 ```
 \
-These Rwanda-wide covariates will change over time and we will update them if and when needed. The following chunk then sets up the legacy soil property data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
+These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. The following chunk then sets up the legacy soil property data in a dataframe that will subsequently generate the the training and validation dataframes for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
 
 ```{r}
 # Data setup --------------------------------------------------------------
