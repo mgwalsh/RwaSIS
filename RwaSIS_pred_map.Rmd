@@ -21,7 +21,7 @@ In the last section of the notebook, we produce initial uncertainty estimates of
 
 # General data setup
 
-To run this notebook, you will need to load the packages indicated in the package chunk directly below. This allows you to assemble the different dataframes and rasters providing a lot of options to generate spatial predictions via machine learning and/or geostatistical algorithms. We encourage and challenge you to explore the options!
+To run this notebook, you will need to load the packages indicated in the package chunk directly below. This allows you to assemble the different dataframes and rasters providing a lot of options to generate spatial predictions via machine learning and/or geostatistical algorithms. We encourage and challenge you to explore the many options in this context!
 
 ```{r}
 # Required packages
