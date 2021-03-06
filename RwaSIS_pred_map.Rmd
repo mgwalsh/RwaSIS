@@ -68,7 +68,7 @@ vars <- read.table("Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. Also note that these are also tagged with a factor variable that designates (a,c,o,r,s) of what we designate as the following soil-forming factors:
+These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. Also note that these are also grouped with a factor variable that designates *f(a,c,o,r,s)* of what we designate as the following soil-condition forming factors:
 
 * a - anthropic
 * c - climatic
