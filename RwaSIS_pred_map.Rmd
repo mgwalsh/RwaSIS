@@ -35,7 +35,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-The following chunk downloads the data needed for running this particular example. Specifically, it assembles georeferenced field observations of soil measurements, e.g. (pH, soil carbon and soil nutrient composition) and links these to remote sensing and GIS images represented by `grids` variable stack. We focus on predicting the topsoil pH measurements here, but the approach is applicable to any given  [Georeferenced](https://en.wikipedia.org/wiki/Georeferencing) soil property or measurement under consideration. 
+The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of soil measurements, e.g. (pH, soil carbon and soil nutrient composition) and links these to remote sensing and GIS images represented by `grids` variable stack. We focus on predicting the topsoil pH measurements here, but the approach is applicable to any given  [Georeferenced](https://en.wikipedia.org/wiki/Georeferencing) soil property or measurement under consideration. 
 
 ```{r, messages=FALSE}
 # Data downloads -----------------------------------------------------------
