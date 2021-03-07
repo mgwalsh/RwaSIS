@@ -1,6 +1,6 @@
 ---
 title: RwaSIS predictive soil mapping guidelines 
-author: M.G. Walsh, G. Heuvelink and R. Manners
+author: M.G. Walsh, G. Heuvelink, T. Hengl, and R. Manners
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -13,7 +13,7 @@ output:
 
 This notebook provides guidelines for predictive soil mapping. The specifics can, and should be, modified to fit the purpose of the specific predictive soil mapping tasks of interest. Our main intent here is to provide a reproducible, generalized, mapping framework and the associated computing workflows in [R](https://www.r-project.org/). The actual data and workflows should also be transferable to other computing environments.
 
-The first section of the notebook sets up georeferenced soil and remote sensing data of Rwanda for spatial analyses and predictions. We focus on *Croplands*, which are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (of ~2.37 Mha). The data offer several advantages including: Africa-wide coverage and consistency, and a robust anlysis process that ensures high quality predictions for use in your soil mapping applications.
+The first section of the notebook sets up georeferenced soil and remote sensing data of Rwanda for spatial analyses and predictions. We focus on *Croplands*, which are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (of ~2.37 Mha). The gridded data offer several advantages including: Africa-wide coverage and consistency, and a robust analysis process that ensures high quality predictions for use in your soil mapping applications.
 
 The subsequent sections illustrate soil prediction workflows, which use an ensemble of machine learning algorithms (MLAs), (see e.g. the various review articles at: [Emsemble models](https://www.sciencedirect.com/topics/computer-science/ensemble-modeling)) with various remote sensing and GIS input layers. While the [Legacy soil data](https://en.wikipedia.org/wiki/Legacy_system) used in this example were not collected on a replicable geostatistical sampling frame, they may provide an inital indication of where specific soil problems or nutrient deficiencies/imbalances are prevalent in Rwanda. As new data become available over the course of the project, we will update the relevant data sources and soil mapping workflows.
 
@@ -21,7 +21,7 @@ In the last section of the notebook, we produce initial (robust) uncertainty est
 
 # General data setup
 
-To run this notebook, you will need to load the packages indicated in the package chunk directly below. This allows you to assemble the different dataframes and rasters providing a lot of options to generate spatial predictions via machine learning and/or geostatistical algorithms. We encourage and challenge you to explore the many options in this context!
+To run this notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the different dataframes and rasters providing a lot of options to generate spatial predictions via machine learning and/or geostatistical algorithms. We encourage and challenge you to explore the many options in this context!
 
 ```{r}
 # Required packages
@@ -68,7 +68,7 @@ vars <- read.table("Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. Also note that these are also grouped with a factor variable that designates *f~(a,c,o,r,s)* of what we designate as the following soil-condition forming factors:
+These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. Also note that these are grouped by a factor variable that designates cropland condition as a function of *f~(a,c,o,r,s)* following factors:
 
 * a - anthropic
 * c - climatic
@@ -76,7 +76,7 @@ These Rwanda-wide (actually Africa-wide) covariates will change over time and we
 * r - relief/topographical/geographical
 * s - soil related
 
-The following chunk then sets up the soil properties in a dataframe that will generate the the training and validation subsets for the different MLAs we shall apply to the spatial prediction of soil properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
+The following chunk then sets up the properties in a dataframe that will generate the the training and validation subsets for the different MLAs we shall apply to the spatial prediction of cropland properties. The soil property data presented here are courtesy of [CROPNUTS](https://cropnuts.com/). 
 
 ```{r}
 # Data setup --------------------------------------------------------------
