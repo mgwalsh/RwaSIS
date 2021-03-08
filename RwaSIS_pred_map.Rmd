@@ -114,9 +114,9 @@ w ## plot widget
 These following chunks predict topsoil soil pH values using different machine learning algorithms (MLAs) with varying remote sensing and GIS (covariate) inputs. The generalized MLA prediction workflow is shown in the figure below.
 
 ```{r, echo=FALSE}
-dir.create("Figures", showWarnings = F)
-download("", "./Figures/figures.zip", mode = "wb")
-unzip("figure.zip", overwrite = T)
+# dir.create("Figures", showWarnings = F)
+# download("", "./Figures/figures.zip", mode = "wb")
+# unzip("figure.zip", overwrite = T)
 
 ```
 
@@ -228,7 +228,7 @@ saveRDS(gl1, fname)
 
 ## GLM with all spatial covariates ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
-This model is very similar to the *Central place model* above, but it initially contains of the 56 covariates and backward selects from those variables to generate a prediction.
+This model is very similar to the *Central place model* above, but it initially contains of the 56 covariates and then backward selects from those variables to generate a prediction with least-squares.
 
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
@@ -286,7 +286,7 @@ saveRDS(rf, fname)
 
 ## Generalized boosting ([gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf))
 
-This next chunk represents one of the *bagging* techniques that can be used for ...
+This next chunk represents one of the *boosting* techniques that can be used for both regression or classification.
 
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
