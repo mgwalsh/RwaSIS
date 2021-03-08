@@ -345,7 +345,7 @@ saveRDS(cu, fname)
 
 # Model ensemble predictions
 
-The main point here is not to evaluate a *best individual model* but rather to evaluate a combination of models of the previously fitted models against a 20% hold-out validation dataset. This provides robust estimates of how the different models should be weighted in combination. 
+The main point here is not to evaluate a *best individual model* but rather to evaluate the combination of the previously fitted models against a 20% hold-out validation dataset. This provides robust estimates of how the different models should be weighted in against one-another. 
 
 ```{r}
 # Stacking setup ------------------------------------------------------------
