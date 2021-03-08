@@ -228,6 +228,8 @@ saveRDS(gl1, fname)
 
 ## GLM with all spatial covariates ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
+This model is very similar to the *Central place model* above, but it initially contains of the 56 covariates and backward selects from those variables to generate a prediction.
+
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -253,7 +255,7 @@ saveRDS(gl2, fname)
 
 ## Random forest ([randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf))
 
-The below is a ...
+The below is a bagging chunk that uses [Breiman & Cutler's](https://link.springer.com/article/10.1023/A:1010933404324) algorithm with all of the covariate data. A good article to look at for reference in context here is [Barnard et al.](https://www.researchgate.net/publication/331328203_Can't_see_the_random_forest_for_the_decision_trees_selecting_predictive_models_for_restoration_ecology).
 
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
