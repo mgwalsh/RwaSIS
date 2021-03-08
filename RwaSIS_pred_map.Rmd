@@ -115,8 +115,8 @@ These following chunks predict topsoil soil pH values using different machine le
 
 ```{r, echo=FALSE}
 dir.create("Figures", showWarnings = F)
-# download("", "./Figures/figures.zip", mode = "wb")
-# unzip("figure.zip", overwrite = T)
+download("", "./Figures/figures.zip", mode = "wb")
+unzip("figure.zip", overwrite = T)
 
 ```
 
