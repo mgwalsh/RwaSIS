@@ -1,6 +1,6 @@
 ---
 title: RwaSIS predictive soil mapping guidelines 
-author: M.G. Walsh, G. ... R. Manners and R.A. MacMillan
+author: M.G. Walsh, R. Manners, ..., and R.A. MacMillan
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -57,6 +57,11 @@ download("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip", mode = "wb")
 unzip("RW_GS_preds.zip", overwrite = T)
 glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
+
+# download figures 
+dir.create("Figures", showWarnings = F)
+download("https://osf.io/42gry/", "./Figures/figures.zip", mode = "wb")
+unzip("figures.zip", overwrite = T)
 ```
 
 The processed Rwanda remote sensing and GIS data (covariates, ... `grids` in the chunk above) were derived from and transformed from their primary open sources. You can download the entire and the `grid` raster stack description at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the covariates included, and their sources are provided in the table immediately below.
@@ -68,9 +73,9 @@ vars <- read.table("Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. Also note that these are grouped by a factor variable that designates cropland condition as a function of *f ~ (a,c,o,r,s)* factors:
+These Rwanda-wide (actually Africa-wide) covariates will change over time and we will update them if and when needed. Also note that these are grouped by factor variables that designate cropland condition (*x*) as a function of *f(x) ~ (a,c,o,r,s)* where:
 
-* a - anthropic
+* a - are variables anthropic variables
 * c - climatic
 * o - organismal (primarily vegetative/land cover related)
 * r - relief/topographical/geographical
@@ -113,11 +118,8 @@ w ## plot widget
 
 These following chunks predict topsoil soil pH values using different machine learning algorithms (MLAs) with varying remote sensing and GIS (covariate) inputs. The generalized MLA prediction workflow is shown in the figure below.
 
-```{r, echo=FALSE}
-# dir.create("Figures", showWarnings = F)
-# download("", "./Figures/figures.zip", mode = "wb")
-# unzip("figure.zip", overwrite = T)
-
+```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="MLA training and validation approach", out.width = '60%', }
+knitr::include_graphics("Figures/training_validation.png")
 ```
 
 The main idea is to train a number of potentially contrasting models with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined/stacked) on an *independent* validation dataset. When applied over time and space, this is a form of [Reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), which should produce increasingly accurate predictions as new field, lab data and MLAs are obtained and run. 
