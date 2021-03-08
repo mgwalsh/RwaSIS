@@ -1,6 +1,6 @@
 ---
 title: RwaSIS predictive soil mapping guidelines 
-author: M.G. Walsh, G. Heuvelink, T. Hengl, R. Manners and R.A. MacMillan
+author: M.G. Walsh, G. ... R. Manners and R.A. MacMillan
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -402,7 +402,7 @@ writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND"
 
 # Ensemble prediction uncertainty estimates
 
-There are numerous ways to quantify the uncertainty inherent in these predictions. We take a simple but quite robust approach here using quantile regression ([quantreg](https://cran.r-project.org/web/packages/quantreg/quantreg.pdf)).
+There are numerous ways to quantify the uncertainty inherent in these predictions. We take a simple but quite robust approach here using quantile regression with ([quantreg](https://cran.r-project.org/web/packages/quantreg/quantreg.pdf)).
 
 ```{r, message=FALSE}
 # Uncertainty estimates via quantile regression ---------------------------
