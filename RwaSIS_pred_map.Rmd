@@ -116,7 +116,7 @@ w ## plot widget
 
 # Machine-learning-based predictive mapping
 
-These following chunks predict topsoil soil pH values using different machine learning algorithms (MLAs) with varying remote sensing and GIS (covariate) inputs. The generalized MLA prediction workflow is shown in the figure below.
+The following chunks predict topsoil soil pH values using different machine learning algorithms (MLAs) with varying remote sensing and GIS (covariate) inputs. The generalized MLA prediction workflow is shown in the figure below.
 
 ```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="MLA training, validation and prediction workflow.", out.width = '80%', }
 knitr::include_graphics("Figures/training_validation.png")
