@@ -232,7 +232,7 @@ saveRDS(gl1, fname)
 
 ## GLM with all spatial covariates ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
 
-This model is very similar to the *Central place model* above, but it initially contains of the 56 covariates and is then backward selected to generate a prediction via a generalized linear model.
+This model is very similar to the *Central place model* above, but it initially contains all of the 56 covariates and is then backward selects from them to generate a prediction via a generalized linear model.
 
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
