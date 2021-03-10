@@ -323,7 +323,7 @@ saveRDS(gb, fname)
 
 ## Cubist ([Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf))
 
-Cubist is an extension of the [Quinlan, 1992](https://www.scirp.org/(S(i43dyn45teexjx455qlt3d2q))/reference/ReferencesPapers.aspx?ReferenceID=1865452) algorithm.
+Cubist is an extension of the [Quinlan, 1992](https://www.scirp.org/(S(i43dyn45teexjx455qlt3d2q))/reference/ReferencesPapers.aspx?ReferenceID=1865452) algorithm. The implementaion in R can only be used for regression problems, but in those contexts it tends to be a leading contender in terms of prediction performance.
 
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
