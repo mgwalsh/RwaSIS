@@ -408,7 +408,7 @@ writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND"
 
 # Ensemble prediction uncertainty estimates
 
-There are numerous ways to quantify the uncertainty inherent in these predictions. We take a simple but quite robust approach here using quantile regression with ([quantreg](https://cran.r-project.org/web/packages/quantreg/quantreg.pdf)). We are mainly interested in the initial spread of the ROI-wide predictions (sensu, their 90% probable intervals). Once new data are collected, we shall be revising these.
+There are numerous ways to quantify the uncertainty inherent in these predictions. We take a simple but quite robust approach here using quantile regression with ([quantreg](https://cran.r-project.org/web/packages/quantreg/quantreg.pdf)). We are mainly interested in the initial spread of the ROI-wide predictions (sensu, their 90% probable intervals). Once new data are collected, we shall be revising these and will also point out some additional (more data sensitive) techniques.
 
 ```{r, message=FALSE}
 # Uncertainty estimates via quantile regression ---------------------------
