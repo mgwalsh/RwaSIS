@@ -389,9 +389,9 @@ st <- train(fval, lval,
 summary(st)
 st.pred <- predict(preds, st) ## spatial predictions
 stopCluster(mc)
-plot(st.pred, axes=F)
 fname <- paste("./Results/", labs, "_st.rds", sep = "")
 saveRDS(st, fname)
+plot(st.pred, axes=F)
 ```
 
 ## Write the prediction grids
