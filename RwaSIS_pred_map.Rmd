@@ -432,4 +432,5 @@ curve(stQ$coefficients[4]*x+stQ$coefficients[3], add=T, from=3, to=9, col="red",
 curve(stQ$coefficients[6]*x+stQ$coefficients[5], add=T, from=3, to=9, col="blue", lwd=2)
 ```
 
-As a final thought about this notebook, should you come up with a better set of data-sources, analysis suggestions, approaches, algorithms or predictions around these data, we would certainly like to hear about them! You can always contact us at [AFSIS](mgw.africasoils.info).
+As a final thought about this notebook, should you come up with a better set of data-sources, analysis suggestions, approaches, algorithms or predictions around these data, we would certainly like to hear about them! You can always contact us at [AFSIS](mgw.africasoils.info). We shall also provide more guidance around other soil property predictions.
+
