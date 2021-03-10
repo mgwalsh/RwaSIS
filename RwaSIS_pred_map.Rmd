@@ -1,6 +1,6 @@
 ---
 title: RwaSIS predictive soil mapping guidelines 
-author: M.G. Walsh, R. Manners, ..., and R.A. MacMillan
+author: M.G. Walsh, R. Manners, B.A. Walsh, and R.A. MacMillan
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
