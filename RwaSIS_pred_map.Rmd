@@ -290,7 +290,7 @@ saveRDS(rf, fname)
 
 ## Generalized boosting ([gbm](https://cran.r-project.org/web/packages/gbm/gbm.pdf))
 
-This next chunk represents one of the *boosting* techniques that can be used for both regression or classification. It is similar to the `randomForest` above, but uses a boosting technique that emphasizes successful predictions rather than penalizing poor predictions via *bagging*. There is a wide-array of literature around these so-called *greedy algorithms*. Very good descriptions of these are provided in [Hastie et al, 2009](https://web.stanford.edu/~hastie/ElemStatLearn/).
+This next chunk represents one of the *boosting* techniques that can be used for both regression or classification. It is similar to the `randomForest` above, but uses a boosting technique that emphasizes successful predictions rather than penalizing poor predictions via *bagging*. There is a wide-array of literature around the so-called *"greedy algorithms"*. Very good descriptions of these are provided in [Hastie et al, 2009](https://web.stanford.edu/~hastie/ElemStatLearn/).
 
 ```{r, results='hide'}
 # start doParallel to parallelize model fitting
