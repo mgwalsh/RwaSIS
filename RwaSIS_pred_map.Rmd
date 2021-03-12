@@ -168,7 +168,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:48,52:79]
 ```
 
-Note that we are using topsoil (0-20 cm) pH as an example in this context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` (target) variable. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respective models to better represent the distributional and/or compositional attributes of the indiviual soil properties, should they arise.
+Note that we are using topsoil (0-20 cm) pH as an example in this context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` (target) variable. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respective models to better represent the distributional and/or compositional attributes of the indiviual soil properties, should the need arise.
 
 ## Spatial trend model ([mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf))
 
