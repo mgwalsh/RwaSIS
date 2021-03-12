@@ -144,7 +144,7 @@ suppressPackageStartupMessages({
 })
 ```
 
-The following chunk scrubs some of the objects in memory, removes incomplete cases (if there are any), sets-up labels and features, and creates a randomized partition between the training and validation dataframes. Everything is parallelized to facilitate efficient use of either local or cloud-based computing resources. Note that there are other options available for this (e.g. [foreach](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html), among others).
+The following chunk scrubs some of the objects in memory, removes incomplete cases (if there are any), sets-up labels and features, and creates a randomized partition between the training and validation dataframes. Everything is parallelized to facilitate efficient use of either local or cloud-based computing resources. Note that there are other options available for this (e.g. [foreach](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html), among others.
 
 ```{r}
 # Data setup --------------------------------------------------------------
@@ -168,7 +168,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,24:48,52:79]
 ```
 
-Note that we are using topsoil (0-20 cm) pH as an example in this context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` (target) variable. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respective models to better represent the distributional and/or compositional attributes of the indiviual soil properties.
+Note that we are using topsoil (0-20 cm) pH as an example in this context. You can substitute other soil properties like (C, N, P, K, etc.) as labels, in the `labs` (target) variable. You may want to transform those `labs` variables prior to model fitting, and perhaps also to tune the respective models to better represent the distributional and/or compositional attributes of the indiviual soil properties, should they arise.
 
 ## Spatial trend model ([mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf))
 
