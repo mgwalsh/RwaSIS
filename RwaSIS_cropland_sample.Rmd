@@ -18,16 +18,17 @@ This notebook describes setting up a representative and completely reproducible 
 These are the R-packages that you will need to run to reproduce or adapt the spatially balanced sampling script that we are proposing.
 
 ```{r}
-# install.packages(c("rgdal","raster","BalancedSampling","DT","leaflet","htmlwidgets"), dependencies=T)
-suppressPackageStartupMessages({
-  require(rgdal)
-  require(raster)
-  require(sp)
-  require(BalancedSampling)
-  require(DT)
-  require(leaflet)
-  require(htmlwidgets)
-})
+# package names
+packages <- c("rgdal", "raster", "sp", "BalancedSampling", "DT", "leaflet", "htmlwidgets")
+
+# install packages
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# load packages
+invisible(lapply(packages, library, character.only = TRUE))
 ```
 
 The following chunk downloads the needed and publicly available geotiffs and shape file that define the RwaSIS project's main ROI constraints (i.e, cropland && distance to buildings < 0.5 km).
