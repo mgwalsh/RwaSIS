@@ -9,6 +9,10 @@ output:
     css: style.css
 ---
 
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
 # Introduction
 
 This notebook describes setting up a representative and completely reproducible [sampling frame](https://en.wikipedia.org/wiki/Sampling_frame) that provides spatially/geographically balanced coverage across the croplands of Rwanda. Croplands are the primary [Region of Interest (ROI)](https://en.wikipedia.org/wiki/Region_of_interest) and the target for various land management interventions of the [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Based on a recent high-resolution remote-sensing [GeoSurvey (2019)](https://osf.io/w5e6c/), croplands are currently estimated to occupy ~68% of Rwanda's overall land area (~2.37 Mha). Selecting an appropriate sampling frame for ground observations and measurements and/or experiments is a critical planning step for the RwaSIS project, because it determines both the main and recurrent costs of any adaptive mapping or monitoring program as well as the resulting precision and accuracy of inferences and predictions that are made about cropland condition and productivity over time. A geographically consistent sampling frame for field surveys and experiments should therefore always be defined in terms of the immediate needs and constraints of the measurement, mapping and monitoring tasks at hand, but within a long-term planning context.
