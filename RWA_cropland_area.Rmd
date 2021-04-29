@@ -1,0 +1,24 @@
+---
+title: Workflows for predictive cropland area mapping: Rwanda 
+author: M.G. Walsh
+date: "`r format(Sys.time(), '%d, %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 1
+    fig_caption: true
+    css: style.css
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+# Introduction
+
+Quantifying the geographical extent, location and spatial dynamics of cropland areas, rural and urban settlements and woody vegetation cover provides essential land cover information for monitoring and managing human dominated (*"anthropic"*) landscapes and the associated socio-economic, health, environmental and ecological impacts. Large portions of Africa remain *"terra incognita"* in this context. So, the main reason for gathering GeoSurvey observations is that these allow us to rapidly assess where in a particular country significant impacts of humans on ecosystem processes can be expected. We have frequently been able to provide highly accurate assessments and spatial predictions of where anthropic impacts are likely to occur in remote places that are not readily reachable nor explorable by car, motorcycle, or even on foot.
+
+[**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for analyzing geospatial land cover observations. High resolution satellite images, mobile phone photography, and drone imagery can be systematically labeled by either trained photo interpreters and/or by *"crowds"* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for predicting land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover these issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial covariates in hand.
+
+This notebook provides an overview of machine learning and statistical workflows, which AfSIS has used for mapping and interpreting various GeoSurvey land cover observations from Google Earth (e.g. Worldview, Boeing ... etc) satellite and/or other aerial images. There are potentially many different techniques and algorithms that could be applied in this context. Hence, the workflows presented here are completely open for constructive criticism and improvement. They could (and probably should) also be exposed and stress-tested in data science competitions e.g., at [Kaggle](https://www.kaggle.com/), given their potential importance for monitoring and managing *terra incognita* landscapes.
+
