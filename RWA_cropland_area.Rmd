@@ -1,5 +1,5 @@
 ---
-title: Workflows for predictive cropland area mapping: Rwanda 
+title: Workflows for predictive cropland mapping 
 author: M.G. Walsh
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -16,11 +16,112 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Quantifying the geographical extent, location and spatial dynamics of cropland areas, rural and urban settlements and woody vegetation cover provides essential land cover information for monitoring and managing human dominated (*"anthropic"*) landscapes and the associated socio-economic, health, environmental and ecological impacts. Large portions of Africa remain *"terra incognita"* in this context. So, the main reason for gathering GeoSurvey observations is that these allow us to rapidly assess where in a particular country significant impacts of humans on ecosystem processes can be expected. We have frequently been able to provide highly accurate assessments and spatial predictions of where anthropic impacts are likely to occur in remote places that are not readily reachable nor explorable by car, motorcycle, or even on foot.
+Quantifying the geographical extent, location and spatial dynamics of cropland areas, rural and urban settlements and woody vegetation cover provides essential land cover information for monitoring and managing human dominated (*"anthropic"*) landscapes and the associated socio-economic, health, environmental and ecological impacts. Large portions of Africa remain *"terra incognita"* in this context. So, the main reason for gathering GeoSurvey observations is that these allow us to rapidly assess where in a particular country significant impacts of humans on ecosystem processes can be expected.
 
-[**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for analyzing geospatial land cover observations. High resolution satellite images, mobile phone photography, and drone imagery can be systematically labeled by either trained photo interpreters and/or by *"crowds"* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for predicting land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover these issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial covariates in hand.
+[**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for analyzing geospatial land cover observations. High resolution satellite images and drone imagery can be systematically labeled by either trained photo interpreters and/or by *"crowds"* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations can result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for predicting land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover these issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial covariates in hand.
 
-This notebook provides an overview of machine learning and statistical workflows, which AfSIS has used for mapping and interpreting various GeoSurvey land cover observations from Google Earth (e.g. Worldview, Boeing ... etc) satellite and/or other aerial images. There are potentially many different techniques and algorithms that could be applied in this context. Hence, the workflows presented here are completely open for constructive criticism and improvement. They could (and probably should) also be exposed and stress-tested in data science competitions e.g., at [Kaggle](https://www.kaggle.com/), given their potential importance for monitoring and managing *terra incognita* landscapes.
+This notebook provides an overview of machine learning and statistical workflows, which AfSIS has used for mapping and interpreting various GeoSurvey land cover observations from remote sensing imagery (e.g. Worldview, Boeing ... etc) satellite and/or other aerial images across Africa. There are potentially many different techniques and algorithms that could be applied in this context. Hence, the workflows presented here are completely open for constructive criticism and improvement. They could (and probably should) also be exposed and stress-tested in data science competitions e.g., at [Kaggle](https://www.kaggle.com/), given their potential importance for monitoring and managing *terra incognita* landscapes.
 
-The intent of this notebook is to describe starter code for predictive mapping and statistical small area estimation [SAE](https://www.census.gov/srd/csrm/SmallArea.html) of variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that largely define the *anthropic* land cover types in a given country or in any other large geographical region of interest. We use the most recent GeoSurvey data and gridded covariates from Tanzania to illustrate the general approach and the key data analysis steps.
+The intent of this notebook is to describe starter code for predictive mapping and statistical small area estimation [SAE](https://www.census.gov/srd/csrm/SmallArea.html) of variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that largely define the *anthropic* land cover types in a given country or in any other large geographical region of interest. I use the most recent GeoSurvey data and gridded covariates from Rwanda to illustrate the general approach and the key data analysis steps. Rwanda being a small country is a convenient target for this, because the code runs fast and will hopefully not test your patience ... too much.
+
+# General data setup
+
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the wet chemistry and spectral dataframes providing a lot of options to generate spectral predictions of acidity relevant soil properties such as pH, EC, Hp, xCEC Ca:Mg, among others. The notebook itself is maintained on my [Github](https://github.com/mgwalsh/Soils/blob/master/Spec_acidity_preds.Rmd), and you can fork and modify it from there as you see fit.
+
+```{r}
+# package names
+packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "dplyr", "doParallel")
+
+# install packages
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+    install.packages(packages[!installed_packages])
+}
+
+# load packages
+invisible(lapply(packages, library, character.only = TRUE))
+```
+
+The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of soil measurements, e.g. (pH, soil carbon and soil nutrient composition) and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the topsoil pH measurements here, but the approach is equally applicable to any given  [Georeferenced](https://en.wikipedia.org/wiki/Georeferencing) soil property or measurement under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
+
+```{r}
+# set working directory
+dir.create("RW_GS20", showWarnings = F)
+setwd("./RW_GS20")
+dir.create("Results", showWarnings = F)
+
+# download GeoSurvey data
+download("https://www.dropbox.com/s/oqao51hxxvc09ec/RW_geos_2019.csv.zip?raw=1", "RW_geos_2019.csv.zip", mode = "wb")
+unzip("RW_geos_2019.csv.zip", overwrite = T)
+geos <- read.table("RW_geos_2019.csv", header = T, sep = ",")
+
+# download GADM-L5 shapefile (courtesy of: http://www.gadm.org)
+download("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_level5.zip", mode = "wb")
+unzip("RWA_level5.zip", overwrite = T)
+shape <- shapefile("gadm36_RWA_5.shp")
+
+# download raster stack
+download("https://osf.io/xts2y?raw=1", "RW_250m_2020.zip", mode = "wb")
+unzip("RW_250m_2020.zip", overwrite = T)
+glist <- list.files(pattern="tif", full.names = T)
+grids <- stack(glist)
+```
+
+
+
+```{r}
+# attach GADM-L5 admin unit names from shape
+coordinates(geos) <- ~lon+lat
+projection(geos) <- projection(shape)
+gadm <- geos %over% shape
+geos <- as.data.frame(geos)
+geos <- cbind(gadm[ ,c(4,6,8,10,12)], geos)
+colnames(geos) <- c("region","district","sector","cell", "village","time","observer","id","lat","lon","BP","CP","TP","WP","bloc","cgrid")
+
+# Coordinates and number of buildings per quadrat -------------------------
+bp <- geos[which(geos$BP == "Y"), ] ## identify quadrats with buildings
+bp$bloc <- as.character(bp$bloc)
+
+# coordinates of tagged building locations from quadrats with buildings
+c <- fromJSON(bp$bloc[1])
+bcoord <- do.call("rbind", c$feature$geometry$coordinates)
+for(i in 2:nrow(bp)) {
+  c <- fromJSON(bp$bloc[i])
+  bcoord_temp <- do.call("rbind", c$feature$geometry$coordinates)
+  bcoord <- rbind(bcoord, bcoord_temp)
+}
+bcoord <- as.data.frame(bcoord) ## vector of coordinates per quadrats with buildings
+colnames(bcoord) <- c("lon","lat")
+
+# number of tagged building locations from quadrats with buildings
+bcount <- rep(NA, nrow(bp))
+for(i in 1:nrow(bp)) {
+  t <- fromJSON(bp$bloc[i])
+  bcount[i] <- nrow(t$features)
+}
+bcount ## vector of number of buildings per quadrats with buildings
+ba <- geos[which(geos$BP == "N"), ]
+ba$bcount <- 0
+bp <- cbind(bp, bcount)
+geos <- rbind(ba, bp)
+geos <- geos[order(geos$time),] ## sort in original sample order
+
+# cropland grid count
+cp <- geos[which(geos$CP == "Y"), ] ## identify quadrats with cropland
+cp$cgrid <- as.character(cp$cgrid)
+
+# number of tagged grid locations from quadrats with cropland
+ccount <- rep(NA, nrow(cp))
+for(i in 1:nrow(cp)) {
+  t <- fromJSON(cp$cgrid[i])
+  ccount[i] <- nrow(t$features)
+}
+ccount ## cropland grid count
+ca <- geos[which(geos$CP == "N"), ]
+ca$ccount <- 0
+cp <- cbind(cp, ccount)
+geos <- rbind(ca, cp)
+geos <- geos[order(geos$time),] ## sort in original sample order
+```
+
 
