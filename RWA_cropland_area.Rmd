@@ -43,23 +43,23 @@ invisible(lapply(packages, library, character.only = TRUE))
 The following chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations from 2019 (labels), raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html). 
 
 ```{r}
-# set working directory
+# Set working directory
 dir.create("RW_GS20", showWarnings = F)
 setwd("./RW_GS20")
 dir.create("Results", showWarnings = F)
 dir.create("Figures", showWarnings = F)
 
-# download GeoSurvey data
+# Download GeoSurvey data
 download("https://www.dropbox.com/s/oqao51hxxvc09ec/RW_geos_2019.csv.zip?raw=1", "RW_geos_2019.csv.zip", mode = "wb")
 unzip("RW_geos_2019.csv.zip", overwrite = T)
 geos <- read.table("RW_geos_2019.csv", header = T, sep = ",")
 
-# download GADM-L5 shapefile (courtesy of: http://www.gadm.org)
+# Download GADM-L5 shapefile (courtesy of: http://www.gadm.org)
 download("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_level5.zip", mode = "wb")
 unzip("RWA_level5.zip", overwrite = T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
-# download raster stack
+# Download raster stack
 download("https://osf.io/xts2y?raw=1", "RW_250m_2020.zip", mode = "wb")
 unzip("RW_250m_2020.zip", overwrite = T)
 glist <- list.files(pattern="tif", full.names = T)
@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various GeoSurvey observations for Rwanda and overlays these with the various spatial data files. 
+This next chunk assembles the various GeoSurvey observations for Rwanda and overlays these with the various raster and shape file data. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) for the associated geojson fields in this GeoSurvey. I will use the `ccount` count variable for small cropland area estimation later on in the notebook. 
 
 ```{r}
 # attach GADM-L5 admin unit names from shape
@@ -128,4 +128,9 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
+The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded 6.25 ha (250x250 m) quadrats from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60%), the bottom right quadrat is an example of grassland without any buildings, cropland and dense woody vegetation.
+
+```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
+knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
+```
 
