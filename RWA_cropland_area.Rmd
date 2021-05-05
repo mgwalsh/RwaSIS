@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various GeoSurvey observations for Rwanda and overlays these with the various raster and shape file data. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) for the associated geojson fields in this GeoSurvey. I will use the `ccount` count variable for small cropland area estimation later on in the notebook. 
+This next chunk assembles the various GeoSurvey observations for Rwanda and overlays these with the various raster and shape file data. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) for the associated geojson fields in this GeoSurvey. I will use the resulting `ccount` variable for small cropland area estimation later on in the notebook. 
 
 ```{r}
 # attach GADM-L5 admin unit names from shape
