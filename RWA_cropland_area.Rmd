@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various GeoSurvey observations for Rwanda and overlays these with the various raster and shape file data. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) for the associated geojson fields in this GeoSurvey. I will use the resulting `ccount` variable for small cropland area estimation later on in the notebook. 
+This next chunk assembles the various GeoSurvey observations for Rwanda (n = ) and overlays these with the various raster and shape file data. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) for the associated geojson fields in this GeoSurvey. I will use the resulting `ccount` variable for small cropland area estimation later on in the notebook. 
 
 ```{r}
 # attach GADM-L5 admin unit names from shape
@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded 6.25 ha (250x250 m) quadrats from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60%), the bottom right quadrat is an example of grassland without any buildings, cropland and dense woody vegetation.
+The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded 6.25 ha (250x250 m) quadrats (blue squares in the figure) from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation.
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
