@@ -1,6 +1,6 @@
 ---
 title: Workflows for predictive cropland area mapping 
-author: M.G. Walsh
+author: M.G. Walsh, J. Chen and W. Wu
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -18,9 +18,9 @@ knitr::opts_chunk$set(message = FALSE)
 
 Quantifying the geographical extent, location and spatial dynamics of cropland areas, rural and urban settlements and woody vegetation cover provides essential land cover information for monitoring and managing human dominated (*"anthropic"*) landscapes and the potential socio-economic, health and environmental impacts. Large portions of Africa remain *"terra incognita"* in this context. So, the main reason for gathering the GeoSurvey observations that are presented here is that these generally allow us to rapidly assess and quantify where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem processes can be expected.
 
-[**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for analyzing geospatial land cover observations. High resolution satellite images and/or other aerial (e.g., drone) imagery can be systematically labeled by either trained photo interpreters and/or by *"crowds"* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations can result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for predicting land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover these issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial covariates in hand.
+[**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for analyzing geospatial land cover observations. High resolution satellite images and/or other aerial (e.g., drone) imagery can be systematically labeled by either trained photo interpreters and/or by *"crowds"* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations can result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for predicting land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover these issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial covariates in hand.
 
-The intent of this notebook is to describe starter code for predictive mapping and statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) of variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that largely define the *anthropic* land cover types in a given country or other ROI. I use the most recent GeoSurvey data and gridded covariates from Rwanda to illustrate the general approach and the key data analysis steps. Rwanda being a small country is convenient for this illustration because the code runs fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available at: [Open Science Framework](https://osf.io/vxc97/).
+The intent of this notebook is to illustrate starter code for predictive mapping and statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) of variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that largely define the *anthropic* land cover types in a given country or any other ROI. I use the most recent GeoSurvey data and gridded covariates from Rwanda to illustrate the general approach and the key data analysis steps. Rwanda being a small country is convenient for this illustration because the code runs fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available at: [Open Science Framework](https://osf.io/vxc97/).
 
 # General data setup
 
@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various GeoSurvey observations for Rwanda (n = 23,776, 6.25 ha quadrats).  It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) for the associated geojson fields in this GeoSurvey. I will use the resulting `ccount` variable for small cropland area estimation later on in the notebook. 
+This next chunk assembles the various GeoSurvey observations for Rwanda (*n* = 23,776, 6.25 ha quadrats).  It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) in the associated geojson fields in this GeoSurvey. I shall use the resulting `ccount` variable for small cropland area estimation later on in the notebook.
 
 ```{r}
 # attach GADM-L5 admin unit names from shape
@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded quadrats (blue squares in the figure) from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation.
+The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded quadrats (blue squares in the figure) from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover.
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
