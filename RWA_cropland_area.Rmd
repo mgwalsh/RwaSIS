@@ -71,9 +71,9 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various GeoSurvey observations for Rwanda (*n* = 23,776, 6.25 ha quadrats).  It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) in the associated geojson fields in this GeoSurvey. I shall use the resulting `ccount` variable for small cropland area estimation later on in the notebook.
+This next chunk assembles the various GeoSurvey observations for Rwanda from (*n* = 23,776) 6.25 ha quadrats. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) in the associated geojson fields in this GeoSurvey. I shall use the resulting quadrat `ccount` variable for small cropland area estimation later on in the notebook.
 
-```{r}
+```{r, results='hide'}
 # attach GADM-L5 admin unit names from shape
 coordinates(geos) <- ~lon+lat
 projection(geos) <- projection(shape)
@@ -128,9 +128,28 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded quadrats (blue squares in the figure) from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover.
+The figure directly below attempts to clarify the GeoSurvey data based on 4 recorded quadrats (the blue squares in the figure) from Rwanda. The top left portion of the figure shows all tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover.
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
+
+The following chunk then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained. 
+
+```{r}
+# Write data frame
+write.csv(geos, "./RW_GS20/Results/RW_soil_data.csv", row.names = F)
+
+# GeoSurvey sample locations
+w <- leaflet() %>%
+  setView(lng = mean(geos$lon), lat = mean(geos$lat), zoom = 9) %>%
+  addProviderTiles(providers$Esri.WorldImagery) %>%
+  addCircleMarkers(geos$lon, geos$lat, clusterOptions = markerClusterOptions())
+saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
+w ## plot widget 
+```
+
+# Machine-learning-based mapping with `caret` and `caretEnsemble`
+
+
 
