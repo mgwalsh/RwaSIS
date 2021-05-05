@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The following chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations (labels) from 2019, raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html). 
+The following chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations from 2019 (labels), raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html). 
 
 ```{r}
 # set working directory
@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-
+This next chunk assembles the various GeoSurvey observations for Rwanda and overlays these with the various spatial data files. 
 
 ```{r}
 # attach GADM-L5 admin unit names from shape
