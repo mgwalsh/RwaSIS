@@ -134,7 +134,7 @@ The figure below attempts to clarify the GeoSurvey data based on 4 example quadr
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
 
-The chunk below reprojects the GeoSurvey data to the *Lambert Azimuthal Equal Area* grid of the raster variables and then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained.
+The chunk below reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the raster variables and then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained.
 
 ```{r}
 # project GeoSurvey coords to grid CRS
@@ -167,14 +167,14 @@ The following chunks calibrate cropland presence/absence observations using diff
 
 1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed desireable or necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network approaches here. 
-3. Ensemble prediction
-4.
+3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
+4. Model prediction results are subsequently placed back into the spatial feature stack for reuse and updating.
 
 ```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="GeoSurvey land cover prediction workflow.", out.width = '70%'}
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-The initial chunk below scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
+To run the workflow, the chunk below initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -195,4 +195,4 @@ lcal <- as.vector(t(gs_cal[labs]))
 
 # raster calibration features
 fcal <- gs_cal[,19:38,42:67]
-
+```
