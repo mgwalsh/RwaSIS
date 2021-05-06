@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure directly below attempts to clarify the GeoSurvey data based on 4 example quadrats from Rwanda (i.e., the blue squares in the figure). The top left portion of the figure shows all of the tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover. Note that mixtures of these archetypes can also occur and be accounted for in the subsequent analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey data based on 4 example quadrats from Rwanda (i.e., the blue squares in the figure). The top left portion of the figure shows all of the tagged buildings, in quadrats where buildings are present. The top right of the figure shows an example of a cropland grid count where cropland is present. The bottom left is a quadrat with dense woody vegetation cover (> 60% cover). The bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover. Note that mixtures of these archetypes can also occur and be accounted for in the subsequent analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
