@@ -128,13 +128,13 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure directly below attempts to clarify the GeoSurvey data based on 4 example quadrats (the blue squares in the figure) from Rwanda. The top left portion of the figure shows all of the tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover. Note that mixtures of these archetypes can also occur and be accounted for in the subsequent analysis and prediction steps. 
+The figure directly below attempts to clarify the GeoSurvey data based on 4 example quadrats from Rwanda (i.e., the blue squares in the figure). The top left portion of the figure shows all of the tagged buildings, in quadrats where buildings are present, the top right of the figure shows an example of a cropland grid count where cropland is present, the bottom left is a quadrat with dense woody vegetation cover (> 60% cover), the bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover. Note that mixtures of these archetypes can also occur and be accounted for in the subsequent analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
 
-This chunk reprojects the GeoSurvey data to the azimuthal equal area grid of the raster variables and then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained.
+The chunk below reprojects the GeoSurvey data to the azimuthal equal area grid of the raster variables and then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained.
 
 ```{r}
 # project GeoSurvey coords to grid CRS
@@ -149,8 +149,8 @@ geosgrid <- extract(grids, geos)
 gsdat <- as.data.frame(cbind(geos, geosgrid))
 gsdat <- gsdat[ which(gsdat$ccount < 17), ]
 
-# Write data frame
-write.csv(geos, "./RW_GS20/Results/RW_GS_data.csv", row.names = F)
+# Write out data frame
+write.csv(g, "./RW_GS20/Results/RW_GS_data.csv", row.names = F)
 
 # GeoSurvey sample locations
 w <- leaflet() %>%
@@ -161,7 +161,7 @@ saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
 
-# Machine-learning-based mapping with `caret` and `caretEnsemble`
+# Machine learning based mapping with `caret` and `caretEnsemble`
 
 The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined/stacked) on an *independent* validation dataset. As shown in the figure below, here are four basic steps to this workflow including:
 
