@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various latest GeoSurvey observations for Rwanda from (*n* = 23,776) 6.25 ha quadrats. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) in the associated geojson fields that are contained in this GeoSurvey. I shall use the resulting quadrat `ccount` variable for cropland area estimation later on in the notebook.
+This next chunk assembles the various latest GeoSurvey observations for Rwanda from (*n* = 23,776) 6.25 ha quadrats. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) from the associated point location geojson fields that are contained in this GeoSurvey. I shall use the resulting quadrat `ccount` variable for cropland area estimation later on in the notebook.
 
 ```{r, results='hide'}
 # attach GADM-L5 admin unit names from shape
@@ -134,7 +134,7 @@ The figure below attempts to clarify the GeoSurvey data based on 4 example quadr
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
 
-The chunk below reprojects the GeoSurvey data to the azimuthal equal area grid of the raster variables and then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained.
+The chunk below reprojects the GeoSurvey data to the *Lambert Azimuthal Equal Area* grid of the raster variables and then writes out the dataframe `RW_GS_data.csv` into your `./Results` directory if you'd like to process those outputs in software other than R. It also generates a location map of where those 23k+ GeoSurvey observations were obtained.
 
 ```{r}
 # project GeoSurvey coords to grid CRS
@@ -150,13 +150,13 @@ gsdat <- as.data.frame(cbind(geos, geosgrid))
 gsdat <- gsdat[ which(gsdat$ccount < 17), ]
 
 # Write out data frame
-write.csv(g, "./RW_GS20/Results/RW_GS_data.csv", row.names = F)
+write.csv(gsdat, "./RW_GS20/Results/RW_GS_data.csv", row.names = F)
 
 # GeoSurvey sample locations
 w <- leaflet() %>%
-  setView(lng = mean(geos$lon), lat = mean(geos$lat), zoom = 9) %>%
+  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 9) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
-  addCircleMarkers(geos$lon, geos$lat, clusterOptions = markerClusterOptions())
+  addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
 saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
