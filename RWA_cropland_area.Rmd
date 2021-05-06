@@ -1,6 +1,6 @@
 ---
 title: Workflows for predictive cropland area mapping 
-author: M.G. Walsh, J. Chen and W. Wu
+author: M.G. Walsh
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The following chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations from 2019 (labels), raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html). 
+The following chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations from 2019 (labels), raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html) for small area estimates by admin-levels. 
 
 ```{r}
 # Set working directory
@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various GeoSurvey observations for Rwanda from (*n* = 23,776) 6.25 ha quadrats. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) in the associated geojson fields in this GeoSurvey. I shall use the resulting quadrat `ccount` variable for small cropland area estimation later on in the notebook.
+This next chunk assembles the various GeoSurvey observations for Rwanda from (*n* = 23,776) 6.25 ha quadrats. It also calculates building count (`bcount`) as well as cropland grid count data (`cgrid`) in the associated geojson fields contained in this GeoSurvey. I shall use the resulting quadrat `ccount` variable for small cropland area estimation later on in the notebook.
 
 ```{r, results='hide'}
 # attach GADM-L5 admin unit names from shape
@@ -82,7 +82,7 @@ geos <- as.data.frame(geos)
 geos <- cbind(gadm[ ,c(4,6,8,10,12)], geos)
 colnames(geos) <- c("region","district","sector","cell", "village","time","observer","id","lat","lon","BP","CP","TP","WP","bloc","cgrid")
 
-# Coordinates and number of buildings per quadrat -------------------------
+# Coordinates and number of buildings per quadrat
 bp <- geos[which(geos$BP == "Y"), ] ## identify quadrats with buildings
 bp$bloc <- as.character(bp$bloc)
 
@@ -143,7 +143,7 @@ write.csv(geos, "./RW_GS20/Results/RW_soil_data.csv", row.names = F)
 # GeoSurvey sample locations
 w <- leaflet() %>%
   setView(lng = mean(geos$lon), lat = mean(geos$lat), zoom = 9) %>%
-  addProviderTiles(providers$Esri.WorldImagery) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(geos$lon, geos$lat, clusterOptions = markerClusterOptions())
 saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
