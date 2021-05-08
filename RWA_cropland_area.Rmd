@@ -197,33 +197,3 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,19:38,42:67]
 ```
 
-
-
-```{r}
-# select central place covariates
-gf_cpv <- gs_cal[,39:41]
-
-# start doParallel to parallelize model fitting
-mc <- makeCluster(detectCores())
-registerDoParallel(mc)
-
-# control setup
-set.seed(1385321)
-tc <- trainControl(method = "cv", classProbs = T, 
-                   summaryFunction = twoClassSummary, allowParallel = T)
-
-# model training
-gm0 <- train(gf_cpv, lcal, 
-            method = "gam",
-            preProc = c("center","scale"), 
-            family = "binomial",
-            metric = "ROC",
-            trControl = tc)
-
-# model outputs & predictions
-summary(gm0)
-gm0.pred <- predict(grids, gm0, type = "prob") ## spatial predictions
-stopCluster(mc)
-fname <- paste("./Results/", labs, "_gm0.rds", sep = "")
-saveRDS(gm0, fname)
-```
