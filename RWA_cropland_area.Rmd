@@ -16,11 +16,11 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Quantifying the geographical extent, location and spatial dynamics of cropland areas, rural and urban settlements and woody vegetation cover provides essential land cover information for monitoring and managing human dominated (*"anthropic"*) landscapes and the associated socio-economic, health and environmental impacts. Large portions of Africa remain *"terra incognita"* in this context. So, the main reason for gathering the GeoSurvey observations that are presented here is that these generally allow us to rapidly assess and quantify where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem processes can be expected.
+Quantifying the geographical extent, location and spatial dynamics of cropland areas, rural and urban settlements and woody vegetation cover provides essential land cover information for monitoring and managing human dominated (*"anthropic"*) landscapes and the associated socio-economic, health and environmental impacts. Large portions of Africa remain *"terra incognita"* in this context. The main reason for gathering the GeoSurvey observations that are presented in this notebook is that these generally allow us to rapidly assess and quantify where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem processes can be expected.
 
 [**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for collecting and analyzing geospatial land cover observations. High resolution satellite images and/or other aerial (e.g., drone) imagery can be systematically and rapidly labeled by either trained air photo interpreters and/or by *"crowds"* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for predicting land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover these issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial covariates in hand.
 
-The intent of this notebook is to illustrate starter code for predictive mapping and statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) of variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that largely define the *anthropic* land cover types in a given country or any other ROI. I use the most recent GeoSurvey data and gridded covariates from Rwanda to illustrate the general approach and the key data analysis steps. Rwanda being a small country is convenient for this illustration because the scripts run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available at: [Open Science Framework](https://osf.io/vxc97/).
+The intent of this notebook is to illustrate starter code for predictive land cover mapping and statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) of variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that largely define the *anthropic* land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and gridded covariates to illustrate the general approach and the key data analysis steps. Rwanda being a small country is convenient for this illustration because the scripts run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available at: [Open Science Framework](https://osf.io/vxc97/).
 
 # General data setup
 
@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The following chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations (labels), raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html) for small area estimates by administrative areas. 
+The next chunk downloads the data, which are needed for running this particular example. The downloads contain the most recent GeoSurvey observations (labels), raster covariates (features) and the administrative boundaries of Rwanda that are sourced from [GADM](https://gadm.org/download_country_v3.html) for small area estimates by administrative areas. 
 
 ```{r}
 # Set working directory
@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This next chunk assembles the various latest GeoSurvey observations for Rwanda from (*n* = 23,776) 6.25 ha [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building count as well as cropland grid count data from the associated point location geojson fields (`bcount` & `cgrid`) in this GeoSurvey. I shall use the resulting quadrat cropland grid count variable (`ccount`) for small area estimation later on in the notebook.
+This assembles the GeoSurvey observations from (*n* = 23,776) 6.25 ha (250x250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building counts as well as cropland grid counts from the associated point location geojson fields (`bcount` & `cgrid`) in this GeoSurvey. I shall use the resulting cropland grid count variable (`ccount`) for small area estimation later on in the notebook.
 
 ```{r, results='hide'}
 # attach GADM-L5 admin unit names from shape
@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey data based on 4 example quadrats from Rwanda (i.e., the blue squares in the figure). The top left portion of the figure shows all of the tagged buildings, in quadrats where buildings are present. The top right of the figure shows an example of a cropland grid count where cropland is present. The bottom left is a quadrat with dense woody vegetation cover (> 60% cover). The bottom right quadrat is an example of *"grassland"* without any buildings, cropland or dense woody vegetation cover. Note that mixtures of these archetypes can also occur and be accounted for in the subsequent analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey data based on 4 example quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings, in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left is a quadrat with dense woody vegetation cover (> 60% cover). The lower right is an example of a *"grassland"* quadrat without any buildings, cropland or dense woody vegetation cover. Note that mixtures of these archetypes occur frequently and be accounted for in the subsequent analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -163,18 +163,18 @@ w ## plot widget
 
 # Machine learning based mapping with `caret` and `caretEnsemble`
 
-The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined/stacked) on an *independent validation dataset*. As shown in the figure below, here are four basic steps to this workflow:
+The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined/stacked) on an *independent validation dataset*. As shown in the figure below, there are four basic steps to run this workflow:
 
 1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed desireable or necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network approaches here. 
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
-4. Model prediction results are subsequently placed back into the gridded feature stack for reuse and updating. This step is really useful for improving model performance over time with new data or for building ensembles at higher spatial resolution.
+4. Model prediction results are subsequently placed back into the gridded feature stack for reuse and updating. This step is really useful for improving model performance over time with new data and/or for building ensembles at higher spatial resolution.
 
 ```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="GeoSurvey land cover prediction workflow.", out.width = '70%'}
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-To run the workflow, the chunk below initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
+In order to monitor changing landscapes the first three steps should be repeated over time; i.e., to facilitate step 4. The end of this notebook provides some suggestions on as to how to do just that. The next chunk initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -198,3 +198,32 @@ fcal <- gs_cal[,19:38,42:67]
 ```
 
 
+
+```{r}
+# select central place covariates
+gf_cpv <- gs_cal[,39:41]
+
+# start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# control setup
+set.seed(1385321)
+tc <- trainControl(method = "cv", classProbs = T, 
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# model training
+gm0 <- train(gf_cpv, lcal, 
+            method = "gam",
+            preProc = c("center","scale"), 
+            family = "binomial",
+            metric = "ROC",
+            trControl = tc)
+
+# model outputs & predictions
+summary(gm0)
+gm0.pred <- predict(grids, gm0, type = "prob") ## spatial predictions
+stopCluster(mc)
+fname <- paste("./Results/", labs, "_gm0.rds", sep = "")
+saveRDS(gm0, fname)
+```
