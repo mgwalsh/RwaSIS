@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey data based on 4 example quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left is a quadrat with dense woody vegetation cover (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings or woody vegetation in croplands), and can be accounted for in the subsequent analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey data based on 4 archetypal quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left is a quadrat with dense woody vegetation cover (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or woody vegetation in croplands), and can be accounted for in the subsequent analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Example GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -197,7 +197,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this context. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are likely to be absent. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. The additional variables are also included in the `RW_soil_data.csv` data file for you to try. 
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this context. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. The additional variables are included in the `RW_soil_data.csv` data file for you to try. 
 
 
 # Conclusions
