@@ -71,7 +71,7 @@ exdir <- "./Figures"
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
 
-This assembles the GeoSurvey observations from *n* = 23,776 (250 × 250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`) of this GeoSurvey. I shall use the resulting *cropland grid count* (`ccount`) variable for small area estimation later on in the notebook.
+This assembles the GeoSurvey observations from *n* = 23,776 (250 × 250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`) of this GeoSurvey. I shall use the resulting *cropland grid count* (`ccount`) variable for small cropland area estimation later on in the notebook.
 
 ```{r, results='hide'}
 # Attach GADM-L5 administrative unit names from shape
@@ -201,6 +201,6 @@ Note that I am using previously vetted cropland presence/absence (`CP`) as an ex
 
 # Small area estimates
 
-The term "small area" in this context generally refers to a small geographical area such as a county. It may also refer to a "small domain", i.e. a particular demographic within an area. If a survey has been carried out for the population as a whole (for example, a nation or statewide survey), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as census records) that exists for these small areas in order to obtain estimates. 
+The term "small area" generally refers to a small geographical area such as *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other "small domain" within an area. If a survey has been carried out for the population as a whole (for example, a nation), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as satellite observations) that exist for these small areas in order to obtain estimates. 
 
 # Conclusions
