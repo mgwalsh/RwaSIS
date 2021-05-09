@@ -168,13 +168,13 @@ The following chunks calibrate cropland presence/absence observations using diff
 1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network approaches here. 
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
-4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and updating. This step is also really useful for improving model performance over time with new data and/or for building ensemble predictions at higher spatial resolution.
+4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution.
 
 ```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="GeoSurvey land cover prediction workflow.", out.width = '70%'}
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fiting process the next chunk initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
+In order to monitor changing landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting process the next chunk initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -201,6 +201,6 @@ Note that I am using previously vetted cropland presence/absence (`CP`) as an ex
 
 # Small area estimates
 
-The term "small area" generally refers to a small geographical area such as *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other "small domain" within an area. If a survey has been carried out for the population as a whole (for example, a nation), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as satellite observations) that exist for these small areas in order to obtain estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other "small domain" within a ROI. If a survey has been carried out for the population as a whole (for example, a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as satellite observations) that exist for these small areas in order to obtain estimates. 
 
 # Conclusions
