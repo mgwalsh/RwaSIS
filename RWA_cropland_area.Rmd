@@ -201,6 +201,6 @@ Note that I am using previously vetted cropland presence/absence (`CP`) as an ex
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other "small domain" within a ROI. If a survey has been carried out for the population as a whole (for example, a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as satellite observations) that exist for these small areas in order to obtain estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a ROI. If a survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as satellite observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
