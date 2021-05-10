@@ -151,7 +151,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), relief, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not, adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not, adequately monitored across Africa.
 
 This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify GeoSurvey locations is available at [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
@@ -182,7 +182,7 @@ w ## plot widget
 
 # Machine learning based mapping with `caret` and `caretEnsemble`
 
-The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined/stacked) on an *independent validation dataset*. As shown in the figure below there are four basic steps to run this workflow:
+The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined / stacked) on an *independent validation dataset*. As shown in the figure below there are four basic steps to run this workflow:
 
 1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network approaches here. 
@@ -209,18 +209,18 @@ gs_cal <- gsdat[ gsIndex,]
 gs_val <- gsdat[-gsIndex,]
 
 # GeoSurvey calibration labels
-labs <- c("CP") ## insert other presence/absence labels (BP,WP,TP) here!
+labs <- c("CP") ## insert other presence/absence labels (BP, WP, TP) here!
 lcal <- as.vector(t(gs_cal[labs]))
 
 # Raster calibration features
 fcal <- gs_cal[,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some models ...
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, but I shall leave those for you to explore. Presented next are some starter models, which I would consider to be contrasting both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data.
 
-## Spatial trend model ([mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf))
+## Spatial trend model with `caret`
 
-This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their georeference. It is similar to ordinary kriging with cross-validation, but it is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate some of the needed specification, output and prediction steps.
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their georeference. It is similar to [ordinary kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
 
 ```{r}
 # Select spatial covariates
@@ -228,7 +228,7 @@ gf_cpv <- gs_cal[,39:41]
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
-registerDoParallel(mc)
+registerDoParallel(mc) ## this parallizes
 
 # Control setup
 set.seed(1385321)
@@ -251,19 +251,19 @@ fname <- paste("./RW_GS20/Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
-## Central place model ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
+## Central place model with `caret`
 
-Central places are influential variables for places of where croplands are likely to occur (or not, e.g., city centers). The model below focuses on central place indicators such as distances to roads and settlements, surface water sources, cell towers and electricity networks among other anthropic factors.
+Central places ([Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g., in city centers, forest reserves or national parks). The model below focuses on central place indicators such as distances to roads and settlements, parks & reserves, surface water sources, cell towers and electricity networks among several other largely anthropically contolled factors.
 
 ```{r}
-# select central place covariates
+# Select central place covariates
 gf_cpv <- gs_cal[,25:38]
 
-# start doParallel to parallelize model fitting
+# Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
 
-# control setup
+# Control setup
 set.seed(1385321)
 tc <- trainControl(method = "cv", classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = T)
@@ -281,9 +281,13 @@ summary(gl1)
 print(gl1) ## ROC's accross cross-validation
 gl1.pred <- predict(grids, gl1, type = "prob") ## spatial predictions
 stopCluster(mc)
-fname <- paste("./Results/", labs, "_gl1.rds", sep = "")
+fname <- paste("./RW_GS20/Results/", labs, "_gl1.rds", sep = "")
 saveRDS(gl1, fname)
 ```
+
+## Fitting several MLA models at once with `caretEnsemble`
+
+# Model stacking
 
 # Small area estimates
 
