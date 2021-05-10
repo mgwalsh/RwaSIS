@@ -130,7 +130,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time), ] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal (250 × 250 m) quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal (250 × 250 m) quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat from which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -230,7 +230,7 @@ This is a simple spatially smoothed *generalized additive model* applying the `g
 
 ```{r}
 # Select spatial covariates
-gf_cpv <- gs_cal[,39:41] ## specifies these features as DX, DY & DXY coordinate rasters
+gf_cpv <- gs_cal[,39:41] ## specifies features as DX, DY & DXY coordinate rasters
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -293,7 +293,7 @@ saveRDS(cp, fname)
 The next chunk fits 4 additional models that use the that use all of gridded data. You can learn more about how these work from the following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can `caretEnsemble` as long as the feature variables (`grids` in this case) and the trainControl methods are the same for each model. This conveniently shortens the script-length for this notebook but does not otherwise alter the overall `caret` functionality.
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case) and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality.
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -312,10 +312,15 @@ clist <- caretList(fcal, lcal,
                    methodList = c("glmStepAIC", "rf", "xgbTree", "nnet"),
                    preProcess = c("center","scale"),
                    metric = "ROC")
+
+gl.pred <- predict(grids, clist$glmStepAIC, type = "prob")
+rf.pred <- predict(grids, clist$rf, type = "prob")
+xt.pred <- predict(grids, clist$xgbTree, type = "prob")
+nn.pred <- predict(grids, clist$nnet, type = "prob")
 stopCluster(mc)
 ```
 
-# Model stacking and validation
+# Model stacking
 
 This next chunk fits the model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe**. You could explore other options here, but I think that this provides a reasonable combination and weighting of the 6 models that were produced in the calibration / training steps.
 
