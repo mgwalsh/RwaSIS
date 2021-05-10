@@ -28,7 +28,7 @@ To actually run the notebook, you will need to load the packages indicated in th
 
 ```{r}
 # package names
-packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
 
 # install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -237,7 +237,7 @@ mc <- makeCluster(detectCores())
 registerDoParallel(mc) ## this parallizes
 
 # Control setup for cross-validation
-set.seed(1385321)
+set.seed(seed)
 tc <- trainControl(method = "cv", classProbs = T, 
                    summaryFunction = twoClassSummary, allowParallel = T)
 
@@ -269,11 +269,11 @@ mc <- makeCluster(detectCores())
 registerDoParallel(mc)
 
 # Control setup for cross validation
-set.seed(1385321)
+set.seed(seed)
 tc <- trainControl(method = "cv", classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = T)
 
-# model training
+# Model training
 cp <- train(gf_cpv, lcal, 
             method = "glmStepAIC",
             family = "binomial",
@@ -281,7 +281,7 @@ cp <- train(gf_cpv, lcal,
             trControl = tc,
             metric ="ROC")
 
-# model outputs & predictions
+# Model outputs & predictions
 cp.pred <- predict(grids, cp, type = "prob") ## central place predictions
 stopCluster(mc)
 fname <- paste("./RW_GS20/Results/", labs, "_cp.rds", sep = "")
@@ -290,10 +290,10 @@ saveRDS(cp, fname)
 
 ## Fitting several additional models with `caretEnsemble`
 
-The next chunk fits 4 additional models that use the that use all of gridded data. You can learn more about how these work from the following links at: 
+The next chunk fits 4 additional models that use the that use all of gridded data with 10-fold cross-validation. You can learn more about how these work from the following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case) and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality.
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case) and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a (geograpically) small country like Rwanda, but could be problematic for (geographically) large countries like the DRC.
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -323,6 +323,8 @@ stopCluster(mc)
 # Model stacking
 
 This next chunk fits the model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe**. You could explore other options here, but I think that this provides a reasonable combination and weighting of the 6 models that were produced in the calibration / training steps.
+
+# Receiver-operator characteristics
 
 # Small area estimates
 
