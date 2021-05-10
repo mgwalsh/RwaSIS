@@ -365,6 +365,10 @@ fname <- paste("./RW_GS20/Results/", labs, "_st.rds", sep = "")
 saveRDS(st, fname)
 ```
 
+```{r, echo = FALSE}
+summary(st)
+```
+
 # Receiver-operator characteristics
 
 
