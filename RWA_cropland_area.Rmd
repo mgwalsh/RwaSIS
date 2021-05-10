@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Quantifying the geographical extent, location and spatial dynamics of croplands, rural and urban settlements and different types of vegetation cover provides essential information for monitoring and managing human dominated (*anthropic*) ecosystems and landscapes. Large portions of Africa remain *terra incognita* in this context. The main reason for monitoring [land cover](https://en.wikipedia.org/wiki/Land_cover) is to assess where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem processes and services can be expected ... and *vice versa*.
+Quantifying the geographical extent, location and spatial dynamics of croplands, rural and urban settlements and different types of vegetation cover provides essential information for monitoring and managing human dominated (*anthropic*) ecosystems and landscapes. Large portions of Africa remain *terra incognita* in this context. The main reason for monitoring [land cover](https://en.wikipedia.org/wiki/Land_cover) is to assess where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem processes and services can be expected, and *vice versa*.
 
 [**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for collecting and analyzing land cover observations. High resolution satellite images and/or other aerial (e.g., drone) imagery can be systematically and rapidly labeled by either trained air photo interpreters and/or by *crowds* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for monitoring land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover those issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial features in hand.
 
@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey observation approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey observation approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -143,17 +143,17 @@ vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a function *f(CP) ~ (a,c,o,r,s)* where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
-* o - organismal (primarily vegetative/land cover related)
-* r - relief/topographical/geographical variables
+* o - organismal (primarily vegetative/land cover related) variables
+* r - relief/topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change over time and space and should be, but are currently not, adequately monitored in Africa.
+The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not, adequately monitored across Africa.
 
-The next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used for this is available at [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
+This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify GeoSurvey locations is available at [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
 ```{r}
 # Project GeoSurvey coords to grid CRS
@@ -193,7 +193,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
+In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
