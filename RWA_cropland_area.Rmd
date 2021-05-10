@@ -73,7 +73,7 @@ unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 
 ## GeoSurvey data assembly
 
-This assembles the GeoSurvey observations from *q* = 23,776 (250 × 250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`) of this GeoSurvey. I shall use the resulting *cropland grid count* (`ccount`) variable for small cropland area estimation later on in the notebook.
+This assembles the GeoSurvey observations from *q* = 23,776 (250 × 250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`) of this GeoSurvey. I'll use the resulting *cropland grid count* (`ccount`) variable for small area estimation later on in the notebook.
 
 ```{r, results='hide'}
 # Attach GADM-L5 administrative unit names from shape
@@ -290,10 +290,10 @@ saveRDS(cp, fname)
 
 ## Fitting several additional models with `caretEnsemble`
 
-The next chunk fits 4 additional models that use the that use all of gridded data with 10-fold cross-validation. You can learn more about how these work from the following links at: 
+The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work from the following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case) and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a (geograpically) small country like Rwanda, but could be problematic for (geographically) large countries like the DRC.
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a (geograpically) small country like Rwanda, but could be computationally problematic for countries like the DRC or Ethiopia.
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -318,11 +318,13 @@ rf.pred <- predict(grids, clist$rf, type = "prob")
 xt.pred <- predict(grids, clist$xgbTree, type = "prob")
 nn.pred <- predict(grids, clist$nnet, type = "prob")
 stopCluster(mc)
+fname <- paste("./RW_GS20/Results/", labs, "_clist.rds", sep = "")
+saveRDS(clist, fname)
 ```
 
 # Model stacking
 
-This next chunk fits the model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe**. You could explore other options here, but I think that this provides a reasonable combination and weighting of the 6 models that were produced in the calibration / training steps.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe** (`gs_val`). You could explore other options here, but I think that this initially provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
 # Receiver-operator characteristics
 
