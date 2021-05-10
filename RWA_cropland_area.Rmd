@@ -153,7 +153,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 
 The main notion here is that the occurrence and distribution of croplands must be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change over time and space and should be, but are currently not, adequately monitored in Africa.
 
-The next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained.
+The next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used for this is available at [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
 ```{r}
 # Project GeoSurvey coords to grid CRS
