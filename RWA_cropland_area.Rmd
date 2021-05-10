@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads the data, which are needed to run this particular example. The downloads contain the most recent GeoSurvey observations, 48 raster covariates (also see the short description of these in the table below) and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating *small cropland area estimates* by administrative units. 
+The next chunk downloads the data, which are needed to run this particular example. The downloads contain the most recent GeoSurvey observations, 48 raster covariates and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating *small cropland area estimates* by administrative units. 
 
 ```{r}
 # Set working directory
