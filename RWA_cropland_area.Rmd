@@ -134,7 +134,7 @@ The figure below attempts to clarify the GeoSurvey approach based on 4 archetypa
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
 
-The processed Rwanda raster data (`grids` in the chunk above) were derived from and reprojected from their primary open sources. You can also download the entire `grids` raster stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included features, and their sources are provided in the table immediately below.
+The processed Rwanda raster data were derived from and reprojected from their primary open sources. You can also download the entire `grids` raster stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
 
 \
 ```{r, echo=FALSE, results='asis'}
@@ -143,7 +143,7 @@ vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a function **f(CP) ~ (a,c,o,r,s)** where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a function *f(CP) ~ (a,c,o,r,s)* where:
 
 * a - anthropic variables
 * c - climatic variables
@@ -151,7 +151,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief/topographical/geographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must be associated with the distribution of humans and their infrastructure, but also constrained by environmental factors such as climate, relief, parent materials and soils. All of these change over time and space and should be, but are currently not, adequately monitored.
+The main notion here is that the occurrence and distribution of croplands must be associated with the distribution of humans and their infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change over time and space and should be, but are currently not, adequately monitored in Africa.
 
 The next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained.
 
