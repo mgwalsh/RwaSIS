@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads the data, which are needed to run this particular example. The downloads contain the most recent GeoSurvey observations (labels), 48 raster covariates (features) and the administrative boundaries of Rwanda that were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating small area estimates by administrative units. 
+The next chunk downloads the data, which are needed to run this particular example. The downloads contain the most recent GeoSurvey observations, 48 raster covariates (also see the short description of these in the table below) and the administrative boundaries of Rwanda that were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating small area estimates by administrative units. 
 
 ```{r}
 # Set working directory
@@ -133,6 +133,23 @@ The figure below attempts to clarify the GeoSurvey data based on 4 archetypal qu
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
+
+The processed Rwanda raster data (`grids` in the chunk above) were derived from and reprojected from their primary open sources. You can also download the entire `grids` raster stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included features, and their sources are provided in the table immediately below.
+
+\
+```{r, echo=FALSE, results='asis'}
+download("https://osf.io/e2x4s?raw=1", "./Wetchem/Grid variables.csv", mode = "wb")
+vars <- read.table("./RW_GS20/Grid variables.csv", header = T, sep = ",")
+datatable(vars)
+```
+\
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate cropland condition (*x*) as a function of **f(x) ~ (a,c,o,r,s)** where:
+
+* a - anthropic variables
+* c - climatic variables
+* o - organismal (primarily vegetative/land cover related)
+* r - relief/topographical/geographical variables
+* s - parent material and soil related variables
 
 The chunk below reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained.
 
