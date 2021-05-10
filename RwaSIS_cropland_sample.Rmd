@@ -22,16 +22,16 @@ This notebook describes setting up a representative and completely reproducible 
 These are the R-packages that you will need to run to reproduce or adapt the spatially balanced sampling script that we are proposing. The notebook itself is maintained on Github [here](https://github.com/mgwalsh/RwaSIS/blob/master/RwaSIS_cropland_sample.Rmd). You can fork it from there and modify it as you see fit.
 
 ```{r}
-# package names
+# Package names
 packages <- c("rgdal", "raster", "sp", "BalancedSampling", "DT", "leaflet", "htmlwidgets")
 
-# install packages
+# Install packages
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {
   install.packages(packages[!installed_packages])
 }
 
-# load packages
+# Load packages
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
