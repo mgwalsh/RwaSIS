@@ -24,7 +24,7 @@ The main intent of this notebook is to illustrate starter code for predictive la
 
 # General data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the GeoSurvey observations, link those to the spatial data and then to model them using machine learning and/or geostatistics. The notebook itself is maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the GeoSurvey observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
 
 ```{r}
 # package names
@@ -236,7 +236,7 @@ gf_cpv <- gs_cal[,39:41] ## specifies these features as DX, DY & DXY coordinate 
 mc <- makeCluster(detectCores())
 registerDoParallel(mc) ## this parallizes
 
-# Control setup
+# Control setup for cross-validation
 set.seed(1385321)
 tc <- trainControl(method = "cv", classProbs = T, 
                    summaryFunction = twoClassSummary, allowParallel = T)
@@ -258,17 +258,17 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `caret`
 
-Central places (sensu [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in, e.g., in city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to roads and settlements, parks & reserves, surface water sources, cell towers and electricity networks among several other largely anthropically contolled / infrastructure factors.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in e.g., city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to roads, urban & rural settlements, parks & reserves, surface water sources, cell towers & electricity networks among other largely anthropically contolled / infrastructure factors.
 
 ```{r, results='hide'}
 # Select central place covariates
-gf_cpv <- gs_cal[,25:38] ## these are the anthropic "distance-to" raster features
+gf_cpv <- gs_cal[,25:38] ## these are the anthropic "distance-to" central place features
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
 registerDoParallel(mc)
 
-# Control setup
+# Control setup for cross validation
 set.seed(1385321)
 tc <- trainControl(method = "cv", classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = T)
@@ -282,22 +282,45 @@ cp <- train(gf_cpv, lcal,
             metric ="ROC")
 
 # model outputs & predictions
-cp.pred <- predict(grids, cp, type = "prob") ## spatial central place predictions
+cp.pred <- predict(grids, cp, type = "prob") ## central place predictions
 stopCluster(mc)
 fname <- paste("./RW_GS20/Results/", labs, "_cp.rds", sep = "")
 saveRDS(cp, fname)
 ```
 
-## Fitting several MLA models at once with `caretEnsemble`
+## Fitting several additional models with `caretEnsemble`
 
+The next chunk fits 4 additional models that use the that use all of gridded data. You can learn more about how these work from the following links at: 
+[MASS](https://cran.r-project.org/web/packages/MASS/index.html),
+[randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can `caretEnsemble` as long as the feature variables (`grids` in this case) and the trainControl methods are the same for each model. This conveniently shortens the script-length for this notebook but does not otherwise alter the overall `caret` functionality.
 
+```{r, warning = FALSE, results='hide'}
+# Start doParallel to parallelize model fitting
+set.seed(seed)
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Specify model training controls
+tc <- trainControl(method = "cv", number = 10, classProbs = T,
+                   summaryFunction = twoClassSummary, allowParallel = TRUE, savePredictions="final")
+
+# Fit 4 calibration models using all of the gridded features
+clist <- caretList(fcal, lcal,
+                   trControl = tc,
+                   tuneList = NULL,
+                   methodList = c("glmStepAIC", "rf", "xgbTree", "nnet"),
+                   preProcess = c("center","scale"),
+                   metric = "ROC")
+stopCluster(mc)
+```
 
 # Model stacking and validation
 
-
+This next chunk fits the model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe**. You could explore other options here, but I think that this provides a reasonable combination and weighting of the 6 models that were produced in the calibration / training steps.
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
