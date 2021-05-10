@@ -138,7 +138,7 @@ knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 
 ## Gridded data
 
-The processed Rwanda grid data (in the `grids` raster / feature stack) were derived from and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
+The processed Rwanda grid data (in the `grids` raster stack) were derived from and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
 
 \
 ```{r, echo=FALSE, results='asis'}
@@ -159,7 +159,7 @@ The main notion here is that the occurrence and distribution of croplands must a
 
 ## Rwanda GeoSurvey dataframe
 
-This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify the GeoSurvey locations is available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
+This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify the GeoSurvey locations is available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
 ```{r}
 # Project GeoSurvey coords to grid CRS
@@ -224,13 +224,13 @@ fcal <- gs_cal[,19:38,42:67]
 
 Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I would consider to be contrasting both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
 
-## Spatial trend model with `gam` in `caret`
+## Spatial trend model with `caret`
 
-This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their georeference. It is similar to [ordinary kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [ordinary kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
 
 ```{r}
 # Select spatial covariates
-gf_cpv <- gs_cal[,39:41] ## these are the DX, DY & DXY coordinate raster features
+gf_cpv <- gs_cal[,39:41] ## specifies these features as DX, DY & DXY coordinate rasters
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -250,20 +250,19 @@ gm <- train(gf_cpv, lcal,
             trControl = tc)
 
 # Model outputs & predictions
-summary(gm)
 gm.pred <- predict(grids, gm, type = "prob") ## spatial predictions
 stopCluster(mc)
 fname <- paste("./RW_GS20/Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
-## Central place theory model with `glmStepAIC` in `caret`
+## Central place theory model with `caret`
 
 Central places (sensu [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in, e.g., in city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to roads and settlements, parks & reserves, surface water sources, cell towers and electricity networks among several other largely anthropically contolled / infrastructure factors.
 
 ```{r, results='hide'}
 # Select central place covariates
-gf_cpv <- gs_cal[,25:38] ## these are the anthropic "distance-to" raster variables
+gf_cpv <- gs_cal[,25:38] ## these are the anthropic "distance-to" raster features
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -283,8 +282,6 @@ gl1 <- train(gf_cpv, lcal,
              metric ="ROC")
 
 # model outputs & predictions
-summary(gl1)
-print(gl1) ## ROC's accross cross-validation
 gl1.pred <- predict(grids, gl1, type = "prob") ## spatial predictions
 stopCluster(mc)
 fname <- paste("./RW_GS20/Results/", labs, "_gl1.rds", sep = "")
