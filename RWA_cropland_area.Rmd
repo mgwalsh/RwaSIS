@@ -27,16 +27,16 @@ The main intent of this notebook is to illustrate starter code for predictive la
 To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the GeoSurvey observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
 
 ```{r}
-# package names
+# Package names
 packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
 
-# install packages
+# Install packages
 installed_packages <- packages %in% rownames(installed.packages())
 if (any(installed_packages == FALSE)) {
     install.packages(packages[!installed_packages])
 }
 
-# load packages
+# Load packages
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
