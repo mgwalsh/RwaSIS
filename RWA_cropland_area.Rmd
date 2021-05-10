@@ -222,7 +222,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I would consider to be contrasting both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I would consider to be *contrasting* both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
 
 ## Spatial trend model with `caret`
 
@@ -230,7 +230,7 @@ This is a simple spatially smoothed *generalized additive model* applying the `g
 
 ```{r}
 # Select spatial covariates
-gf_cpv <- gs_cal[,39:41] ## specifies features as DX, DY & DXY coordinate rasters
+gf_cpv <- gs_cal[ ,39:41] ## specifies features as DX, DY & DXY coordinate rasters
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -290,10 +290,10 @@ saveRDS(cp, fname)
 
 ## Fitting several additional models with `caretEnsemble`
 
-The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work from the following links at: 
+The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work by following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a country like Rwanda, but could be computationally problematic for countries like the DRC or Ethiopia.
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a country like Rwanda, but could be computationally problematic for large countries like the DRC or Ethiopia. I fit these with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
