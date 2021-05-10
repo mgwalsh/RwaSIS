@@ -20,7 +20,7 @@ Quantifying the geographical extent, location and spatial dynamics of croplands,
 
 [**GeoSurvey**](https://geosurvey.qed.ai/) is a platform for collecting and analyzing land cover observations. High resolution satellite images and/or other aerial (e.g., drone) imagery can be systematically and rapidly labeled by either trained air photo interpreters and/or by *crowds* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for monitoring land use. The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover those issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial features in hand.
 
-The main intent of this notebook is to illustrate starter code for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the scripts run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).
+The main intent of this notebook is to illustrate starter code for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).
 
 # General data setup
 
@@ -70,6 +70,8 @@ download("https://osf.io/yu8ts/", "GeoSurvey_figs.zip", mode = "wb")
 exdir <- "./Figures" 
 unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 ```
+
+## GeoSurvey data assembly
 
 This assembles the GeoSurvey observations from *q* = 23,776 (250 × 250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat). It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`) of this GeoSurvey. I shall use the resulting *cropland grid count* (`ccount`) variable for small cropland area estimation later on in the notebook.
 
@@ -128,13 +130,15 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in a quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
 
-The processed Rwanda raster data were derived from and reprojected from their primary open sources. You can also download the entire `grids` raster stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
+## Gridded data
+
+The processed Rwanda grid data (in the `grids` raster / feature stack) were derived from and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
 
 \
 ```{r, echo=FALSE, results='asis'}
@@ -151,7 +155,9 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not, adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained / facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
+
+## Rwanda GeoSurvey dataframe
 
 This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify GeoSurvey locations is available at [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
