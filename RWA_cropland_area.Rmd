@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey observation approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -143,15 +143,15 @@ vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, e, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
-* o - organismal (primarily vegetative/land cover related) variables
-* r - relief/topographical variables
+* o - organismal / ecologically successional variables
+* r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not, adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), relief, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not, adequately monitored across Africa.
 
 This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify GeoSurvey locations is available at [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
@@ -193,7 +193,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk initially scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
+In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -209,14 +209,81 @@ gs_cal <- gsdat[ gsIndex,]
 gs_val <- gsdat[-gsIndex,]
 
 # GeoSurvey calibration labels
-labs <- c("CP") ## insert other labels (BP,WP ...) here!
+labs <- c("CP") ## insert other presence/absence labels (BP,WP,TP) here!
 lcal <- as.vector(t(gs_cal[labs]))
 
 # Raster calibration features
 fcal <- gs_cal[,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this context. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to try. 
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some models ...
+
+## Spatial trend model ([mgcv](https://cran.r-project.org/web/packages/mgcv/mgcv.pdf))
+
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their georeference. It is similar to ordinary kriging with cross-validation, but it is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate some of the needed specification, output and prediction steps.
+
+```{r}
+# Select spatial covariates
+gf_cpv <- gs_cal[,39:41]
+
+# Start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Control setup
+set.seed(1385321)
+tc <- trainControl(method = "cv", classProbs = T, 
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# Model training
+gm <- train(gf_cpv, lcal, 
+            method = "gam",
+            preProc = c("center","scale"), 
+            family = "binomial",
+            metric = "ROC",
+            trControl = tc)
+
+# Model outputs & predictions
+summary(gm)
+gm.pred <- predict(grids, gm, type = "prob") ## spatial predictions
+stopCluster(mc)
+fname <- paste("./RW_GS20/Results/", labs, "_gm.rds", sep = "")
+saveRDS(gm, fname)
+```
+
+## Central place model ([MASS](https://cran.r-project.org/web/packages/MASS/MASS.pdf))
+
+Central places are influential variables for places of where croplands are likely to occur (or not, e.g., city centers). The model below focuses on central place indicators such as distances to roads and settlements, surface water sources, cell towers and electricity networks among other anthropic factors.
+
+```{r}
+# select central place covariates
+gf_cpv <- gs_cal[,25:38]
+
+# start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# control setup
+set.seed(1385321)
+tc <- trainControl(method = "cv", classProbs = T,
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# model training
+gl1 <- train(gf_cpv, lcal, 
+             method = "glmStepAIC",
+             family = "binomial",
+             preProc = c("center","scale"), 
+             trControl = tc,
+             metric ="ROC")
+
+# model outputs & predictions
+summary(gl1)
+print(gl1) ## ROC's accross cross-validation
+gl1.pred <- predict(grids, gl1, type = "prob") ## spatial predictions
+stopCluster(mc)
+fname <- paste("./Results/", labs, "_gl1.rds", sep = "")
+saveRDS(gl1, fname)
+```
 
 # Small area estimates
 
