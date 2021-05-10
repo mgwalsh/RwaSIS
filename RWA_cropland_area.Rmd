@@ -216,7 +216,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, but I shall leave those for you to explore. Presented next are some starter models, which I would consider to be contrasting both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I would consider to be contrasting both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
 
 ## Spatial trend model with `gam` in `caret`
 
@@ -224,7 +224,7 @@ This is a simple spatially smoothed *generalized additive model* applying the `g
 
 ```{r}
 # Select spatial covariates
-gf_cpv <- gs_cal[,39:41] ## these are the DX, DY & DXY raster features
+gf_cpv <- gs_cal[,39:41] ## these are the DX, DY & DXY coordinate raster features
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -253,11 +253,11 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `glmStepAIC` in `caret`
 
-Central places (sensu [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g., in city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to roads and settlements, parks & reserves, surface water sources, cell towers and electricity networks among several other largely anthropically contolled / infrastructure factors.
+Central places (sensu [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in, e.g., in city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to roads and settlements, parks & reserves, surface water sources, cell towers and electricity networks among several other largely anthropically contolled / infrastructure factors.
 
 ```{r, results='hide'}
 # Select central place covariates
-gf_cpv <- gs_cal[,25:38] ## these are the anthropic distance-to feature variables
+gf_cpv <- gs_cal[,25:38] ## these are the anthropic "distance-to" raster variables
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -295,6 +295,6 @@ saveRDS(gl1, fname)
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a ROI. If a survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as satellite observations) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
