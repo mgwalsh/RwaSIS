@@ -366,7 +366,7 @@ saveRDS(st, fname)
 ```
 
 ```{r, echo = FALSE}
-display(st)
+summary(st)
 ```
 
 # Receiver-operator characteristics
