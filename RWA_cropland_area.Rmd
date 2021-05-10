@@ -274,18 +274,18 @@ tc <- trainControl(method = "cv", classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = T)
 
 # model training
-gl1 <- train(gf_cpv, lcal, 
-             method = "glmStepAIC",
-             family = "binomial",
-             preProc = c("center","scale"), 
-             trControl = tc,
-             metric ="ROC")
+cp <- train(gf_cpv, lcal, 
+            method = "glmStepAIC",
+            family = "binomial",
+            preProc = c("center","scale"), 
+            trControl = tc,
+            metric ="ROC")
 
 # model outputs & predictions
-gl1.pred <- predict(grids, gl1, type = "prob") ## spatial predictions
+cp.pred <- predict(grids, cp, type = "prob") ## spatial central place predictions
 stopCluster(mc)
-fname <- paste("./RW_GS20/Results/", labs, "_gl1.rds", sep = "")
-saveRDS(gl1, fname)
+fname <- paste("./RW_GS20/Results/", labs, "_cp.rds", sep = "")
+saveRDS(cp, fname)
 ```
 
 ## Fitting several MLA models at once with `caretEnsemble`
