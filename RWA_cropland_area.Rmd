@@ -138,12 +138,12 @@ The processed Rwanda raster data (`grids` in the chunk above) were derived from 
 
 \
 ```{r, echo=FALSE, results='asis'}
-download("https://osf.io/e2x4s?raw=1", "./Wetchem/Grid variables.csv", mode = "wb")
-vars <- read.table("./RW_GS20/Grid variables.csv", header = T, sep = ",")
+download("https://osf.io/ag6fk?raw=1", "./RW_GS20/GS variables.csv", mode = "wb")
+vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate cropland condition (*x*) as a function of **f(x) ~ (a,c,o,r,s)** where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (*CP*) as a function of **f(CP) ~ (a,c,o,r,s)** where:
 
 * a - anthropic variables
 * c - climatic variables
