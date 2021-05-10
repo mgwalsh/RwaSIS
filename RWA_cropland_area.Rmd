@@ -143,11 +143,11 @@ vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, e, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when appropriate or needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
-* o - organismal / ecologically successional variables
+* o - organismal and ecologically successional variables
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
@@ -218,13 +218,13 @@ fcal <- gs_cal[,19:38,42:67]
 
 Note that I am using previously vetted cropland presence/absence (`CP`) as an example in this example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, but I shall leave those for you to explore. Presented next are some starter models, which I would consider to be contrasting both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data.
 
-## Spatial trend model with `caret`
+## Spatial trend model with `gam` in `caret`
 
 This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their georeference. It is similar to [ordinary kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
 
 ```{r}
 # Select spatial covariates
-gf_cpv <- gs_cal[,39:41]
+gf_cpv <- gs_cal[,39:41] ## these are the DX, DY & DXY raster features
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -251,11 +251,11 @@ fname <- paste("./RW_GS20/Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
-## Central place model with `caret`
+## Central place theory model with `glmStepAIC` in `caret`
 
 Central places ([Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g., in city centers, forest reserves or national parks). The model below focuses on central place indicators such as distances to roads and settlements, parks & reserves, surface water sources, cell towers and electricity networks among several other largely anthropically contolled factors.
 
-```{r}
+```{r, results='hide'}
 # Select central place covariates
 gf_cpv <- gs_cal[,25:38]
 
@@ -287,7 +287,11 @@ saveRDS(gl1, fname)
 
 ## Fitting several MLA models at once with `caretEnsemble`
 
-# Model stacking
+
+
+# Model stacking and validation
+
+
 
 # Small area estimates
 
