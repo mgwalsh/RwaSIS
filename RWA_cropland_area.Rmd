@@ -193,7 +193,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network approaches here. 
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
-4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed.
+4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed or desired.
 
 ```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="GeoSurvey land cover prediction workflow.", out.width = '70%'}
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
@@ -293,7 +293,7 @@ saveRDS(cp, fname)
 The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work from the following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a (geograpically) small country like Rwanda, but could be computationally problematic for countries like the DRC or Ethiopia.
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer to run. This is not a big problem for a country like Rwanda, but could be computationally problematic for countries like the DRC or Ethiopia.
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -322,9 +322,48 @@ fname <- paste("./RW_GS20/Results/", labs, "_clist.rds", sep = "")
 saveRDS(clist, fname)
 ```
 
-# Model stacking
+# Model stacking with `caret`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe** (`gs_val`). You could explore other options here, but I think that this initially provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the **validation dataframe** (`gs_val`). You could explore other options here, but I think that this provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+
+```{r, results = 'hide'}
+# Stacking setup
+preds <- stack(1-gm.pred, 1-cp.pred, 1-gl.pred, 1-rf.pred, 1-xt.pred, 1-nn.pred)
+names(preds) <- c("gm","ct","gl","rf","xt","nn")
+
+# Extract predictions on validation set
+coordinates(gs_val) <- ~x+y
+projection(gs_val) <- projection(preds)
+gspred <- extract(preds, gs_val)
+gspred <- as.data.frame(cbind(gs_val, gspred))
+
+# Set validation labels and features
+gs_val <- as.data.frame(gs_val)
+lval <- as.vector(t(gs_val[labs])) ##  subset validation labels
+fval <- gspred[ ,68:73] ## subset validation features
+
+# Start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Control setup
+set.seed(1385321)
+tc <- trainControl(method = "repeatedcv", number = 10, repeats = 3, classProbs = T, 
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# Model training
+st <- train(fval, lval,
+            method = "glmStepAIC",
+            family = "binomial",
+            metric = "ROC",
+            trControl = tc)
+
+# Model outputs & predictions
+st.pred <- predict(preds, st, type = "prob") ## stacked spatial predictions
+stopCluster(mc)
+fname <- paste("./RW_GS20/Results/", labs, "_st.rds", sep = "")
+saveRDS(st, fname)
+```
 
 # Receiver-operator characteristics
 
