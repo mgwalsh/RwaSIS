@@ -128,7 +128,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time),] ## sort in original sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey approach based on 4 archetypal quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation cover (> 60%). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey observation approach based on 4 archetypal quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat where buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -151,7 +151,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief/topographical/geographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must be associated with the distribution of humans and their infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change over time and space and should be, but are currently not, adequately monitored in Africa.
+The main notion here is that the occurrence and distribution of croplands must be associated with the distribution of humans and their built infrastructure, but also constrained/facilitated by environmental factors such as climate, relief, parent materials and soils. Note that all of these change over time and space and should be, but are currently not, adequately monitored in Africa.
 
 The next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area projection](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained.
 
