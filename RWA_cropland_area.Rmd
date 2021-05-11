@@ -116,7 +116,7 @@ geos <- geos[order(geos$time),] ## sort in original sample order
 cp <- geos[which(geos$CP == "Y"), ] ## identify quadrats with cropland
 cp$cgrid <- as.character(cp$cgrid)
 
-# Number of tagged grid locations from quadrats with cropland
+# Number of tagged grid locations (out of 16 possibles) from quadrats with cropland
 ccount <- rep(NA, nrow(cp))
 for(i in 1:nrow(cp)) {
   t <- fromJSON(cp$cgrid[i])
@@ -127,7 +127,7 @@ ca <- geos[which(geos$CP == "N"), ]
 ca$ccount <- 0
 cp <- cbind(cp, ccount)
 geos <- rbind(ca, cp)
-geos <- geos[order(geos$time), ] ## sort in original sample order
+geos <- geos[order(geos$time), ] ## sort back in original random sample order
 ```
 
 The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal (250 × 250 m) quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat from which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
@@ -147,7 +147,7 @@ vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when appropriate or needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
@@ -404,7 +404,7 @@ projection(gsdat) <- projection(grids)
 gspre <- extract(gspreds, gsdat)
 gsout <- as.data.frame(cbind(gsdat, gspre))
 gsout$mzone <- ifelse(gsout$mk == 1, "Y", "N")
-fname <- paste("./Results/","RW_", labs, "_out.csv", sep = "")
+fname <- paste("./RW_GS20/Results/","RW_", labs, "_out.csv", sep = "")
 write.csv(gsout, fname, row.names = F)
 ```
 
@@ -417,3 +417,6 @@ confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y")
 The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
+
+This notebook produces highly accurate spatial predictions of cropland occurence and area for Rwanda.
+
