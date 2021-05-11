@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads the data, which are needed to run this particular example. The downloads contain the most recent GeoSurvey observations, 48 raster covariates and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating *small cropland area estimates* by administrative units. 
+The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations from 2019, 48 raster covariates and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating *small cropland area estimates* by administrative units. 
 
 ```{r}
 # Set working directory
@@ -130,7 +130,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time), ] ## sort back in original random sample order
 ```
 
-The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal (250 × 250 m) quadrats from Rwanda; i.e., the blue squares in the figure. The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat from which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the GeoSurvey observation and tagging approach based on 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat from which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation in croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -369,9 +369,9 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-# Receiver-operator characteristic (ROC)
+# Receiver operator chararacteristic 
 
-[ROC analysis](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) helps to select a potentially optimal model for predicting a binary outcome variable and to discard any suboptimal ones. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe.
+A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive  rate is high and the false-positive  [1 – Specificity] rate is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package.
 
 ```{r}
 # Generate validation set receiver-operator curve
