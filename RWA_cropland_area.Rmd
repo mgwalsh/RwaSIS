@@ -258,7 +258,7 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `caret`
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in e.g., city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure factors.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in e.g., city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure factors.
 
 ```{r, results='hide'}
 # Select central place covariates
@@ -414,9 +414,10 @@ confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y")
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small domain"* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small(er) domain"* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
 
-This notebook produces highly accurate spatial predictions of cropland occurence and area for Rwanda.
+* This notebook produces highly accurate spatial predictions of the occurence (presence / absence) of croplands in Rwanda based on an ensemble machine learning approach.
+* 
 
