@@ -418,6 +418,6 @@ The term *"small area"* refers to a small geographical area such as e.g., *distr
 
 # Conclusions
 
-* This notebook produces highly accurate spatial predictions of the occurence (presence / absence) of croplands in Rwanda based on an ensemble machine learning approach.
-* 
+* This notebook produces highly accurate spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on an ensemble machine learning approach.
+* The approach can be extended 
 
