@@ -155,7 +155,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained / facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
 
 ## Rwanda GeoSurvey dataframe
 
@@ -222,7 +222,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[ ,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I would consider to be *contrasting* both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I consider to be *contrasting* both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
 
 ## Spatial trend model with `caret`
 
@@ -293,7 +293,7 @@ saveRDS(cp, fname)
 The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work by following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This conveniently shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but might be computationally problematic for larger countries like the DRC or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that this takes a bit of time to run on a normal 4-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be computationally problematic for larger countries like the DRC or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -324,17 +324,17 @@ saveRDS(clist, fname)
 
 # Model stacking with `caret`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other options here, but I think that this provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
 preds <- stack(1-gm.pred, 1-cp.pred, 1-gl.pred, 1-rf.pred, 1-xt.pred, 1-nn.pred)
 names(preds) <- c("gm","ct","gl","rf","xt","nn")
 
-# Extract predictions on validation set
+# Extract predictions on the validation set
 coordinates(gs_val) <- ~x+y
 projection(gs_val) <- projection(preds)
-gspred <- extract(preds, gs_val)
+gspred <- extract(preds, gs_val) ## extracts the probabilities of each model in the stack
 gspred <- as.data.frame(cbind(gs_val, gspred))
 
 # Set validation labels and features
@@ -369,9 +369,48 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-# Receiver-operator characteristics
+# Receiver-operator characteristic (ROC)
 
+[ROC analysis](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) helps to select a potentially optimal model for predicting a binary outcome variable and to discard any suboptimal ones. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe.
 
+```{r}
+# Generate validation set receiver-operator curve
+cp_pre <- predict(st, fval, type="prob")
+cp_val <- cbind(lval, cp_pre)
+cpp <- subset(cp_val, cp_val=="Y", select=c(Y))
+cpa <- subset(cp_val, cp_val=="N", select=c(Y))
+cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on test set
+```
+
+```{r, echo = FALSE}
+plot(cp_eval, 'ROC') ## plot ROC curve
+```
+
+```{r}
+# Generate feature mask
+t <- threshold(cp_eval) ## calculate thresholds based on ROC
+r <- matrix(c(0, t[,1], 0, t[,1], 1, 1), ncol=3, byrow = T) ## set classification threshold value using <kappa>
+mask <- reclassify(1-st.pred, r) ## reclassify stacked predictions
+
+# Write out the prediction grids
+gspreds <- stack(preds, 1-st.pred, mask)
+names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
+fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
+writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
+
+# Write output data frame
+coordinates(gsdat) <- ~x+y
+projection(gsdat) <- projection(grids)
+gspre <- extract(gspreds, gsdat)
+gsout <- as.data.frame(cbind(gsdat, gspre))
+gsout$mzone <- ifelse(gsout$mk == 1, "Y", "N")
+fname <- paste("./Results/","RW_", labs, "_out.csv", sep = "")
+write.csv(gsout, fname, row.names = F)
+```
+
+```{r, echo = FALSE}
+confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y")
+```
 
 # Small area estimates
 
