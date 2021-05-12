@@ -75,7 +75,7 @@ unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 
 ## GeoSurvey data assembly
 
-This chunk assembles the observations from *q* = 23,776 (250 × 250 m) GeoSurvey [quadrats](https://en.wikipedia.org/wiki/Quadrat), which were collected by 6 experienced air-photo interpreters. It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`). I'll use the resulting *cropland grid count* (`ccount`) variable for small area cropland estimation later on in the notebook.
+This chunk assembles the observations from *q* = 23,776 (250 × 250 m) GeoSurvey [quadrats](https://en.wikipedia.org/wiki/Quadrat), which were collected by 6 experienced image interpreters. It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`). I'll use the resulting *cropland grid count* (`ccount`) variable for small area cropland estimation later on in the notebook.
 
 ```{r, results='hide'}
 # Attach GADM-L5 administrative unit names from shape
@@ -129,10 +129,10 @@ ca <- geos[which(geos$CP == "N"), ]
 ca$ccount <- 0
 cp <- cbind(cp, ccount)
 geos <- rbind(ca, cp)
-geos <- geos[order(geos$time), ] ## sort back in original random sample order
+geos <- geos[order(geos$time), ] ## sort back into original random sample order
 ```
 
-The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat from which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
+The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland is present in the quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
 ```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats from Rwanda.", out.width = '90%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
@@ -159,7 +159,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 
 The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
 
-## Rwanda GeoSurvey dataframe
+## Tidy Rwanda GeoSurvey dataframe
 
 This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify the GeoSurvey locations is available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
