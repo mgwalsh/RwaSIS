@@ -439,11 +439,11 @@ w ## plot widget
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small(er) domain* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
 
-* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on an ensemble machine learning approach.
-* The approach can be flexibly extended to map other land cover variables (e.g., building, dense woody vegetation cover and built-up infrastructure presence / absence, among others).
+* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
+* The approach can be flexibly extended to map other land cover variables (e.g., building, dense woody vegetation cover and built-up infrastructure presence / absence, among others). It can also be used to cover new geographies and ROIs.
 * 
 
