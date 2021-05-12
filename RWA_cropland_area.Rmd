@@ -426,7 +426,7 @@ writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND"
 mkll <- projectRaster(mask, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # Set color pallette
-pal <- colorBin("Greens", domain = 0:1, na.color = "transparent")
+pal <- colorBin("Greens", bins = 2, na.color = "transparent")
 
 # Render map
 w <- leaflet() %>% 
