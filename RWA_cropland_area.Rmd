@@ -371,9 +371,9 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-# Receiver operator chararacteristic 
+# Receiver operator chararacteristics 
 
-A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive  rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
+A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This next chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
 
 ```{r}
 # Generate validation set receiver-operator curve
@@ -389,7 +389,7 @@ par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can also be used to threshold the predictions to create a cropland mask map for Rwanda. Pixels above (or below) the threshold are classified as having cropland present (or absent). This is useful for additional accuracy checks. Additionally, this step provides a map that is useful for planning of subsequent / additional ground sampling campaigns that involve croplands as the main ROI (e.g., for soil mapping and/or various management response trials). The next chunk sets the relevant threshold and provides a map of the cropland mask for Rwanda.
+The ROC curve can also be used to threshold the spatial predictions to create a cropland mask map for Rwanda. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It provides a cropland mask useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or various management response trials). The next chunk sets the relevant threshold and provides a cropland mask map for Rwanda.
 
 ```{r}
 # Generate feature mask
@@ -397,15 +397,6 @@ t <- threshold(cp_eval) ## calculate thresholds based on ROC
 r <- matrix(c(0, t[,1], 0, t[,1], 1, 1), ncol=3, byrow = T) ## set classification threshold value using <kappa>
 mask <- reclassify(1-st.pred, r) ## reclassify stacked predictions
 
-# Write out the prediction grids
-gspreds <- stack(preds, 1-st.pred, mask)
-names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
-fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
-writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
-
-```
-
-```{r}
 # Write output data frame
 coordinates(gsdat) <- ~x+y
 projection(gsdat) <- projection(grids)
@@ -420,9 +411,21 @@ write.csv(gsout, fname, row.names = F)
 confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y")
 ```
 
+## Write out prediction grid geotifs
+
+This chunk writes out the 8 prediction rasters that you can import as geotif files into a GIS system of your choice for visualizations, reports and/or further processing. 
+
+```{r}
+# Write out the prediction grids
+gspreds <- stack(preds, 1-st.pred, mask)
+names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
+fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
+writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
+```
+
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *"small(er) domain"* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small(er) domain* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular small area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
 
