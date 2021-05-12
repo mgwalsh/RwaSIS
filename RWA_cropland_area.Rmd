@@ -201,7 +201,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized partition between the training and validation dataframes.
+In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80 / 20%) partition between training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
