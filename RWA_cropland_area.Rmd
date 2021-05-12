@@ -295,7 +295,7 @@ saveRDS(cp, fname)
 The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work by following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the trainControl methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the claculations take a bit of time to run on a normal 4-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be computationally problematic for larger countries like the DRC or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the claculations take a bit of time to run on a normal 4-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be computationally challenging for larger countries like the DRC or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -389,7 +389,7 @@ par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can also be used to threshold the spatial predictions to create a cropland mask map. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out various management response trials). The next chunk sets the relevant threshold and calculates a cropland mask for Rwanda.
+The ROC curve can also be used to threshold the spatial predictions to create a cropland mask map. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out various management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates a cropland mask for Rwanda.
 
 ```{r}
 # Generate feature mask
@@ -421,6 +421,20 @@ gspreds <- stack(preds, 1-st.pred, mask)
 names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
+
+# Project stm.pred to EPSG:3857
+stll <- projectRaster(stm.pred, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Set color pallette
+pal <- colorBin("Greens", domain = 0:1, na.color = "transparent")
+
+# Render map
+w <- leaflet() %>% 
+  setView(lng = mean(gsout$lon), lat = mean(gsout$lat), zoom = 8) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addRasterImage(stll, colors = pal, opacity = 0.5) %>%
+  addLegend(pal = pal, values = values(stll), title = "Cropland mask")
+w ## plot widget
 ```
 
 # Small area estimates
