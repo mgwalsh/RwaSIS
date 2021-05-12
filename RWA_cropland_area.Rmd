@@ -373,7 +373,7 @@ summary(st)
 
 # Receiver operator chararacteristic 
 
-A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive  rate is high and the false-positive  [1 – Specificity] rate is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
+A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive  rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
 
 ```{r}
 # Generate validation set receiver-operator curve
@@ -384,12 +384,12 @@ cpa <- subset(cp_val, cp_val=="N", select=c(Y))
 cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on test set
 ```
 
-```{r, fig.align = "center", fig.cap = "Cropland classification ROC curve for the validation set."}
+```{r, echo = FALSE, fig.align = "center", fig.cap = "Cropland classification ROC curve for the validation set."}
 par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-
+The ROC curve can also be used to threshold the predictions to create a cropland mask map for Rwanda. Pixels above (or below) the threshold are classified as having cropland present (or absent). This is useful for additional accuracy checks. Additionally, this step provides a map that is useful for planning of subsequent / additional ground sampling campaigns that involve croplands as the main ROI (e.g., for soil mapping and/or various management response trials). The next chunk sets the relevant threshold and provides a map of the cropland mask for Rwanda.
 
 ```{r}
 # Generate feature mask
@@ -403,6 +403,9 @@ names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 
+```
+
+```{r}
 # Write output data frame
 coordinates(gsdat) <- ~x+y
 projection(gsdat) <- projection(grids)
