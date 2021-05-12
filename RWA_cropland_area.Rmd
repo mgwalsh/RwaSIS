@@ -422,8 +422,8 @@ names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
 
-# Project stm.pred to EPSG:3857
-stll <- projectRaster(stm.pred, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+# Project st.pred to EPSG:3857
+stll <- projectRaster(st.pred, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # Set color pallette
 pal <- colorBin("Greens", domain = 0:1, na.color = "transparent")
@@ -444,6 +444,6 @@ The term *"small area"* refers to a small geographical area such as e.g., *distr
 # Conclusions
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
-* The approach can be flexibly extended to map other land cover variables (e.g., building, dense woody vegetation cover and built-up infrastructure presence / absence, among others). It can also be used to cover new geographies and ROIs.
+* The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover and built-up infrastructure, among others). It can also be rapidly extended to cover new geographies and ROIs.
 * 
 
