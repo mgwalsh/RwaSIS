@@ -192,7 +192,7 @@ w ## plot widget
 
 The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined / stacked) on an *independent validation dataset*. As shown in the figure below there are four conceptual steps to run this workflow:
 
-1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
+1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for the different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network approaches here. 
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
 4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed or desired.
@@ -389,7 +389,7 @@ par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can also be used to threshold the spatial predictions to create a cropland mask map for Rwanda. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It provides a cropland mask useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or various management response trials). The next chunk sets the relevant threshold and provides a cropland mask map for Rwanda.
+The ROC curve can also be used to threshold the spatial predictions to create a cropland mask map. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out various management response trials). The next chunk sets the relevant threshold and calculates a cropland mask for Rwanda.
 
 ```{r}
 # Generate feature mask
