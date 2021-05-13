@@ -228,7 +228,7 @@ Note that I am using previously vetted cropland presence/absence (`CP`) as an ex
 
 ## Spatial trend model with `caret`
 
-This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [ordinary kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps. Also
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps. Also
 
 ```{r}
 # Select spatial covariates
@@ -376,12 +376,12 @@ summary(st)
 A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This next chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
 
 ```{r}
-# Generate validation set receiver-operator curve
+# Plot validation set ROC curve
 cp_pre <- predict(st, fval, type="prob")
 cp_val <- cbind(lval, cp_pre)
 cpp <- subset(cp_val, cp_val=="Y", select=c(Y))
 cpa <- subset(cp_val, cp_val=="N", select=c(Y))
-cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on test set
+cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 ```
 
 ```{r, echo = FALSE, fig.align = "center", fig.cap = "Cropland classification ROC curve for the validation set."}
@@ -389,7 +389,7 @@ par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can also be used to threshold the spatial predictions to create a cropland mask map. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates a cropland mask, generates an overview map, and writes out the 8 prediction grids to a geotif file.
+The ROC curve can then also be used to threshold the spatial predictions to create a cropland mask map. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates a cropland mask and writes out the 8 prediction grids to a geotif file.
 
 ```{r}
 # Generate feature mask
@@ -402,25 +402,11 @@ gspreds <- stack(preds, 1-st.pred, mask)
 names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
-
-# Project cropland mask to EPSG:3857
-stll <- projectRaster(1-st, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-
-# Set color pallette
-pal <- colorNumeric("Greens", domain = 0:1, na.color = "transparent")
-
-# Render map
-w <- leaflet() %>% 
-  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
-  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
-  addRasterImage(stll, colors = pal, opacity = 0.5) %>%
-  addLegend(pal = pal, values = values(stll), title = "Cropland probability")
-w ## plot widget
 ```
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey observations) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
 
