@@ -444,7 +444,7 @@ summary(m0)
 # With GeoSurvey cropland occurrence predictions
 m1 <- glm(cbind(ccount, 16-ccount) ~ st, family = binomial, gsout) ## scaling model
 m1.pred <- predict(gspreds, m1, type = "response")
-m1.area <- m1.pred*6.25 ## calculates cropland area (ha)
+m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
 ```
 
 # Conclusions
