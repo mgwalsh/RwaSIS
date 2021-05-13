@@ -422,7 +422,7 @@ w ## plot widget
 
 # Small area estimates
 
-The term *"small area"* often refers small administrative areas such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate area estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* often refers small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate area estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain more accurate land cover area estimates. 
 
 # Conclusions
 
