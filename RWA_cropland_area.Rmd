@@ -385,7 +385,7 @@ cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 ```
 
 ```{r, echo = FALSE, fig.align = "center", fig.cap = "Cropland classification ROC curve for the validation set."}
-par(pty="s", mar=c(4.5,4.5,1,1))
+par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
@@ -402,6 +402,16 @@ gspreds <- stack(preds, 1-st.pred, mask)
 names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
+
+# Write output data frame
+coordinates(gsdat) <- ~x+y
+projection(gsdat) <- projection(grids)
+gspre <- extract(gspreds, gsdat)
+gsout <- as.data.frame(cbind(gsdat, gspre))
+gsout$mzone <- ifelse(gsout$mk == 1, "Y", "N")
+# confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y") ## run this for extra stats
+fname <- paste("./RW_GS20/Results/","RW_", labs, "_out.csv", sep = "")
+write.csv(gsout, fname, row.names = F)
 
 # Project st.pred to EPSG:3857
 stc <- 1-st.pred
@@ -420,9 +430,24 @@ w <- leaflet() %>%
 w ## plot widget
 ```
 
-# Small area estimates
+# Small area estimation (SAE)
 
-The term *"small area"* often refers small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate area estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain more accurate land cover area estimates. 
+The term *"small area"* small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for a whole population (e.g., a country), the sample size within any particular smaller sub area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data (such as GeoSurvey predictions), which typically have much denser spatial coverage than the population-wide survey.
+
+
+```{r}
+# Base model
+m0 <- glm(cbind(ccount, 16-ccount) ~ 1, family=binomial, gsout) ## calculates base model
+e0 <- cbind(Estimate = coef(m0), confint(m0)) ## standard 95% confidence intervals
+```
+
+# with cropland occurrence predictions
+summary(m1 <- glm(cbind(ccount, 16-ccount) ~ st, family=binomial, gsdat)) ## scaling model
+(est1 <- cbind(Estimate = coef(m1), confint(m1))) ## standard 95% confidence intervals
+m1.pred <- predict(grids, m1, type="response")
+(m1.area <- cellStats(m1.pred*6.25, sum)) ## calculates total cropland area (ha)
+plot(m1.pred, axes=F)
+gsdat$m1 <- predict(m1, gsdat, type="response")
 
 # Conclusions
 
