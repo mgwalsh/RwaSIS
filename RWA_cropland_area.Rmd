@@ -389,7 +389,7 @@ par(pty="s", mar=c(4.5,4.5,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can then also be used to threshold the spatial predictions to create a cropland mask map. Pixels above, or below the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates the cropland mask and writes out the 8 prediction grids to a geotif file. It also generates an overview map of the cropland occurrence probabilities.
+The ROC curve can then be used to threshold the spatial predictions to create a cropland mask map. Pixels above, or below the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates the cropland mask and writes out the 8 prediction grids to a geotif file. It also generates an overview map of the cropland occurrence probabilities.
 
 ```{r}
 # Generate feature mask
