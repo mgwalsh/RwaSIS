@@ -134,7 +134,7 @@ geos <- geos[order(geos$time), ] ## sort back into original random sample order
 
 The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland occupies virtually the entire quadrat. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
-```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '90%', }
+```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%', }
 knitr::include_graphics("./RW_GS20/Figures/GeoSurvey_examples.png")
 ```
 
@@ -201,7 +201,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80 / 20%) partition between training and validation dataframes.
+In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80 / 20%) partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -224,7 +224,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 fcal <- gs_cal[ ,19:38,42:67]
 ```
 
-Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I consider to be *contrasting* both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the data to those.
+Note that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I consider to be *contrasting* both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the observational data to those.
 
 ## Spatial trend model with `caret`
 
@@ -260,7 +260,7 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `caret`
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in e.g., city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in e.g., city centers, forests or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
 
 ```{r, results='hide'}
 # Select central place covariates
@@ -385,7 +385,7 @@ cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 ```
 
 ```{r, echo = FALSE, fig.align = "center", fig.cap = "Cropland classification ROC curve for the validation set."}
-par(pty="s", mar=c(4,4,1,1))
+par(pty="s", mar=c(4.5,4.5,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
@@ -422,11 +422,11 @@ w ## plot widget
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate area estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* often refers small administrative areas such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate area estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
-* The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover and built-up infrastructure, among others). It can also be rapidly extended to cover new geographies and ROIs.
+* The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 * 
 
