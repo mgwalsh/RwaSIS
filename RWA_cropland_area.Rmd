@@ -389,7 +389,7 @@ par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can then also be used to threshold the spatial predictions to create a cropland mask map. Pixels above (or below) the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates a cropland mask and writes out the 8 prediction grids to a geotif file.
+The ROC curve can then also be used to threshold the spatial predictions to create a cropland mask map. Pixels above, or below the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates the cropland mask and writes out the 8 prediction grids to a geotif file. It also generates an overview map of the cropland occurrence probabilities.
 
 ```{r}
 # Generate feature mask
@@ -402,11 +402,27 @@ gspreds <- stack(preds, 1-st.pred, mask)
 names(gspreds) <- c("gm","cp","gl","rf","xt","nn","st","mk")
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_preds_2020.tif", sep = "")
 writeRaster(gspreds, filename=fname, datatype="FLT4S", options="INTERLEAVE=BAND", overwrite=T)
+
+# Project st.pred to EPSG:3857
+stc <- 1-st.pred
+msk <- mask < 1
+stm <- mask(stc, msk, maskvalue = TRUE)
+stl <- projectRaster(stm, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# set color pallette
+pal <- colorBin("Greens", domain = 0:1, na.color = "transparent") 
+
+# render map
+w <- leaflet() %>% 
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addRasterImage(stl, colors = pal, opacity = 0.5) %>%
+  addLegend(pal = pal, values = values(stl), title = "Cropland prob.")
+w ## plot widget
 ```
 
 # Small area estimates
 
-The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain land cover area estimates. 
+The term *"small area"* refers to a small geographical area such as e.g., *districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for the population as a whole (e.g., a country), the sample size within any particular smaller area may be too small to generate accurate area estimates from the data. To deal with this problem, it may be possible to use additional data (such as GeoSurvey predictions) that exist for these small areas in order to obtain land cover area estimates. 
 
 # Conclusions
 
