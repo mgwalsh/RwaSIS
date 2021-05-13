@@ -75,7 +75,7 @@ unzip("GeoSurvey_figs.zip", exdir = exdir, overwrite = T)
 
 ## GeoSurvey data assembly
 
-This chunk assembles the observations from *q* = 23,776 (250 × 250 m) GeoSurvey [quadrats](https://en.wikipedia.org/wiki/Quadrat), which were collected by 6 experienced image interpreters. It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`). I'll use the resulting *cropland grid count* (`ccount`) variable for small area cropland estimation later on in the notebook.
+This chunk assembles the observations from *q* = 23,199 (250 × 250 m) GeoSurvey [quadrats](https://en.wikipedia.org/wiki/Quadrat), which were collected by 6 experienced image interpreters between April-July, 2019. It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`). I'll use the resulting *cropland grid count* (`ccount`) variable for small area cropland estimation later on in the notebook.
 
 ```{r, results='hide'}
 # Attach GADM-L5 administrative unit names from shape
