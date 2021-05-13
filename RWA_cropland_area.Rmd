@@ -416,7 +416,7 @@ write.csv(gsout, fname, row.names = F)
 # Project st.pred to EPSG:3857
 st <- 1-st.pred
 msk <- mask < 1
-stm <- mask(stc, msk, maskvalue = TRUE)
+stm <- mask(st, msk, maskvalue = TRUE)
 stl <- projectRaster(stm, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # set color pallette
@@ -443,8 +443,8 @@ summary(m0)
 ```{r}
 # With GeoSurvey cropland occurrence predictions
 m1 <- glm(cbind(ccount, 16-ccount) ~ st, family = binomial, gsout) ## scaling model
-m1.pred <- predict(stc, m1, type="response")
-(m1.area <- cellStats(m1.pred*6.25, sum)) ## calculates total cropland area (ha)
+m1.pred <- predict(gspreds, m1, type = "response")
+m1.area <- m1.pred*6.25 ## calculates cropland area (ha)
 ```
 
 # Conclusions
