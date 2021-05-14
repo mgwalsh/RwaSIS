@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Quantifying the geographical extent, location and spatial dynamics of croplands, rural and urban settlements and different types of vegetation cover provides essential information for monitoring and managing human dominated (*anthropic*) ecosystems and landscapes. Large portions of Africa remain *terra incognita* in this context. The main reason for monitoring [land cover](https://en.wikipedia.org/wiki/Land_cover) is to assess where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem processes and services can be expected, and *vice versa*.
+Quantifying the geographical extent, location and spatial dynamics of croplands, rural and urban settlements and different types of vegetation cover provides essential information for monitoring and managing human dominated (*anthropic*) ecosystems and landscapes. Large portions of Africa remain *terra incognita* in this context. The main reason for monitoring [land cover](https://en.wikipedia.org/wiki/Land_cover) is to assess where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem services can be expected, and *vice versa*.
 
 [GeoSurvey](https://geosurvey.qed.ai/) is a platform for collecting and analyzing land cover observations. High resolution satellite images and/or other aerial (e.g., aircraft or drone) imagery can be systematically and rapidly labeled by either trained image interpreters and/or by *crowds* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations can result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for monitoring [land use](https://nca2018.globalchange.gov/chapter/5/). When supplied with properly time-stamped imagery, GeoSurvey can also be used for monitoring ecosystem and landscape changes. 
 
@@ -432,24 +432,29 @@ w ## plot widget
 
 # Small area estimation (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for a whole population (e.g., a country), the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data (such as GeoSurvey predictions), which typically have much denser spatial coverage than the population-wide survey.
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data (such as GeoSurvey predictions), which will have much denser spatial coverage than e.g., a country-wide ground survey. This section illustrates some classical approaches to this common estimation problem (see: [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
 
 ```{r}
-# Base model
-m0 <- glm(cbind(ccount, 16-ccount) ~ 1, family = binomial, gsout) ## calculates base model
+# Calculates pooled national-level model
+m0 <- glm(cbind(ccount, 16-ccount) ~ 1, family = binomial, gsout)
 summary(m0)
 ```
 
 ```{r}
-# With GeoSurvey cropland occurrence predictions
-m1 <- glm(cbind(ccount, 16-ccount) ~ st, family = binomial, gsout) ## scaling model
-m1.pred <- predict(gspreds, m1, type = "response")
+# Post-stratified spatial model with GeoSurvey cropland occurrence predictions
+m1 <- glm(cbind(ccount, 16-ccount) ~ st, family = binomial, gsout)
+m1.pred <- predict(gspreds, m1, type = "response") ## maps pixel-level predictions
 m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
+```
+
+```{r}
+# Small area estimates
+
 ```
 
 # Conclusions
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
 * The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
-* 
+* The outputs can be used 
 
