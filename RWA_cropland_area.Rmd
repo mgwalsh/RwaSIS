@@ -420,7 +420,7 @@ stm <- mask(st, msk, maskvalue = TRUE)
 stl <- projectRaster(stm, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # set color pallette
-pal <- colorBin("Greens", domain = 0.6:1, na.color = "transparent") 
+pal <- colorBin("Greens", domain = 0:1, na.color = "transparent") 
 
 # render map
 w <- leaflet() %>% 
