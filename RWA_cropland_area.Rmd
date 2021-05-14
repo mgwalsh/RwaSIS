@@ -450,10 +450,10 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (viz `m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models is. The next chunk calculates small area estimates for the 30 districts of Rwanda.
+While the national-level estimate of cropland proportion (viz `m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. The next chunk calculates small area estimates for the 30 districts of Rwanda.
 
 ```{r}
-# Small area random-effect estimates by district & sector
+# Small area random-effect estimates by district
 m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district), family = binomial, gsout)
 summary(m2)
 ```
