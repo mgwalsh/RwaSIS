@@ -201,7 +201,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. The end of this notebook provides some suggestions about how to do just that. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80 / 20%) partition between the training and validation dataframes.
+In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80 / 20%) partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -432,13 +432,15 @@ w ## plot widget
 
 # Small area estimation (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data (such as GeoSurvey predictions), which will have much denser spatial coverage than e.g., a country-wide ground survey. This section of the notebook illustrates some classical approaches to this common estimation problem (e.g., see: [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as GeoSurvey predictions, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classical approaches to this common estimation problem (e.g., see [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
 
 ```{r}
 # Calculates pooled national-level model
 m0 <- glm(cbind(ccount, 16-ccount) ~ 1, family = binomial, gsout)
 summary(m0)
 ```
+
+The above chunk calculates the overall cropland area of Rwanda as ~68% of its total land area of ~2.37 Mha. The standard 95% confidence interval of this estimate is ± 1%. The next chunk calculates post-stratified estimates using the GeoSurvey cropland occurrence predictions. It also produces map of the expected within pixel cropland proportions and areas. While the national-level estimate of cropland proportion is not affected much, the precision of the estimates at the individual pixel scale is. 
 
 ```{r}
 # Post-stratified spatial model with GeoSurvey cropland occurrence predictions
@@ -457,5 +459,5 @@ summary(m2)
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
 * The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
-* The various model outputs can be used can be used for small area estimation and monitoring. I shall post addtional
+* The model outputs can be used can be used to improve the precision of small area estimation and monitoring workflows. I'll update the examples in this notebook as additional ground data become available for Rwanda over the coming year via the currently ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
 
