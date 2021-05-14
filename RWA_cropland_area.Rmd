@@ -454,7 +454,7 @@ While the national-level estimate of cropland proportion (viz `m0`) is not affec
 
 ```{r}
 # Small area hierarchical random-effect estimates by sectors in 30 districts
-m2 <- glmer(cbind(ccount, 16-ccount) ~ (1|district/sector), family = binomial, gsout)
+m2 <- glmer(cbind(ccount, 16-ccount) ~ 1 + (1|district/sector), family = binomial, gsout)
 m3 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomial, gsout)
 anova(m2, m3)
 ```
@@ -463,5 +463,5 @@ anova(m2, m3)
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
 * The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
-* The model outputs can be used to improve the precision of small area estimates and potentially also for cropland monitoring workflows. I'll update the short examples in this notebook as additional ground data become available for Rwanda over the coming year via the currently ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
+* The model outputs can be used to improve the precision of small area estimates and potentially also for cropland monitoring workflows. I'll update the short examples in this notebook as additional ground data become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
 
