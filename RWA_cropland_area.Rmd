@@ -389,7 +389,7 @@ par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
 
-The ROC curve can then be used to threshold the spatial predictions to create a cropland mask map. Pixels above, or below the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates the cropland mask and writes out the 8 prediction grids to a geotif file. It also generates an overview map of the cropland occurrence probabilities.
+The ROC curve can then be used to threshold the spatial predictions to create a cropland mask map. Pixels above, or below the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates the cropland mask and writes out the 8 prediction grids to a geotif file, which can be imported to a GIS of your choice. It also generates an overview map of the cropland occurrence probabilities.
 
 ```{r}
 # Generate feature mask
@@ -453,9 +453,10 @@ anova(m0, m1) ## anova comparison
 While the national-level estimate of cropland proportion (viz `m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. The next chunk calculates small area estimates for the 30 districts of Rwanda.
 
 ```{r}
-# Small area random-effect estimates by district
-m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district), family = binomial, gsout)
-summary(m2)
+# Small area hierarchical random-effect estimates by sectors in 30 districts
+m2 <- glmer(cbind(ccount, 16-ccount) ~ (1|district/sector), family = binomial, gsout)
+m3 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomial, gsout)
+anova(m2, m3)
 ```
 
 # Conclusions
