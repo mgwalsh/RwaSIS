@@ -452,7 +452,7 @@ anova(m0, m1) ## anova comparison
 
 ```{r}
 # Small area random-effect estimates by district & sector
-m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district) + (1|sector), family = binomial, gsout)
+m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district), family = binomial, gsout)
 summary(m2)
 ```
 
