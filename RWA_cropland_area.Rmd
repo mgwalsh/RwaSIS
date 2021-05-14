@@ -260,7 +260,7 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `caret`
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not in e.g., city centers, forests or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
 
 ```{r, results='hide'}
 # Select central place covariates
@@ -440,18 +440,19 @@ m0 <- glm(cbind(ccount, 16-ccount) ~ 1, family = binomial, gsout)
 summary(m0)
 ```
 
-The above chunk calculates the overall cropland area of Rwanda as ~68% of its total land area of ~2.37 Mha. The standard 95% confidence interval of this estimate is ± 1%. The next chunk calculates post-stratified estimates using the GeoSurvey cropland occurrence predictions. It also produces map of the expected within pixel cropland proportions and areas. While the national-level estimate of cropland proportion is not affected much, the precision of the estimates at the individual pixel scale is. 
+The above chunk calculates the overall cropland area of Rwanda at ~68% of its total land area of ~2.37 Mha. The standard 95% confidence interval of this estimate is ± 1%. The next chunk calculates post-stratified estimates using the GeoSurvey cropland occurrence predictions. It also produces map of the expected within pixel cropland proportions and areas. While the national-level estimate of cropland proportion is not affected much, its precision is. 
 
 ```{r}
 # Post-stratified spatial model with GeoSurvey cropland occurrence predictions
 m1 <- glm(cbind(ccount, 16-ccount) ~ st, family = binomial, gsout)
 m1.pred <- predict(gspreds, m1, type = "response") ## maps pixel-level predictions
 m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
+anova(m0, m1) ## anova comparison
 ```
 
 ```{r}
-# Small area random-effects estimates 
-m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district), data = gsout)
+# Small area random-effect estimates by district & sector
+m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district) + (1|sector), family = binomial, gsout)
 summary(m2)
 ```
 
@@ -459,5 +460,5 @@ summary(m2)
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
 * The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
-* The model outputs can be used to improve the precision of small area estimates and potentially also monitoring workflows. I'll update the examples in this notebook as additional ground data become available for Rwanda over the coming year via the currently ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
+* The model outputs can be used to improve the precision of small area estimates and potentially also for cropland monitoring workflows. I'll update the examples in this notebook as additional ground data become available for Rwanda over the coming year via the currently ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
 
