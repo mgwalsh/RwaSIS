@@ -432,7 +432,7 @@ w ## plot widget
 
 # Small area estimation (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data (such as GeoSurvey predictions), which will have much denser spatial coverage than e.g., a country-wide ground survey. This section illustrates some classical approaches to this common estimation problem (see: [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data (such as GeoSurvey predictions), which will have much denser spatial coverage than e.g., a country-wide ground survey. This section of the notebook illustrates some classical approaches to this common estimation problem (e.g., see: [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
 
 ```{r}
 # Calculates pooled national-level model
@@ -448,13 +448,14 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 ```
 
 ```{r}
-# Small area estimates
-
+# Small area random-effects estimates 
+m2 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district), data = gsout)
+summary(m2)
 ```
 
 # Conclusions
 
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) of croplands in Rwanda based on a completely reproducible ensemble machine learning approach.
 * The approach can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
-* The outputs can be used 
+* The various model outputs can be used can be used for small area estimation and monitoring. I shall post addtional
 
