@@ -450,7 +450,7 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (viz `m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. The next chunk calculates small area estimates for the 30 national *reporting districts* to the Ministry of Agriculture [MINAGRI](https://www.minagri.gov.rw/) in Rwanda.
+While the national-level estimate of cropland proportion (viz `m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. The next chunk calculates small area estimates for the 30 national *reporting districts* to the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda.
 
 ```{r}
 # Small area hierarchical random-effect estimates by sectors in 30 districts
