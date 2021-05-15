@@ -481,7 +481,7 @@ The main takeaways for this notebook are the following:
 
 * The model outputs can be used to improve the precision of small area estimates but potentially also for cropland monitoring workflows.
 
-* Model outputs can also be used for planning and implementing targeted ground survey campaigns that focus on cropland ROIs ... currently ongoing in Rwanda and other African countries.
+* Model outputs can also be used for planning and implementing targeted ground survey campaigns (e.g., soil surveys) that focus on cropland ROIs ... currently ongoing in Rwanda and other African countries.
 
-I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, crop types and site conditions become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
+I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, crop types and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
 
