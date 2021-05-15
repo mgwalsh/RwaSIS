@@ -443,19 +443,19 @@ summary(m0)
 The above chunk calculates the overall cropland area of Rwanda as ~68% of its total land area of ~2.37 Mha. The standard 95% confidence interval of this estimate is ± 1%. The next chunk calculates post-stratified estimates using the GeoSurvey cropland occurrence predictions. It also produces map of the expected within pixel cropland proportions and areas. 
 
 ```{r}
-# Post-stratified spatial model with GeoSurvey cropland occurrence predictions
+# Post-stratified spatial model with stacked GeoSurvey cropland occurrence predictions
 m1 <- glm(cbind(ccount, 16-ccount) ~ st, family = binomial, gsout)
 m1.pred <- predict(gspreds, m1, type = "response") ## maps pixel-level predictions
 m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison (precision) between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive stacked predictions similar to those of the stacked (`st`) model.
+While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison (precision) between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration. The main point here is to consider the main stacking options for cropland area predictions.
 
 ```{r}
-# Post-stratified spatial model with GeoSurvey cropland occurrence predictions
+# Post-stratified spatial model with base model GeoSurvey cropland occurrence predictions
 m2 <- glm(cbind(ccount, 16-ccount) ~ gm+cp+gl+rf+xt+nn, family = binomial, gsout)
-m2.pred <- predict(gspreds, m1, type = "response") ## maps pixel-level predictions
+m2.pred <- predict(gspreds, m2, type = "response") ## maps pixel-level predictions
 m2.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
 anova(m1, m2) ## anova comparison
 ```
