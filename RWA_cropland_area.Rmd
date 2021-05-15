@@ -473,11 +473,15 @@ anova(m3, m4) ## anova comparison
 
 # Takeaways
 
+The main takeaways for this notebook are the following:
+
 * This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., [Rocca (2019)](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205)).
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 
-* The model outputs can be used to improve the precision of small area estimates but potentially also for cropland monitoring workflows. 
+* The model outputs can be used to improve the precision of small area estimates but potentially also for cropland monitoring workflows.
+
+* Model outputs can also be used for planning and implementing targeted ground survey campaigns that focus on cropland ROIs ... ongoing in Rwanda and other African countries currently.
 
 I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, crop types and site conditions become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
 
