@@ -450,7 +450,7 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison (precision) between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration. The main point here is to consider the main stacking options for cropland area predictions.
+While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for cropland area predictions.
 
 ```{r}
 # Post-stratified spatial model with base model GeoSurvey cropland occurrence predictions
