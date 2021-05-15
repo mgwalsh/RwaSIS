@@ -450,7 +450,7 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for cropland area predictions.
+While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for the cropland area predictions.
 
 ```{r}
 # Post-stratified spatial model with base model GeoSurvey cropland occurrence predictions
@@ -459,6 +459,8 @@ m2.pred <- predict(gspreds, m2, type = "response") ## maps pixel-level predictio
 m2.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
 anova(m1, m2) ## anova comparison
 ```
+
+The slightly lower deviance of the `m2` model for area predictions indicates that it maybe preferable. Note however that the difference is small and is not validated. So, I would still go with the `m1` estimate in this particular case based on the data here and the [parsimony principle](https://en.wikipedia.org/wiki/Occam%27s_razor).
 
 The next chunk calculates small area estimates for the 30 national *districts* and 417 *sectors located in districts* that are reporting cropland area information to the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda. Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions in the respective small area models provide potentially useful information for sub-national planning purposes.
 
