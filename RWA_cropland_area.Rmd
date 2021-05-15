@@ -1,6 +1,6 @@
 ---
 title: Workflows for predictive cropland area mapping 
-author: M.G. Walsh & B.A. Walsh
+author: M.G. Walsh
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -192,7 +192,7 @@ w ## plot widget
 
 The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined / stacked) on an *independent validation dataset*. As shown in the figure below there are four conceptual steps to run this workflow:
 
-1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for the different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
+1. Label vetting (quality control) for a sub-sample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for the different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network base models here. 
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
 4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed.
@@ -260,7 +260,7 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `caret`
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically contolled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
 
 ```{r, results='hide'}
 # Select central place covariates
@@ -373,7 +373,7 @@ summary(st)
 
 # Receiver operator chararacteristics 
 
-A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performace of the stacked model (`st`) on the validation dataframe. This next chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
+A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performance of the stacked model (`st`) on the validation dataframe. This next chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
 
 ```{r}
 # Plot validation set ROC curve
@@ -450,7 +450,7 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for the cropland area predictions.
+While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for the cropland area predictions.
 
 ```{r}
 # Post-stratified spatial model with base model GeoSurvey cropland occurrence predictions
@@ -460,7 +460,7 @@ m2.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m1, m2) ## anova comparison
 ```
 
-The slightly lower deviance of the `m2` model for area predictions indicates that it might be preferable. Note however that the difference is small enough and has not been validated. So, I would still go with the `m1` prediction in this particular case, based on the [parsimony principle](https://en.wikipedia.org/wiki/Occam%27s_razor).
+The slightly lower deviance of the `m2` model for area predictions indicates that it might be preferable. Note however that the difference is small enough and has not been validated. So, I would still go with the `m1` prediction for this particular illustration, based on the [parsimony principle](https://en.wikipedia.org/wiki/Occam%27s_razor).
 
 The next chunk calculates small area estimates for the 30 national *districts* and 417 *sectors located in districts* that are reporting cropland area information to the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda. Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions in the respective small area models provide potentially useful information for sub-national planning purposes.
 
@@ -475,7 +475,7 @@ anova(m3, m4) ## anova comparison
 
 The main takeaways for this notebook are the following:
 
-* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., see [Rocca (2019)](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205)).
+* This notebook produces highly accurate (>95%) spatial predictions of the observed occurrence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., see [Rocca, 2019](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205)).
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 
