@@ -193,7 +193,7 @@ w ## plot widget
 The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined / stacked) on an *independent validation dataset*. As shown in the figure below there are four conceptual steps to run this workflow:
 
 1. Label vetting (quality control) for a subsample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for the different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
-2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network base models here (see e.g., [Rocca (2019)](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205) for a more thorough explanation of those. 
+2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network base models here. 
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
 4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed.
 
@@ -471,11 +471,11 @@ anova(m3, m4) ## anova comparison
 
 # Takeaways
 
-* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow.
+* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., [Rocca (2019)](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205).
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 
 * The model outputs can be used to improve the precision of small area estimates but potentially also for cropland monitoring workflows. 
 
-I'll update the introductory examples in this notebook as additional ground data for the occurrence of specific crops and crop types become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
+I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, crop types and site conditions become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
 
