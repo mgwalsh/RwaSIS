@@ -326,7 +326,7 @@ saveRDS(clist, fname)
 
 # Model stacking with `caret`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other *meta-model* options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
@@ -432,10 +432,10 @@ w ## plot widget
 
 # Small area estimation (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as GeoSurvey predictions, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classical approaches to this common estimation problem (e.g., see [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as GeoSurvey predictions, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classical approaches to this common estimation problem (e.g., see the classic article by [Battese & Fuller (1982)](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
 
 ```{r}
-# Calculates pooled national-level model
+# Calculates mean national-level model
 m0 <- glm(cbind(ccount, 16-ccount) ~ 1, family = binomial, gsout)
 summary(m0)
 ```
@@ -450,22 +450,32 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison (precision) between the two models (`m0` vs `m1`) is. The next chunk calculates small area estimates for the 30 national *districts* and 417 *sectors located in districts* that are reporting cropland area information to the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda. Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions in the respective small area models provide potentially useful information for sub-national planning purposes.
+While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison (precision) between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derrive stacked predictions similar to those of the stacked (`st`) model.
+
+```{r}
+# Post-stratified spatial model with GeoSurvey cropland occurrence predictions
+m2 <- glm(cbind(ccount, 16-ccount) ~ gm+cp+gl+rf+xt+nn, family = binomial, gsout)
+m2.pred <- predict(gspreds, m1, type = "response") ## maps pixel-level predictions
+m2.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per pixel
+anova(m1, m2) ## anova comparison
+```
+
+The next chunk calculates small area estimates for the 30 national *districts* and 417 *sectors located in districts* that are reporting cropland area information to the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda. Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions in the respective small area models provide potentially useful information for sub-national planning purposes.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 417 sectors in 30 districts
-m2 <- glmer(cbind(ccount, 16-ccount) ~ 1 + (1|district/sector), family = binomial, gsout)
-m3 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomial, gsout)
-anova(m2, m3) ## anova comparison
+m3 <- glmer(cbind(ccount, 16-ccount) ~ 1 + (1|district/sector), family = binomial, gsout)
+m4 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomial, gsout)
+anova(m3, m4) ## anova comparison
 ```
 
 # Takeaways
 
-* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible ensemble machine learning workflow.
+* This notebook produces highly accurate (>95%) spatial predictions of the observed occurence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow.
 
-* The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
+* The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 
 * The model outputs can be used to improve the precision of small area estimates but potentially also for cropland monitoring workflows. 
 
-I'll update the introductory examples in this notebook as additional ground data become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
+I'll update the introductory examples in this notebook as additional ground data for the occurrence of specific crops and crop types become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
 
