@@ -1,6 +1,6 @@
 ---
 title: Workflows for predictive cropland area mapping 
-author: M.G. Walsh
+author: M.G. Walsh & B.A. Walsh
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
