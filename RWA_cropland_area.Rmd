@@ -331,7 +331,7 @@ This next chunk fits a model ensemble with the `glmStepAIC` function from the `M
 ```{r, results = 'hide'}
 # Stacking setup
 preds <- stack(1-gm.pred, 1-cp.pred, 1-gl.pred, 1-rf.pred, 1-xt.pred, 1-nn.pred)
-names(preds) <- c("gm","ct","gl","rf","xt","nn")
+names(preds) <- c("gm","cp","gl","rf","xt","nn")
 
 # Extract predictions on the validation set
 coordinates(gs_val) <- ~x+y
