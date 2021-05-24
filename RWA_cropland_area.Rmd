@@ -260,7 +260,7 @@ saveRDS(gm, fname)
 
 ## Central place theory model with `caret`
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. Also note that I always save the current models as [`.rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. Also note that I always save the current models as [`.Rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
 
 ```{r, results='hide'}
 # Select central place covariates
