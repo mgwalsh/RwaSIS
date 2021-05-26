@@ -485,7 +485,7 @@ The main takeaways of this notebook are the following:
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructures and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs with new observations, geodata and/or MLAs.
 
-* The workflow outputs can be used to improve the precision and accuracy of small area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost.
+* The workflow outputs can be used to improve the precision and accuracy of small area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost compared to conventional land cover mapping practices.
 
 I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Any questions or comments about this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
