@@ -479,7 +479,7 @@ The main takeaways for this notebook are the following:
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 
-* The model outputs can be used to improve the precision of small area estimates, but depending on the availability of properly time-stamped GeoSurveys, also for cropland area monitoring and change detection workflows.
+* The model outputs can be used to improve the precision of small area estimates, but depending on the availability of properly time-stamped GeoSurveys, also for cropland area monitoring and change detection workflows, operationally and at low cost.
 
 I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
 
