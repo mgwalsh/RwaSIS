@@ -201,7 +201,7 @@ The following chunks calibrate cropland presence/absence observations using diff
 knitr::include_graphics("./RW_GS20/Figures/geosurvey_prediction_workflow.png")
 ```
 
-In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80 / 20%) partition between the training and validation dataframes.
+In order to monitor changing ecosystems and landscapes the first three steps should be repeated over time; i.e., to facilitate the feedback-loop in step 4. To start the fitting processes the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
 
 ```{r}
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
@@ -468,12 +468,18 @@ The next chunk calculates small area estimates for the 30 national *districts* a
 # Small area hierarchical random-effect estimates by 417 sectors in 30 districts
 m3 <- glmer(cbind(ccount, 16-ccount) ~ 1 + (1|district/sector), family = binomial, gsout)
 m4 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomial, gsout)
+summary(m4)
+```
+
+Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions (`m4` above) in the respective small area models provide potentially useful information for sub-national planning purposes.
+
+```{r}
 anova(m3, m4) ## anova comparison
 ```
 
 # Takeaways
 
-The main takeaways for this notebook are the following:
+The main takeaways of this notebook are the following:
 
 * This notebook produces highly precise and accurate (>95%) spatial predictions of the observed occurrence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., see [Rocca, 2019](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205)).
 
