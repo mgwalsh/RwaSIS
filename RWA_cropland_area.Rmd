@@ -228,7 +228,7 @@ Note again that I am using previously vetted cropland presence/absence (`CP`) as
 
 ## Spatial trend model with `caret`
 
-This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps. Also
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
 
 ```{r}
 # Select spatial covariates
