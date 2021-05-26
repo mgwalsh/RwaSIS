@@ -432,7 +432,7 @@ w ## plot widget
 
 # Small area estimation (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for  e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as GeoSurvey predictions, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem (e.g., see the article by [Battese & Fuller, 1982](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as GeoSurvey predictions, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem (e.g., see the article by [Battese & Fuller, 1982](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
 
 ```{r}
 # Calculates mean national-level model
@@ -471,7 +471,7 @@ m4 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomi
 summary(m4)
 ```
 
-Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions (`m4` above) in the respective small area models provide potentially useful information for sub-national planning purposes.
+Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions (`m4`, above) in the respective small area models provide potentially useful information for sub-national planning purposes.
 
 ```{r}
 anova(m3, m4) ## anova comparison
@@ -485,7 +485,7 @@ The main takeaways of this notebook are the following:
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs.
 
-* The model outputs can be used to improve the precision of small area estimates, but depending on the availability of properly time-stamped GeoSurveys, also for cropland area monitoring and change detection workflows, operationally and at low cost.
+* The model outputs can be used to improve the precision and accuracy of small area estimates, and depending on the availability of properly time-stamped GeoSurveys, also for cropland area monitoring and change detection workflows, operationally and at low cost.
 
-I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity).
+I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Any questions or comments about this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
