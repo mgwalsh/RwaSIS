@@ -16,15 +16,15 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook itself is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit.
+The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](), which describes some of the prediction methods and the associated SAE procedures in more detail.
 
 # General data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning. 
+To actually run this notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning. 
 
 ```{r}
 # Package names
-packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -38,7 +38,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been indicated by [RAB](http://rab.gov.rw/index.php?id=180) (Maize, Wheat, Rice, Potato, Cassava and Bean) for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the distribution of Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
+The following chunk downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), Maize, Wheat, Rice, Potato, Cassava and Bean, for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the distribution of Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
 
 ```{r}
 # Data downloads -----------------------------------------------------------
@@ -67,6 +67,12 @@ unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 
 ## Observational data
 
+RAB's 6 priority crop observations were assembled from 4 surveys:
+
+1. The currently ongoing RwaSIS survey designated as `base` (see the raw data at: [Kobo]())
+2. 
+3.
+4.
 
 ## Gridded data
 
