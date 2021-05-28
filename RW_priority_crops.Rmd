@@ -20,7 +20,7 @@ The main intent of this notebook is to illustrate starter code for predictive cr
 
 # General data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on [Github](), and you can fork and modify the code from there as you see fit.
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit.
 
 ```{r}
 # Package names
@@ -38,7 +38,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of the priority crops (Maize, Wheat, Rice, Potato, Cassava and Bean) and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
+The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops by [RAB](http://rab.gov.rw/index.php?id=180) (Maize, Wheat, Rice, Potato, Cassava and Bean) and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
 
 ```{r}
 # Data downloads -----------------------------------------------------------
@@ -92,4 +92,4 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands and crop distributions must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of crop distributions must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
