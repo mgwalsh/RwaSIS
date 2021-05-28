@@ -46,6 +46,7 @@ The following chunk then downloads the data that we have assembled, which are ne
 dir.create("Priority_crops", showWarnings=F)
 setwd("./Priority_crops")
 dir.create("Results", showWarnings=F)
+dir.create("Figures", showWarnings=F)
 
 # Download crop data
 download("", mode = "wb")
@@ -90,4 +91,4 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of crop distributions must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
