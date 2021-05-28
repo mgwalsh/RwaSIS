@@ -38,7 +38,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been indicated by [RAB](http://rab.gov.rw/index.php?id=180) (Maize, Wheat, Rice, Potato, Cassava and Bean) for management response trials and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
+The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been indicated by [RAB](http://rab.gov.rw/index.php?id=180) (Maize, Wheat, Rice, Potato, Cassava and Bean) for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
 
 ```{r}
 # Data downloads -----------------------------------------------------------
@@ -47,10 +47,8 @@ dir.create("Priority_crops", showWarnings=F)
 setwd("./Priority_crops")
 dir.create("Results", showWarnings=F)
 
-# Download soil data
-download("https://osf.io/djcfz?raw=1", "RW_wetchem.zip", mode = "wb")
-unzip("RW_wetchem.zip", overwrite = T)
-prof <- read.table("Profiles.csv", header = T, sep = ",")
+# Download crop data
+download("", mode = "wb")
 samp <- read.table("Samples.csv", header = T, sep = ",")
 geos <- merge(prof, samp, by="pid")
 
