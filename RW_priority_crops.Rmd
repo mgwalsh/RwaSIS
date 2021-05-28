@@ -16,11 +16,11 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running the code.
+The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it.
 
 # General data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit.
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit.
 
 ```{r}
 # Package names
@@ -38,7 +38,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops by [RAB](http://rab.gov.rw/index.php?id=180) (Maize, Wheat, Rice, Potato, Cassava and Bean) and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
+The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been indicated by [RAB](http://rab.gov.rw/index.php?id=180) (Maize, Wheat, Rice, Potato, Cassava and Bean) for management response trials and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
 
 ```{r}
 # Data downloads -----------------------------------------------------------
@@ -88,7 +88,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 
 * a - anthropic variables
 * c - climatic variables
-* o - organismal and ecologically successional variables
+* o - organismal and ecologically succession variables
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
