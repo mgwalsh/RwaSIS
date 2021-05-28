@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropland land use types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running the code.
+The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running the code.
 
 # General data setup
 
