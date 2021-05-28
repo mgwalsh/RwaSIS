@@ -1,0 +1,39 @@
+---
+title: Crop distribution modeling and small area mapping 
+author: M.G. Walsh, R. Manners, ...
+date: "`r format(Sys.time(), '%d, %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 1
+    fig_caption: true
+    css: style.css
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+# Introduction
+
+The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) that define the crop and cropland land use types in a given country or any other ROI. We use Rwanda's most recent (and legacy) cropland survey data here and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience.
+
+# General data setup
+
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide GeoSurvey observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify the code from there as you see fit.
+
+```{r}
+# Package names
+packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
+
+# Install packages
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+    install.packages(packages[!installed_packages])
+}
+
+# Load packages
+invisible(lapply(packages, library, character.only = TRUE))
+```
+
+
