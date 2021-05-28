@@ -16,11 +16,11 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) that define the crop and cropland land use types in a given country or any other ROI. We use Rwanda's most recent (and legacy) cropland survey data here and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience.
+The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropland land use types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running the code.
 
 # General data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide GeoSurvey observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify the code from there as you see fit.
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on [Github](), and you can fork and modify the code from there as you see fit.
 
 ```{r}
 # Package names
@@ -36,4 +36,60 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
+## Data downloads
 
+The following chunk then downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of the priority crops (Maize, Wheat, Rice, Potato, Cassava and Bean) and links these to remote sensing and GIS images represented by the `grids` feature stack. We focus on predicting the Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures would need to be changed to run on Windows machines.
+
+```{r}
+# Data downloads -----------------------------------------------------------
+# Create a data folder in  your current working directory
+dir.create("Priority_crops", showWarnings=F)
+setwd("./Priority_crops")
+dir.create("Results", showWarnings=F)
+
+# Download soil data
+download("https://osf.io/djcfz?raw=1", "RW_wetchem.zip", mode = "wb")
+unzip("RW_wetchem.zip", overwrite = T)
+prof <- read.table("Profiles.csv", header = T, sep = ",")
+samp <- read.table("Samples.csv", header = T, sep = ",")
+geos <- merge(prof, samp, by="pid")
+
+# Download and assemble raster stacks
+download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
+unzip("RW_250m_2020.zip", overwrite = T)
+download("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip", mode = "wb")
+unzip("RW_GS_preds.zip", overwrite = T)
+glist <- list.files(pattern="tif", full.names = T)
+grids <- stack(glist)
+
+# Download cropland mask
+download("https://osf.io/bmysp/", "RW_CP_mask.zip", mode = "wb")
+exdir <- "./Mask" 
+unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
+
+# Download figures
+download("https://osf.io/42gry/", "figures.zip", mode = "wb")
+exdir <- "./Figures" 
+unzip("figures.zip", exdir = exdir, overwrite = T)
+```
+
+## Gridded data
+
+The processed Rwanda grid data (in the `grids` raster stack) were derived and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
+
+\
+```{r, echo=FALSE, results='asis'}
+download("https://osf.io/ag6fk?raw=1", "./RW_GS20/GS variables.csv", mode = "wb")
+vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
+datatable(vars)
+```
+\
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
+
+* a - anthropic variables
+* c - climatic variables
+* o - organismal and ecologically successional variables
+* r - relief / topographical variables
+* s - parent material and soil related variables
+
+The main notion here is that the occurrence and distribution of croplands and crop distributions must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
