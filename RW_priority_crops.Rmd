@@ -134,7 +134,7 @@ gsdat <- gsdat[sample(1:nrow(gsdat)), ]
 # Write out data frame
 write.csv(gsdat, "./Priority_crops/Results/RW_priority_crop_dist.csv", row.names = F)
 
-# Plot combined crop survey observation locations
+# Plot combined crop survey locations
 w <- leaflet() %>%
   setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
@@ -147,3 +147,28 @@ w ## plot widget
 
 The following chunks calibrate crop presence/absence distribution observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined or stacked) on an *independent validation dataset*.
 
+To start the fitting processes covered in this section, the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
+
+```{r}
+# Remove extraneous objects & incomplete cases
+rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
+gsdat <- gsdat[complete.cases(gsdat[ ,c(19:67)]),] ## removes incomplete cases
+
+# Set calibration/validation set randomization seed
+seed <- 12358
+set.seed(seed)
+
+# Split data into calibration and validation sets
+gsIndex <- createDataPartition(gsdat$bean, p = 4/5, list = F, times = 1)
+gs_cal <- gsdat[ gsIndex,]
+gs_val <- gsdat[-gsIndex,]
+
+# GeoSurvey calibration labels
+labs <- c("bean") ## insert other presence/absence labels here (e.g. maize, wheat, rice, potato or cassava)
+lcal <- as.vector(t(gs_cal[labs]))
+
+# Raster calibration features
+fcal <- gs_cal[ ,19:38,42:67]
+```
+
+Note that we are using the observed `bean` distribution data here. You can also substitute other crops as labels and specify those with the `labs` variable in the chunk above. The additional labels are included in the `RW_soil_data.csv` data file, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
