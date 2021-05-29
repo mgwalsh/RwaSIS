@@ -38,7 +38,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), Maize, Wheat, Rice, Potato, Cassava and Bean, for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the distribution of Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
+The following chunk downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), Maize, Wheat, Rice, Potato, Cassava and Bean, for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the distribution of Maize here, but the approach is equally applicable to any given [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
 
 ```{r}
 # Create a data folder in  your current working directory
@@ -50,6 +50,11 @@ dir.create("Results", showWarnings=F)
 download("https://osf.io/zqh9y/?raw=1", "priority_crops.csv.zip", mode = "wb")
 unzip("priority_crops.csv.zip", overwrite = T)
 crop <- read.table("priority_crops.csv", header = T, sep = ",")
+
+# Download GADM-L5 shapefile (courtesy of: http://www.gadm.org)
+download("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_level5.zip", mode = "wb")
+unzip("RWA_level5.zip", overwrite = T)
+shape <- shapefile("gadm36_RWA_5.shp")
 
 # Download raster stacks
 download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
@@ -97,3 +102,32 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * s - parent material and soil related variables
 
 The main notion here is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
+
+## Complete Rwanda crop survey dataframe
+
+This next chunk reprojects the priority data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_crop_data.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 5.1k+ crop survey observations were obtained.
+
+```{r}
+# Project GeoSurvey coords to grid CRS
+crop.proj <- as.data.frame(project(cbind(crop$lon, crop$lat), "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"))
+colnames(crop.proj) <- c("x","y")
+geos <- cbind(crop, crop.proj)
+coordinates(crop) <- ~x+y
+projection(crop) <- projection(grids)
+
+# Extract gridded variables at GeoSurvey locations
+cropgrid <- extract(grids, crop)
+gsdat <- as.data.frame(cbind(crop, cropgrid))
+
+# Write out data frame
+write.csv(gsdat, "./RW_GS20/Results/RW_GS_data.csv", row.names = F)
+
+# Plot GeoSurvey sample locations
+w <- leaflet() %>%
+  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
+saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
+w ## plot widget 
+```
+
