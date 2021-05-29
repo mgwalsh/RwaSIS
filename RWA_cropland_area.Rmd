@@ -159,7 +159,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 
 The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
 
-## Complete Rwanda GeoSurvey dataframe
+## Combined Rwanda GeoSurvey dataframe
 
 This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify the GeoSurvey locations is available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
