@@ -143,3 +143,7 @@ saveWidget(w, './Priority_crops/Results/RW_crop_locs.html', selfcontained = T) #
 w ## plot widget 
 ```
 
+# Ensemble machine learning based mapping with `caret` and `caretEnsemble`
+
+The following chunks calibrate crop presence/absence distribution observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined or stacked) on an *independent validation dataset*.
+
