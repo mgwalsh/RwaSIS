@@ -80,7 +80,7 @@ RAB's 6 priority crop occurrence observations (presence/absence) for Rwanda were
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 602 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions from the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and has to be treated as such in some of the analyses below. 
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should to be treated as such for the purpose of some of the SAE analyses below. It is however very useful for mapping similar areas accross Rwanda, which is precisely why it is included here. 
 
 ## Gridded data
 
