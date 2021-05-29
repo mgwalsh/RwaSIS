@@ -76,7 +76,7 @@ RAB's 6 priority crop occurrence observations (presence/absence) for Rwanda were
 
 1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS survey progresses, and we will update the numbers accordingly.
 
-2. The [CIALCA Farm Heterogeneity Survey of Rwanda](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 2,483 georeferenced observations in this survey in which at least one of the priority crops is present. Note that the spatial coordinates for this survey have been slightly offset to protect the privacy of farmers.
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 2,483 georeferenced observations in this survey in which at least one of the priority crops is present. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the household rather than the locations of actual fields.
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 602 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions from the soil survey's meta-data.
 
@@ -93,7 +93,7 @@ vars <- read.table("./Priority_crops/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(C) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(cpa) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
@@ -108,6 +108,14 @@ The main notion here is that the occurrence and distribution of croplands and cr
 This next chunk reprojects the priority data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_crop_data.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 5.1k+ crop survey observations were obtained.
 
 ```{r}
+# Attach GADM-L5 administrative unit names from shape
+coordinates(crop) <- ~lon+lat
+projection(crop) <- projection(shape)
+gadm <- crop %over% shape
+crop <- as.data.frame(crop)
+crop <- cbind(gadm[ ,c(4,6,8,10,12)], crop)
+colnames(crop) <- c("region","district","sector","cell", "village","survey","scode","lon","lat","maize","wheat","rice","potato","cassava","bean")
+
 # Project GeoSurvey coords to grid CRS
 crop.proj <- as.data.frame(project(cbind(crop$lon, crop$lat), "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"))
 colnames(crop.proj) <- c("x","y")
@@ -120,14 +128,14 @@ cropgrid <- extract(grids, crop)
 gsdat <- as.data.frame(cbind(crop, cropgrid))
 
 # Write out data frame
-write.csv(gsdat, "./RW_GS20/Results/RW_GS_data.csv", row.names = F)
+write.csv(gsdat, "./Priority_crops/Results/RW_priority_crop_data.csv", row.names = F)
 
 # Plot GeoSurvey sample locations
 w <- leaflet() %>%
   setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
-saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
+saveWidget(w, 'RW_crop_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
 
