@@ -1,5 +1,5 @@
 ---
-title: Crop distribution modeling and small area estimation 
+title: Crop distribution survey meta-analyses and small area estimation 
 author: M.G. Walsh, R. Manners, ...
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](), which describes some of the prediction methods and the associated SAE procedures in more detail.
+The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) based on that, which define the crop and cropping systems types in a given country or any other ROI. We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](https://osf.io/shkxp/), which describes some of the spatial prediction methods and the associated SAE procedures in more detail.
 
 # General data setup
 
@@ -67,12 +67,15 @@ unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 
 ## Observational data
 
-RAB's 6 priority crop observations were assembled from 4 surveys:
+RAB's 6 priority crop (presence/absence) observations for Rwanda were assembled from 4 surveys:
 
-1. The currently ongoing RwaSIS survey designated as `base` (see the raw data at: [Kobo]())
-2. 
-3.
-4.
+1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS survey progresses and we will update the numbers accordingly.
+
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 2,483 georeferenced observations in this survey in which at least one of the priority crops is present. Note that the spatial coordinates for this survey have been slightly offset to protect the privacy of farmers.
+
+3. The [CNLS]() soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](). There are 602 observations in this survey in which at least one of the priority crops is present. These were extracted from the crop type descriptions from the soil survey meta-data.
+
+4. The [RAB]() soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and has to be treated as such in some of the analyses below. 
 
 ## Gridded data
 
@@ -81,15 +84,15 @@ The pre-processed Rwanda grid data (in the `grids` raster stack) were derived an
 \
 ```{r, echo=FALSE, results='asis'}
 download("https://osf.io/ag6fk?raw=1", ".//GS variables.csv", mode = "wb")
-vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
+vars <- read.table("./Priority_crops/GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of cropland (`CP`) as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(CP) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(C) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
-* o - organismal and ecologically succession variables
+* o - organismal and successional variables
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
