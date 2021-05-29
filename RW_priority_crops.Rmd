@@ -103,7 +103,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 
 The main notion here is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
 
-## Complete Rwanda crop survey dataframe
+## Combined Rwanda crop survey dataframe
 
 This next chunk reprojects the priority data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_crop_data.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 5.1k+ crop survey observations were obtained.
 
@@ -126,6 +126,10 @@ projection(crop) <- projection(grids)
 # Extract gridded variables at GeoSurvey locations
 cropgrid <- extract(grids, crop)
 gsdat <- as.data.frame(cbind(crop, cropgrid))
+
+# Randomize dataframe
+set.seed(1235813)
+gsdat <- gsdat[sample(1:nrow(gsdat)), ]
 
 # Write out data frame
 write.csv(gsdat, "./Priority_crops/Results/RW_priority_crop_data.csv", row.names = F)
