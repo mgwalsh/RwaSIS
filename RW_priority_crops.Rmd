@@ -74,7 +74,7 @@ unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 
 RAB's 6 priority crop occurrence observations (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
 
-1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
+1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
 2. The [CIALCA Farm Heterogeneity Survey of Rwanda](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 2,483 georeferenced observations in this survey in which at least one of the priority crops is present. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the households rather than the locations of actual fields.
 
@@ -88,8 +88,8 @@ The pre-processed Rwanda grid data (in the `grids` raster stack) were derived an
 
 \
 ```{r, echo=FALSE, results='asis'}
-download("https://osf.io/e2x4s?raw=1", "./Wetchem/Grid variables.csv", mode = "wb")
-vars <- read.table("./Wetchem/Grid variables.csv", header = T, sep = ",")
+download("https://osf.io/e2x4s?raw=1", "./Priority_crops/Grid variables.csv", mode = "wb")
+vars <- read.table("./Priority_crops/Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
@@ -119,7 +119,7 @@ colnames(crop) <- c("region","district","sector","cell", "village","survey","sco
 # Project GeoSurvey coords to grid CRS
 crop.proj <- as.data.frame(project(cbind(crop$lon, crop$lat), "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"))
 colnames(crop.proj) <- c("x","y")
-geos <- cbind(crop, crop.proj)
+crop <- cbind(crop, crop.proj)
 coordinates(crop) <- ~x+y
 projection(crop) <- projection(grids)
 
@@ -139,7 +139,7 @@ w <- leaflet() %>%
   setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
-saveWidget(w, 'RW_crop_locs.html', selfcontained = T) ## save widget
+saveWidget(w, './Priority_crops/Results/RW_crop_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
 
