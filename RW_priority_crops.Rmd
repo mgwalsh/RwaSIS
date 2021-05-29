@@ -41,7 +41,6 @@ invisible(lapply(packages, library, character.only = TRUE))
 The following chunk downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), Maize, Wheat, Rice, Potato, Cassava and Bean, for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the distribution of Maize here, but the approach is equally applicable to any given  [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
 
 ```{r}
-# Data downloads -----------------------------------------------------------
 # Create a data folder in  your current working directory
 dir.create("Priority_crops", showWarnings=F)
 setwd("./Priority_crops")
