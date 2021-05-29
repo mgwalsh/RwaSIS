@@ -1,6 +1,6 @@
 ---
-title: Crop distribution survey meta-analyses and small area estimation 
-author: M.G. Walsh, R. Manners, ...
+title: Crop distribution survey predictions and small area estimation 
+author: M.G. Walsh, R. Manners and J. Rutebuka
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to illustrate starter code for predictive crop type and cropping systems distribution mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html), which define the crop and cropping systems types in a given region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)). We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](https://osf.io/shkxp/), which describes some of the spatial prediction methods and the associated SAE procedures in more detail.
+The main intent of this notebook is to illustrate starter code for predictive crop and cropping systems distribution mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html), which define the crop and cropping systems types in a given region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)). We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](https://osf.io/shkxp/), which describes some of the spatial prediction methods and the associated SAE procedures in more detail.
 
 # General data setup
 
@@ -24,7 +24,7 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r}
 # Package names
-packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "glmnet", "randomForest", "xgboost", "nnet", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -72,7 +72,7 @@ unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 
 ## Priority crop occurrence data
 
-RAB's 6 priority crop occurrence observations (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
+RAB's 6 priority crop occurrences (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
 
 1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
@@ -80,7 +80,7 @@ RAB's 6 priority crop occurrence observations (presence/absence) for Rwanda were
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 602 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions from the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should to be treated as such for the purpose of some of the SAE analyses below. It is however very useful for mapping similar areas accross Rwanda, which is precisely why it is included here. 
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is precisely why it is included here. 
 
 ## Gridded data
 
@@ -139,7 +139,6 @@ w <- leaflet() %>%
   setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
-saveWidget(w, './Priority_crops/Results/RW_crop_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
 
@@ -152,7 +151,7 @@ To start the fitting processes covered in this section, the next chunk scrubs so
 ```{r}
 # Remove extraneous objects & incomplete cases
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
-gsdat <- gsdat[complete.cases(gsdat[ ,c(19:67)]),] ## removes incomplete cases
+gsdat <- gsdat[complete.cases(gsdat[ ,c(16:71)]),] ## removes incomplete cases
 
 # Set calibration/validation set randomization seed
 seed <- 12358
@@ -166,9 +165,105 @@ gs_val <- gsdat[-gsIndex,]
 # GeoSurvey calibration labels
 labs <- c("bean") ## insert other presence/absence labels here (e.g. maize, wheat, rice, potato or cassava)
 lcal <- as.vector(t(gs_cal[labs]))
+lcal <- ifelse(lcal == 1, "Y", "N")
 
 # Raster calibration features
-fcal <- gs_cal[ ,19:38,42:67]
+fcal <- gs_cal[ ,16:40,44:71]
 ```
 
-Note that we are using the observed `bean` distribution data here. You can also substitute other crops as labels and specify those with the `labs` variable in the chunk above. The additional labels are included in the `RW_soil_data.csv` data file, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
+Note that while we are using the observed `bean` distribution data here, you can also substitute other crops as labels and specify those with the `labs` variable in the chunk above. The additional priority crop labels are included in the `RW_soil_data.csv` data file, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
+
+## Spatial trend model with `caret`
+
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `bean` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. We use the standard `caret` syntax here to illustrate the general specification, output and prediction steps. Also note that we always save the current models as [`.Rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows us to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
+
+```{r}
+# Select spatial covariates
+gf_cpv <- gs_cal[ ,41:43] ## specifies features as DX, DY & DXY coordinate rasters
+
+# Start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc) ## this parallizes
+
+# Control setup for cross-validation
+set.seed(seed)
+tc <- trainControl(method = "cv", classProbs = T, 
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# Model training
+gm <- train(gf_cpv, lcal, 
+            method = "gam",
+            preProc = c("center","scale"), 
+            family = "binomial",
+            metric = "ROC",
+            trControl = tc)
+
+# Model outputs & predictions
+gm.pred <- predict(grids, gm, type = "prob") ## spatial predictions
+stopCluster(mc)
+fname <- paste("./Priority_crops/Results/", labs, "_gm.rds", sep = "")
+saveRDS(gm, fname)
+```
+
+## Central place theory model with `caret`
+
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where specific crops are likely to occur (or not, e.g. in forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. 
+
+```{r, results='hide'}
+# Select central place covariates
+gf_cpv <- gs_cal[ ,27:40] ## these are the anthropic "distance-to" central place features
+
+# Start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Control setup for cross validation
+set.seed(seed)
+tc <- trainControl(method = "cv", classProbs = T,
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# Model training
+cp <- train(gf_cpv, lcal, 
+            method = "glmStepAIC",
+            family = "binomial",
+            preProc = c("center","scale"), 
+            trControl = tc,
+            metric ="ROC")
+
+# Model outputs & predictions
+cp.pred <- predict(grids, cp, type = "prob") ## central place predictions
+stopCluster(mc)
+fname <- paste("./Priority_crops/Results/", labs, "_cp.rds", sep = "")
+saveRDS(cp, fname)
+```
+
+## Fitting several additional models with `caretEnsemble`
+
+The next chunk fits 4 additional ML models that use the that use all of gridded calibration data with 10-fold cross-validation. You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be computationally challenging for larger countries like Tanzania or Ethiopia. We fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
+
+```{r, warning = FALSE, results='hide'}
+# Start doParallel to parallelize model fitting
+set.seed(seed)
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Specify model training controls
+tc <- trainControl(method = "cv", number = 10, classProbs = T,
+                   summaryFunction = twoClassSummary, allowParallel = TRUE, savePredictions="final")
+
+# Fit 4 calibration models using all of the gridded features
+clist <- caretList(fcal, lcal,
+                   trControl = tc,
+                   tuneList = NULL,
+                   methodList = c("glmStepAIC", "rf", "xgbTree", "nnet"),
+                   preProcess = c("center","scale"),
+                   metric = "ROC")
+
+gl.pred <- predict(grids, clist$glmStepAIC, type = "prob")
+rf.pred <- predict(grids, clist$rf, type = "prob")
+xt.pred <- predict(grids, clist$xgbTree, type = "prob")
+nn.pred <- predict(grids, clist$nnet, type = "prob")
+stopCluster(mc)
+fname <- paste("./Priority_crops/Results/", labs, "_clist.rds", sep = "")
+saveRDS(clist, fname)
+```
