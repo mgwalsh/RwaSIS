@@ -65,9 +65,9 @@ exdir <- "./Mask"
 unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 ```
 
-## Observational data
+## Priority crop occurrence data
 
-RAB's 6 priority crop (presence/absence) observations for Rwanda were assembled from 4 surveys:
+RAB's 6 priority crop occurrence observations (presence/absence) for Rwanda were assembled from 4 surveys:
 
 1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS survey progresses, and we will update the numbers accordingly.
 
