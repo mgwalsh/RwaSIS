@@ -48,8 +48,9 @@ setwd("./Priority_crops")
 dir.create("Results", showWarnings=F)
 
 # Download crop data
-download("", mode = "wb")
-samp <- read.table("Samples.csv", header = T, sep = ",")
+download("https://osf.io/zqh9y/?raw=1", "priority_crops.csv.zip", mode = "wb")
+unzip("priority_crops.csv.zip", overwrite = T)
+crop <- read.table("priority_crops.csv", header = T, sep = ",")
 
 # Download raster stacks
 download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
