@@ -1,5 +1,5 @@
 ---
-title: Crop distribution survey predictions and small area estimation 
+title: Crop distribution predictions from survey data and small area estimation 
 author: M.G. Walsh, R. Manners and J. Rutebuka
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -72,15 +72,15 @@ unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 
 ## Priority crop occurrence data
 
-RAB's 6 priority crop occurrences (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
+RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
 
-1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,126 observations in this survey in which at least one of the priority crops is present. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
+1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,290 observations in this survey. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
-2. The [CIALCA Farm Heterogeneity Survey of Rwanda](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 2,483 georeferenced observations in this survey in which at least one of the priority crops is present. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the households rather than the locations of actual fields.
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 3,570 georeferenced observations in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than the locations of actual fields.
 
-3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 602 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions from the soil survey's meta-data.
+3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 602 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is precisely why it is included here. 
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here. 
 
 ## Gridded data
 
