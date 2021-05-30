@@ -1,5 +1,5 @@
 ---
-title: Crop distribution predictions from survey data and small area estimation 
+title: Crop distribution predictions from survey data and small area estimates
 author: M.G. Walsh, J. Rutebuka and R. Manners
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -342,7 +342,7 @@ stm.pred <- mask(1-st.pred, cpmask, inverse=FALSE, maskvalue=NA, updatevalue=NA)
 stll <- projectRaster(stm.pred, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # Set color pallette
-pal <- colorBin("Greens", domain = 0:1, na.color = "transparent")
+pal <- colorBin("Reds", domain = 0:1, na.color = "transparent")
 
 # Render map
 w <- leaflet() %>% 
@@ -352,3 +352,7 @@ w <- leaflet() %>%
   addLegend(pal = pal, values = values(stll), title = "Probability")
 w ## plot widget
 ```
+
+# Small area estimates (SAE)
+
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as the ones presented here, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
