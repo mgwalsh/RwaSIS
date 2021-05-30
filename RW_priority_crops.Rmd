@@ -150,7 +150,7 @@ The following chunks calibrate crop presence/absence distribution observations u
 To start the fitting processes covered in this section, the next chunk scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
 
 ```{r}
-# Remove extraneous objects & incomplete cases
+# Remove extraneous objects
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
 
 # Set calibration/validation set randomization seed
