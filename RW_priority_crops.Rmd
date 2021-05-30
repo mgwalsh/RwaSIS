@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-The main intent of this notebook is to demonstrate starter code for predictive crop and cropping systems distribution mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html), which define the crop and cropping systems types in a given region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)). We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](https://osf.io/shkxp/), which describes some of the spatial prediction methods and the associated SAE procedures in more detail.
+The main intent of this notebook is to demonstrate starter code for predictive crop and cropping systems distribution mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html), which define the crop and cropping systems types in a given region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)). We use both Rwanda's most recent and some of its legacy cropland survey (label) data here and the associated gridded raster (features) to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast so as to not test your patience in running it. The notebook is publicly maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd), and you can fork and modify it from there as you see fit. You may also want to take a look at the [GeoSurvey cropland area notebook](https://osf.io/shkxp/), which describes some of the spatial prediction methods and the associated SAE estimation procedures in more detail.
 
 # General data setup
 
@@ -126,6 +126,7 @@ projection(crop) <- projection(grids)
 # Extract gridded variables at GeoSurvey locations
 cropgrid <- extract(grids, crop)
 gsdat <- as.data.frame(cbind(crop, cropgrid))
+gsdat <- gsdat[complete.cases(gsdat[ ,c(16:71)]),] ## removes incomplete cases
 
 # Define unique grid ID's (GID)
 res.pixel <- 10000 ## specifies GID scale (res.pixel, in m) ... you can change this
@@ -136,12 +137,9 @@ gidy <- ifelse(gsdat$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
 GID <- paste(gidx, gidy, sep="")
 gsdat <- cbind(GID, gsdat)
 
-# Randomize dataframe
+# Randomize and writeout dataframe
 set.seed(1235813)
 gsdat <- gsdat[sample(1:nrow(gsdat)), ]
-
-# Write out data frame
-gsdat <- gsdat[complete.cases(gsdat[ ,c(16:71)]),] ## removes incomplete cases
 write.csv(gsdat, "./Priority_crops/Results/RW_priority_crop_dist.csv", row.names = F)
 
 # Plot combined crop survey locations
@@ -181,7 +179,7 @@ lcal <- ifelse(lcal == 1, "Y", "N")
 fcal <- gs_cal[ ,17:41,45:72]
 ```
 
-Note that while we are using the `bean` distribution data here, you can also substitute the other crops as labels and specify those with the `labs` variable in the chunk above. The additional labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
+Note that while we are using the `bean` distribution data here, you can also substitute the other crops as labels and specify those with the `labs` variable in the chunk above. The 5 additional crop labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
 
 ## Spatial trend model with `caret`
 
@@ -365,6 +363,6 @@ w ## plot widget
 
 # Small area estimates (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI (e.g., `GID` or similar). If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional covariates (auxiliary variables), which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain*  (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional covariates (auxiliary variables), which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
 
 
