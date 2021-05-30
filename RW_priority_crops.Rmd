@@ -76,9 +76,9 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 
 1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,290 observations in this survey. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
-2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 3,470 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
 
-3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 602 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
+3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
 4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here. 
 
@@ -267,3 +267,52 @@ stopCluster(mc)
 fname <- paste("./Priority_crops/Results/", labs, "_clist.rds", sep = "")
 saveRDS(clist, fname)
 ```
+
+# Model stacking with `caret`
+
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous training steps. Again, the fitting is done with cross-validation.
+
+```{r, results = 'hide'}
+# Stacking setup
+preds <- stack(1-gm.pred, 1-cp.pred, 1-gl.pred, 1-rf.pred, 1-xt.pred, 1-nn.pred)
+names(preds) <- c("gm","cp","gl","rf","xt","nn")
+
+# Extract predictions on the validation set
+coordinates(gs_val) <- ~x+y
+projection(gs_val) <- projection(preds)
+gspred <- extract(preds, gs_val) ## extracts the probabilities of each model in the stack
+gspred <- as.data.frame(cbind(gs_val, gspred))
+
+# Set validation labels and features
+gs_val <- as.data.frame(gs_val)
+lval <- as.vector(t(gs_val[labs])) ##  subset validation labels
+lval <- ifelse(lval == 1, "Y", "N")
+fval <- gspred[ ,72:77] ## subset validation features
+
+# Start doParallel to parallelize model fitting
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Control setup
+set.seed(1385321)
+tc <- trainControl(method = "repeatedcv", number = 10, repeats = 3, classProbs = T, 
+                   summaryFunction = twoClassSummary, allowParallel = T)
+
+# Model training
+st <- train(fval, lval,
+            method = "glmStepAIC",
+            family = "binomial",
+            metric = "ROC",
+            trControl = tc)
+
+# Model outputs & predictions
+st.pred <- predict(preds, st, type = "prob") ## stacked spatial predictions
+stopCluster(mc)
+fname <- paste("./Priority_crops/Results/", labs, "_st.rds", sep = "")
+saveRDS(st, fname)
+```
+
+```{r, echo = FALSE}
+summary(st)
+```
+
