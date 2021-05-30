@@ -171,7 +171,7 @@ lcal <- ifelse(lcal == 1, "Y", "N")
 fcal <- gs_cal[ ,16:40,44:71]
 ```
 
-Note that while we are using the observed `bean` distribution data here, you can also substitute other crops as labels and specify those with the `labs` variable in the chunk above. The additional priority crop labels are included in the `RW_soil_data.csv` data file, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
+Note that while we are using the `bean` distribution data here, you can also substitute the other crops as labels and specify those with the `labs` variable in the chunk above. The additional labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
 
 ## Spatial trend model with `caret`
 
@@ -332,4 +332,22 @@ gspre <- extract(gspreds, gsdat)
 gsout <- as.data.frame(cbind(gsdat, gspre))
 fname <- paste("./Priority_crops/Results/","RW_", labs, "_out.csv", sep = "")
 write.csv(gsout, fname, row.names = F)
+
+# Apply cropland mask
+cpmask <- raster("./Priority_crops/Mask/RW_CP_mask.tif")
+stm.pred <- mask(1-st.pred, cpmask, inverse=FALSE, maskvalue=NA, updatevalue=NA)
+
+# Project stm.pred to EPSG:3857
+stll <- projectRaster(stm.pred, crs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+# Set color pallette
+pal <- colorBin("Greens", domain = 0:1, na.color = "transparent")
+
+# Render map
+w <- leaflet() %>% 
+  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
+  addRasterImage(stll, colors = pal, opacity = 0.5) %>%
+  addLegend(pal = pal, values = values(stll), title = "Probability")
+w ## plot widget
 ```
