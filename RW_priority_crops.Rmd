@@ -259,6 +259,7 @@ clist <- caretList(fcal, lcal,
                    preProcess = c("center","scale"),
                    metric = "ROC")
 
+# Generate spatial predictions
 gl.pred <- predict(grids, clist$glmStepAIC, type = "prob")
 rf.pred <- predict(grids, clist$rf, type = "prob")
 xt.pred <- predict(grids, clist$xgbTree, type = "prob")
