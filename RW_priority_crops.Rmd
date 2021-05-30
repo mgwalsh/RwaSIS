@@ -145,9 +145,7 @@ w ## plot widget
 
 # Ensemble machine learning based mapping with `caret` and `caretEnsemble`
 
-The following chunks calibrate crop presence/absence distribution observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined or stacked) on an *independent validation dataset*.
-
-To start the fitting processes covered in this section, the next chunk scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
+The following chunks calibrate crop presence/absence distribution observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined or stacked) on an *independent validation dataset*. To start the fitting processes covered in this section, the next chunk scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
 
 ```{r}
 # Remove extraneous objects
@@ -317,7 +315,7 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-The next chunk sets writes out the 7 prediction grids to a geotif file, which can be imported to a GIS of your choice. It also generates an overview map of the cropland occurrence probabilities.
+The next chunk sets writes out the 7 prediction grids to a geotif file, which can be imported to a GIS of your choice. It also generates an overview map of the cropland occurrence probabilities for `beans` in this particular example.
 
 ```{r}
 # Write prediction grids
@@ -355,4 +353,4 @@ w ## plot widget
 
 # Small area estimates (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as the ones presented here, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, which have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
