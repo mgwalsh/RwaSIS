@@ -126,7 +126,7 @@ projection(crop) <- projection(grids)
 # Extract gridded variables at GeoSurvey locations
 cropgrid <- extract(grids, crop)
 gsdat <- as.data.frame(cbind(crop, cropgrid))
-gsdat <- gsdat[complete.cases(gsdat[ ,c(16:71)]),] ## removes incomplete cases
+gsdat <- gsdat[complete.cases(gsdat[ ,c(17:72)]),] ## removes incomplete cases
 
 # Define unique grid ID's (GID)
 res.pixel <- 10000 ## specifies GID scale (res.pixel, in m) ... you can change this
@@ -363,6 +363,13 @@ w ## plot widget
 
 # Small area estimates (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain*  (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem.
 
+The next chunk calculates small area estimates for the 30 national *districts* and 399 *sectors located within districts* that were assembled for the combined survey of Rwanda.
 
+```{r}
+# Small area hierarchical random-effect estimates by 399 sectors in 30 districts
+m0 <- glmer(bean ~ 1 + (1|district/sector), family = binomial, gsout) ## change to maize, wheat ... here 
+m1 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
+summary(m1)
+```
