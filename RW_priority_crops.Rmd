@@ -38,7 +38,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk downloads the data that we have assembled, which are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), Maize, Wheat, Rice, Potato, Cassava and Bean, for their planned management response trials and links these to remote sensing images and GIS data represented by the `grids` feature stack. We focus on predicting the distribution of Maize here, but the approach is equally applicable to any given [georeferenced](https://en.wikipedia.org/wiki/Georeferencing) crop type under consideration. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
+The following chunk downloads the data that are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), including Maize, Wheat, Rice, Potato, Cassava and Bean and links these to raster and GIS data features. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
 
 ```{r}
 # Create a data folder in  your current working directory
@@ -101,7 +101,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa (and many other parts of the world).
+The main notion is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa (and many other parts of the world).
 
 ## Combined Rwanda crop occurrence survey dataframe
 
