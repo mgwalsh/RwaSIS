@@ -101,7 +101,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion here is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
+The main notion here is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa (and many other parts of the world).
 
 ## Combined Rwanda crop occurrence survey dataframe
 
@@ -127,6 +127,15 @@ projection(crop) <- projection(grids)
 cropgrid <- extract(grids, crop)
 gsdat <- as.data.frame(cbind(crop, cropgrid))
 
+# Define unique grid ID's (GID)
+res.pixel <- 10000 ## specifies GID scale (res.pixel, in m) ... you can change this
+xgid <- ceiling(abs(gsdat$x)/res.pixel)
+ygid <- ceiling(abs(gsdat$y)/res.pixel)
+gidx <- ifelse(gsdat$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
+gidy <- ifelse(gsdat$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
+GID <- paste(gidx, gidy, sep="")
+gsdat <- cbind(GID, gsdat)
+
 # Randomize dataframe
 set.seed(1235813)
 gsdat <- gsdat[sample(1:nrow(gsdat)), ]
@@ -142,6 +151,8 @@ w <- leaflet() %>%
   addCircleMarkers(gsdat$lon, gsdat$lat, clusterOptions = markerClusterOptions())
 w ## plot widget 
 ```
+
+Note that the `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey locations, which you can use as waypoint input to a GPS (see e.g: [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using the administrative units. 
 
 # Ensemble machine learning based mapping with `caret` and `caretEnsemble`
 
@@ -166,7 +177,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 lcal <- ifelse(lcal == 1, "Y", "N")
 
 # Raster calibration features
-fcal <- gs_cal[ ,16:40,44:71]
+fcal <- gs_cal[ ,17:41,45:72]
 ```
 
 Note that while we are using the `bean` distribution data here, you can also substitute the other crops as labels and specify those with the `labs` variable in the chunk above. The additional labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
@@ -177,7 +188,7 @@ This is a simple spatially smoothed *generalized additive model* applying the `g
 
 ```{r}
 # Select spatial covariates
-gf_cpv <- gs_cal[ ,41:43] ## specifies features as DX, DY & DXY coordinate rasters
+gf_cpv <- gs_cal[ ,42:44] ## specifies features as DX, DY & DXY coordinate rasters
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -209,7 +220,7 @@ Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Cen
 
 ```{r, results='hide'}
 # Select central place covariates
-gf_cpv <- gs_cal[ ,27:40] ## these are the anthropic "distance-to" central place features
+gf_cpv <- gs_cal[ ,28:41] ## these are the anthropic "distance-to" central place features
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -286,7 +297,7 @@ gspred <- as.data.frame(cbind(gs_val, gspred))
 gs_val <- as.data.frame(gs_val)
 lval <- as.vector(t(gs_val[labs])) ##  subset validation labels
 lval <- ifelse(lval == 1, "Y", "N")
-fval <- gspred[ ,72:77] ## subset validation features
+fval <- gspred[ ,73:78] ## subset validation features
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
@@ -354,3 +365,5 @@ w ## plot widget
 # Small area estimates (SAE)
 
 The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, which have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem.
+
+
