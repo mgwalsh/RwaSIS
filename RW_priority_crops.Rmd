@@ -1,6 +1,6 @@
 ---
 title: Crop distribution predictions from survey data and small area estimation 
-author: M.G. Walsh, R. Manners and J. Rutebuka
+author: M.G. Walsh, J. Rutebuka and R. Manners
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -24,7 +24,7 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r}
 # Package names
-packages <- c("downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "glmnet", "randomForest", "xgboost", "nnet", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "glmnet", "randomForest", "xgboost", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -93,7 +93,7 @@ vars <- read.table("./Priority_crops/Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(crop) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(*crop*) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
@@ -132,6 +132,7 @@ set.seed(1235813)
 gsdat <- gsdat[sample(1:nrow(gsdat)), ]
 
 # Write out data frame
+gsdat <- gsdat[complete.cases(gsdat[ ,c(16:71)]),] ## removes incomplete cases
 write.csv(gsdat, "./Priority_crops/Results/RW_priority_crop_dist.csv", row.names = F)
 
 # Plot combined crop survey locations
@@ -146,12 +147,11 @@ w ## plot widget
 
 The following chunks calibrate crop presence/absence distribution observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined or stacked) on an *independent validation dataset*.
 
-To start the fitting processes covered in this section, the next chunk scrubs some of the extraneous objects in memory, removes any incomplete cases, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
+To start the fitting processes covered in this section, the next chunk scrubs some of the extraneous objects in memory, sets-up labels and features, and creates a randomized (80:20%) partition between the training and validation dataframes.
 
 ```{r}
 # Remove extraneous objects & incomplete cases
 rm(list=setdiff(ls(), c("gsdat","grids","glist"))) ## scrub extraneous objects in memory
-gsdat <- gsdat[complete.cases(gsdat[ ,c(16:71)]),] ## removes incomplete cases
 
 # Set calibration/validation set randomization seed
 seed <- 12358
