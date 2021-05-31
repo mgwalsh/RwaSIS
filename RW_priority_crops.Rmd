@@ -376,7 +376,7 @@ m2 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
 summary(m2)
 ```
 
-The use of of administrative units may be somewhat problematic for small area monitoring as administrative units tend to change over time. Imagine that at some stage in future that you would want to assess how crop distributions have changed, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., population growth accounting and/or politics). We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. This will avoid confusion for including new survey data and/or for change detection, monitoring, policy and planning.
+The use of of administrative units may be somewhat problematic for small area monitoring as administrative units tend to change over time. Imagine that at some stage in future that you would want to assess how crop distributions have changed, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., population growth accounting and/or politics). We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. This will avoid confusion for including both new survey data and/or for change detection, monitoring, local policy and planning.
 
 # Takeaways
 
