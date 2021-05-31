@@ -434,5 +434,5 @@ The main takeaways of this notebook are the following:
 
 * The predictions can be flexibly extended to include other priority crop distribution predictions and small area estimates that are needed for planning of response trials and monitoring activities.
 
-* We recommend a standard small equal area (such as the `GID`) over admistrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time ... barring meteor impacts.
+* We recommend a standard small equal area (such as the `GID`) over admistrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time ... barring any meteor impacts.
 
