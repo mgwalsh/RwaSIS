@@ -85,7 +85,7 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 ```{r, echo = FALSE, results = 'hide'}
 # summary crosstabs by individual surveys for reference
 maize <- as.data.frame.matrix(table(crop$survey, crop$maize > 0))
-wheat <- as.data.frame.matrix(table(cro$survey, crop$wheat > 0))
+wheat <- as.data.frame.matrix(table(crop$survey, crop$wheat > 0))
 rice <- as.data.frame.matrix(table(crop$survey, crop$rice > 0))
 potato <- as.data.frame.matrix(table(crop$survey, crop$potato > 0))
 cassava <- as.data.frame.matrix(table(crop$survey, crop$cassava > 0))
