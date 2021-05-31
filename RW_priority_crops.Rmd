@@ -378,8 +378,8 @@ The term *small area* conventionally refers to small administrative areas such a
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors
 # Change dependent variable labels from `bean` ... `maize`, `cassava`, etc here
-m0 <- glmer(bean ~ scode + (1|sector), family = binomial, gsout) ## base model
-m1 <- glmer(bean ~ scode+st + (1|sector), family = binomial, gsout)
+m0 <- glmer(bean ~ 1 + (1|sector), family = binomial, gsout) ## base model
+m1 <- glmer(bean ~ st + (1|sector), family = binomial, gsout)
 ```
 
 ```{r, echo = FALSE, results = 'hide'}
@@ -395,20 +395,30 @@ The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`
 
 ```{r}
 # Small area hierarchical random-effect estimates by 233 GIDs
-m2 <- glmer(bean ~ scode+st + (1|GID), family = binomial, gsout)
+m2 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
-The `anova` results in the chunk above, the SAEs reported by `GID` produce significantly more precise estimates than those produced by reporting by `sector`, relative to the `m0` base model, which does not take the spatial distribution predictions into account. This may be an artifact of the current `bean` distribution survey data that were available and used in this particular SAE model comparison that bear further investigation and more recent data. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind (see the `m2` SAE model estimates below).
+The `anova` results in the chunk above, the SAEs reported by `GID` produce significantly more precise estimates than those produced by reporting by `sector`, and relative to the `m0` base model, which does not take the spatial distribution predictions into account. This may be an artifact of the current `bean` distribution survey data that were available and used in this particular SAE model comparison that bear further investigation and more recent data. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind (see the `m2` SAE model estimates below).
 
 ```{r, echo = FALSE}
 summary(m2)
 ``` 
 
-The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. Again, the estimates can be flexibly extended to include other crop distributions.
+The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results in the combined survey. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. Again, the estimates can be flexibly extended to include other crop distributions.
 
 ```{r}
 bean <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
+bean$GID = rownames(bean)
+
+sae.ran <- ranef(m2)
+sae.rse <- se.ranef(m2)
+sae.est <- as.data.frame(rownames(sae.ran$GID))
+colnames(sae.est) <- c("GID")
+sae.est$ranef <- sae.ran$GID[,1]
+sae.est$se <- sae.rse$GID[,1]
+bean <- merge(bean, sae.est, by = "GID")
+colnames(bean) <- c("GID", "absent", "present", "ranef", "se")
 
 ```
 
