@@ -93,7 +93,7 @@ vars <- read.table("./Priority_crops/Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and I will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f*(*crop*) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide (actually Africa-wide) features will change over time and we will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f* (*crop*) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
@@ -105,7 +105,7 @@ The main notion is that the occurrence and distribution of croplands and crop ty
 
 ## Combined Rwanda crop occurrence survey dataframe
 
-This next chunk reprojects the priority data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_priority_crop_dist.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 5.1k+ crop survey observations were obtained.
+This next chunk reprojects the crop data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_priority_crop_dist.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 6k+ crop survey observations were obtained.
 
 ```{r}
 # Attach GADM-L5 administrative unit names from shape
@@ -363,11 +363,15 @@ w ## plot widget
 
 # Small area estimates (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem. The next chunk calculates small area estimates for the 30 national *districts* and 399 *sectors located within districts* that were assembled for the combined survey of Rwanda.
+The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem. The next chunk initially calculates small area estimates using some [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for *district* and *sector in district* level administrative units.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors in 30 districts
 m0 <- glmer(bean ~ 1 + (1|district/sector), family = binomial, gsout) ## change to maize, wheat ... here 
-m1 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
-summary(m1)
+m1 <- glmer(bean ~ scode + (1|district/sector), family = binomial, gsout)
+m2 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
+```
+
+```{r}
+summary(m2)
 ```
