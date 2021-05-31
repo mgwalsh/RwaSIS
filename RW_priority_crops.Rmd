@@ -80,7 +80,7 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda and should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here. 
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here. 
 
 ## Gridded data
 
@@ -363,30 +363,30 @@ w ## plot widget
 
 # Small area estimates (SAE)
 
-The term *small area* conventionally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem. The next chunk initially calculates small area estimates using some [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for *district* and *sector in district* level administrative units. They can also estimate fixed effects such as the individual suvey data that were used to derive the estimates and more importantly those which record the actual crop distribution predictions.
+The term *small area* conventionally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem. The next chunk initially calculates small area estimates using some [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for *sector* level administrative units. They can also estimate fixed effects that were used to derive the estimates such as the crop distribution predictions (`st`).
 
 ```{r}
-# Small area hierarchical random-effect estimates by 399 sectors in 30 districts
-m0 <- glmer(bean ~ 1 + (1|district/sector), family = binomial, gsout) ## change dependent variable to maize, cassava ... here 
-m1 <- glmer(bean ~ scode + (1|district/sector), family = binomial, gsout)
-m2 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
+# Small area hierarchical random-effect estimates by 399 sectors
+# Change dependent variable from `bean` to `maize`, `cassava` ... here
+m0 <- glmer(bean ~ 1 + (1|sector), family = binomial, gsout) ## base model
+m1 <- glmer(bean ~ st + (1|sector), family = binomial, gsout)
 ```
+
+The use of of administrative units is operationally problematic for small area monitoring, as administrative units tend to change over time ... sometimes quickly. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or voting and politics). 
+
+We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This SAE approach would avoid confusion for including both new survey data and/or data for change detection, monitoring and local planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main operational consideration in this context is simply to provide an accurate georeference of the individual observations and measurements ... are there beans grown here or not, and what other crops occur here at this time.
+
+The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. The precision of the `m1` and `m2` models is assessed via mixed model `anova`.
+
+```{r}
+m2 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
+anova(m0, m1, m2)
+```
+
+
 
 ```{r}
 summary(m2)
-```
-
-The use of of administrative units is somewhat problematic for small area monitoring, as administrative units tend to change over time ... sometimes quickly. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or voting and politics). 
-
-We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This SAE approach would avoid confusion for including both new survey data and/or data for change detection, monitoring and local planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main thing in this context is simply to provide an accurate georeference of the individual observations and measurements ... are there beans grown here or not, and what other crops occur here at this time.
-
-The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. The precision of the models is assessed via mixed model `anova`.
-
-```{r}
-m3 <- glmer(bean ~ scode + (1|GID), family = binomial, gsout)
-m4 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
-m5 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
-anova(m3, m4, m5)
 ```
 
 # Takeaways
