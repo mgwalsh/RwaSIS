@@ -398,7 +398,7 @@ m2 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
-The `anova` results in the chunk above, the SAEs reported by `GID` produce significantly more precise estimates than those produced by reporting by `sector`, relative to the `m0` base model, which does not take the spatial predictions into account. This may be an artifact of the current `bean` distribution survey data that were available and used in this particular SAE model comparison that bear further investigation. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind (see the `m2` SAE model estimates below).
+The `anova` results in the chunk above, the SAEs reported by `GID` produce significantly more precise estimates than those produced by reporting by `sector`, relative to the `m0` base model, which does not take the spatial distribution predictions into account. This may be an artifact of the current `bean` distribution survey data that were available and used in this particular SAE model comparison that bear further investigation and more recent data. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind (see the `m2` SAE model estimates below).
 
 ```{r, echo = FALSE}
 summary(m2)
