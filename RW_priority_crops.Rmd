@@ -430,7 +430,7 @@ write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
 
 The main takeaways of this notebook are the following:
 
-* This notebook produces precise, accurate and reproducible spatial predictions of the observed occurrence (presence / absence) of bean occurrence data in Rwanda based on 4 FAIRly (see [FAIR](https://en.wikipedia.org/wiki/FAIR_data)) distributed crop/soil surveys and using a standard ensemble machine learning workflow.
+* This notebook produces precise, accurate and reproducible spatial predictions of the observed occurrence (presence / absence) of bean occurrence data in Rwanda based on 4 *FAIRly* (see [FAIR](https://en.wikipedia.org/wiki/FAIR_data)) distributed crop/soil surveys and using a standard ensemble machine learning workflow.
 
 * The predictions can be flexibly extended to include other priority crop or cropping system distribution predictions and small area estimates that are needed for planning of response trials and monitoring activities.
 
