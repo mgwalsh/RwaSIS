@@ -80,7 +80,17 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here. 
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here.
+
+```{r, echo = FALSE, results = 'hide'}
+# summary crosstabs by individual surveys for reference
+maize <- as.data.frame.matrix(table(crop$survey, crop$maize > 0))
+wheat <- as.data.frame.matrix(table(cro$survey, crop$wheat > 0))
+rice <- as.data.frame.matrix(table(crop$survey, crop$rice > 0))
+potato <- as.data.frame.matrix(table(crop$survey, crop$potato > 0))
+cassava <- as.data.frame.matrix(table(crop$survey, crop$cassava > 0))
+bean <- as.data.frame.matrix(table(crop$survey, crop$bean > 0))
+```
 
 ## Gridded data
 
@@ -376,11 +386,11 @@ m1 <- glmer(bean ~ st + (1|sector), family = binomial, gsout)
 summary(m1)
 ```
 
-The use of of administrative units is operationally problematic for small area monitoring, as administrative units tend to change over time ... sometimes very quickly. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or politics). 
+The use of of administrative units tends to be operationally problematic for small area monitoring, as administrative units change over time ... sometimes very quickly. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or politics). 
 
 We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This SAE approach would avoid confusion for including both new survey data and/or data for change detection, monitoring and local planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main operational consideration in this context is simply to provide an accurate georeference of the individual observations and measurements ... *are there beans grown here or not, and what other crops occur here at this time*.
 
-The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. The precision of the `m1` and `m2` models can be assessed via mixed model `anova`. The only difference between the 2 models are the `sector` vs `GID` random intercept effects.
+The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. The precision of the `m1` and `m2` models can be assessed via mixed model `anova`. Note that the only difference between the 2 models are the `sector` vs `GID` random intercept effects.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 233 GIDs
@@ -392,7 +402,11 @@ anova(m0, m1, m2)
 summary(m2)
 ```
 
-Note that based on the `anova` results in the chunk above, the SAEs reported by `GID` also produce significantly more precise estimates than those produced by reporting by `sectors`. This may be an artifact of the current `bean` distribution survey data available that were used in this particular SAE model comparison, which bears further investigation. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind. The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below. These can be consulted for planning additional surveys or experiments.
+The `anova` results in the chunk above, the SAEs reported by `GID` also produce significantly more precise estimates than those produced by reporting by `sectors`. This may be an artifact of the current `bean` distribution survey data available that were used in this particular SAE model comparison, which bears further investigation. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind. The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below. These can be consulted for planning additional surveys and/or experiments.
+
+```{r}
+
+```
 
 # Takeaways
 
