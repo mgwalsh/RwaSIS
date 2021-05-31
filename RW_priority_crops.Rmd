@@ -383,6 +383,7 @@ m1 <- glmer(bean ~ scode+st + (1|sector), family = binomial, gsout)
 ```
 
 ```{r, echo = FALSE, results = 'hide'}
+summary(m0)
 summary(m1)
 ```
 
