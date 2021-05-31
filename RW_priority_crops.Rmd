@@ -408,9 +408,11 @@ summary(m2)
 The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results in the combined survey. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. Again, the estimates can be flexibly extended to include other crop distributions.
 
 ```{r}
+# Generate cross-tabulation of the observations
 bean <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
 bean$GID = rownames(bean)
 
+# Generate SAE model estimates and merge
 sae.ran <- ranef(m2)
 sae.rse <- se.ranef(m2)
 sae.est <- as.data.frame(rownames(sae.ran$GID))
@@ -420,6 +422,13 @@ sae.est$se <- sae.rse$GID[,1]
 bean <- merge(bean, sae.est, by = "GID")
 colnames(bean) <- c("GID", "absent", "present", "ranef", "se")
 
+# Write out the file
+write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
+```
+
+```{r, echo=FALSE}
+# Generate the table
+datatable(bean)
 ```
 
 # Takeaways
