@@ -391,7 +391,7 @@ The use of of administrative units tends to be operationally problematic for sma
 
 We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This SAE approach would avoid confusion for including both new survey data and/or data for change detection, monitoring and local planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main operational consideration in this context is simply to provide an accurate georeference of the individual observations and measurements ... *are there beans grown here or not, and what other crops occur here at this time*.
 
-The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. The precision of the `m1` and `m2` models can be assessed via mixed model `anova`. Note that the only difference between the 2 models are the `sector` vs `GID` random intercept effects, which are estimated here.
+The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. The precision of the `m1` & `m2` models can be assessed via mixed model `anova`. Note that the only difference between the 2 models are the `sector` vs `GID` random intercept effects, which are estimated below.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 233 GIDs
@@ -420,18 +420,24 @@ colnames(sae.est) <- c("GID")
 sae.est$ranef <- sae.ran$GID[,1]
 sae.est$se <- sae.rse$GID[,1]
 bean <- merge(bean, sae.est, by = "GID")
-colnames(bean) <- c("GID", "absent", "present", "ranef", "se")
+colnames(bean) <- c("GID", "absent", "present", "ranef", "SE")
 
 # Write out the file
 write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
 ```
 
+\
 ```{r, echo=FALSE}
 # Generate the table
 datatable(bean)
 ```
+\
 
 # Takeaways
 
+The main takeaways of this notebook are the following:
 
+* This notebook produces precise and accurate spatial predictions of the observed occurrence (presence / absence) of assembled bean occurrence data in Rwanda based on a completely reproducible, standard ensemble machine learning workflow.
+
+* ... 
 
