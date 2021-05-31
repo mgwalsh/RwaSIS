@@ -378,7 +378,16 @@ summary(m2)
 
 The use of of administrative units is somewhat problematic for small area monitoring, as administrative units tend to change over time. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or voting and politics). 
 
-We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This will avoid confusion for including both new survey data and/or for change detection, monitoring, and local policy planning. It also provides straight-forward solutions for field survey team navigation and various area-based data analyses.
+We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This would avoid confusion for including both new survey data and/or data for change detection, monitoring and local policy planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main thing in this context is simply to provide an accurate georeference of the individual observations and measurements ... are there beans grown here or not, and what other crops occur here at this time.
+
+The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence label in Rwanda. The precision of the models is compared via `anova`.
+
+```{r}
+m3 <- glmer(bean ~ scode + (1|GID), family = binomial, gsout)
+m4 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
+m5 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
+anova(m3, m4, m5)
+```
 
 # Takeaways
 
