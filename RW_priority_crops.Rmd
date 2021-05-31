@@ -363,11 +363,11 @@ w ## plot widget
 
 # Small area estimates (SAE)
 
-The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem. The next chunk initially calculates small area estimates using some [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for *district* and *sector in district* level administrative units. They can also estimate fixed effects such as the individual suveys that were used and more importantly those which record the crop distribution predictions.
+The term *small area* conventionally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data, and *vice versa*. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to this common estimation problem. The next chunk initially calculates small area estimates using some [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for *district* and *sector in district* level administrative units. They can also estimate fixed effects such as the individual suvey data that were used to derive the estimates and more importantly those which record the actual crop distribution predictions.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors in 30 districts
-m0 <- glmer(bean ~ 1 + (1|district/sector), family = binomial, gsout) ## change dependent variable to maize, wheat ... here 
+m0 <- glmer(bean ~ 1 + (1|district/sector), family = binomial, gsout) ## change dependent variable to maize, cassava ... here 
 m1 <- glmer(bean ~ scode + (1|district/sector), family = binomial, gsout)
 m2 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
 ```
@@ -376,7 +376,9 @@ m2 <- glmer(bean ~ st + (1|district/sector), family = binomial, gsout)
 summary(m2)
 ```
 
-The use of of administrative units may be somewhat problematic for small area monitoring as administrative units tend to change over time. Imagine that at some stage in future that you would want to assess how crop distributions have changed, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., population growth accounting and/or politics). We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. This will avoid confusion for including both new survey data and/or for change detection, monitoring, local policy and planning.
+The use of of administrative units is somewhat problematic for small area monitoring, as administrative units tend to change over time. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or voting and politics). 
+
+We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This will avoid confusion for including both new survey data and/or for change detection, monitoring, and local policy planning. It also provides straight-forward solutions for field survey team navigation and various area-based data analyses.
 
 # Takeaways
 
