@@ -367,9 +367,13 @@ The term *small area* conventionally refers to small administrative areas such a
 
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors
-# Change dependent variable labels from `bean` to `maize`, `cassava` ... here
+# Change dependent variable labels from `bean` ... `maize`, `cassava`, etc here
 m0 <- glmer(bean ~ 1 + (1|sector), family = binomial, gsout) ## base model
 m1 <- glmer(bean ~ st + (1|sector), family = binomial, gsout)
+```
+
+```{r, echo = FALSE, results = 'hide'}
+summary(m1)
 ```
 
 The use of of administrative units is operationally problematic for small area monitoring, as administrative units tend to change over time ... sometimes very quickly. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or politics). 
@@ -384,13 +388,11 @@ m2 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
-Note that based on the `anova` results in the chunk above, the SAEs reported by `GID` also produce significantly more precise estimates than those produced by reporting by `sectors`. This may be an artifact of the current `bean` distribution survey data available that were used in this particular SAE model comparison, which bear further investigations. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind.
-
-```{r, echo = FALSE}
+```{r, echo = FALSE, results = 'hide'}
 summary(m2)
 ```
 
-Generate table ... of observations and prediction by GID
+Note that based on the `anova` results in the chunk above, the SAEs reported by `GID` also produce significantly more precise estimates than those produced by reporting by `sectors`. This may be an artifact of the current `bean` distribution survey data available that were used in this particular SAE model comparison, which bears further investigation. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind. The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below. These can be consulted for planning additional surveys or experiments.
 
 # Takeaways
 
