@@ -436,5 +436,5 @@ The main takeaways of this notebook are the following:
 
 * We recommend a standard small equal area sampling frame (such as the `GID`) over admistrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
 
-* There are other important and prevalent small-holder crops that probably warrant attention in Rwanda's R&D agenda (e.g., Sorghum Banana and vegetables), which are currently not priorities for surveys and/or management response trials.
+* There are other notable, important and prevalent small-holder crops that probably warrant attention in Rwanda's R&D agenda (e.g., Sorghum, Banana and vegetables), which are currently not priorities for surveys and/or management response trials, at least within RwaSIS.
 
