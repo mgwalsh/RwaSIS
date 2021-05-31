@@ -437,7 +437,7 @@ datatable(bean)
 
 The main takeaways of this notebook are the following:
 
-* This notebook produces precise and accurate spatial predictions of the observed occurrence (presence / absence) of assembled bean occurrence data in Rwanda based on a completely reproducible, standard ensemble machine learning workflow.
+* This notebook produces precise, accurate and reproducible spatial predictions of the observed occurrence (presence / absence) of bean occurrence data in Rwanda based on a standard ensemble machine learning workflow.
 
 * ... 
 
