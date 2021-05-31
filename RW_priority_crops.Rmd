@@ -76,11 +76,11 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 
 1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,290 observations in this survey. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
-2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `s1`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `other`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
 
-3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `s2`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
+3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `other`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `s3`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here.
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `other`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here.
 
 ```{r, echo = FALSE, results = 'hide'}
 # summary crosstabs by individual surveys for reference
@@ -201,7 +201,7 @@ gf_cpv <- gs_cal[ ,42:44] ## specifies features as DX, DY & DXY coordinate raste
 
 # Start doParallel to parallelize model fitting
 mc <- makeCluster(detectCores())
-registerDoParallel(mc) ## this parallizes
+registerDoParallel(mc)
 
 # Control setup for cross-validation
 set.seed(seed)
@@ -257,7 +257,7 @@ saveRDS(cp, fname)
 
 ## Fitting several additional models with `caretEnsemble`
 
-The next chunk fits 4 additional ML models that use the that use all of gridded calibration data with 10-fold cross-validation. You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be more computationally challenging for larger countries like Tanzania or Ethiopia. We fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
+The next chunk fits 4 additional ML models that use the that use all of gridded calibration data with 10-fold cross-validation. You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be more computationally challenging for larger countries like Tanzania or Ethiopia. We fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)). Note that you can also change the different model tuning paramters here with a tunigList method.
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -378,8 +378,8 @@ The term *small area* conventionally refers to small administrative areas such a
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors
 # Change dependent variable labels from `bean` ... `maize`, `cassava`, etc here
-m0 <- glmer(bean ~ 1 + (1|sector), family = binomial, gsout) ## base model
-m1 <- glmer(bean ~ st + (1|sector), family = binomial, gsout)
+m0 <- glmer(bean ~ scode + (1|sector), family = binomial, gsout) ## base model
+m1 <- glmer(bean ~ scode+st + (1|sector), family = binomial, gsout)
 ```
 
 ```{r, echo = FALSE, results = 'hide'}
@@ -394,7 +394,7 @@ The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`
 
 ```{r}
 # Small area hierarchical random-effect estimates by 233 GIDs
-m2 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
+m2 <- glmer(bean ~ scode+st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
