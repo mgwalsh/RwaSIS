@@ -404,9 +404,10 @@ The `anova` results in the chunk above, the SAEs reported by `GID` produce signi
 summary(m2)
 ``` 
 
-The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. Again, those can be flexibly expanded to include other crop distributions.
+The table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. Again, the estimates can be flexibly extended to include other crop distributions.
 
 ```{r}
+bean <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
 
 ```
 
