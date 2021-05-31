@@ -76,11 +76,11 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 
 1. The currently ongoing RwaSIS survey designated as `base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,290 observations in this survey. Note that this number will change during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
-2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey desinated as `other`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey designated as `other`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `other`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
-4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `other`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas accross Rwanda, which is why it is included here.
+4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `other`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas across Rwanda, which is why it is included here.
 
 ```{r, echo = FALSE, results = 'hide'}
 # summary crosstabs by individual surveys for reference
@@ -434,7 +434,7 @@ The main takeaways of this notebook are the following:
 
 * The predictions can be flexibly extended to include other priority crop or cropping system distribution predictions and small area estimates that are needed for planning of response trials and monitoring activities.
 
-* We recommend a standard small equal area sampling frame (such as the `GID`) over admistrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
+* We recommend a standard small equal area sampling frame (such as the `GID`) over administrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
 
 * There are other notable and prevalent small-holder crops that probably warrant attention in Rwanda's R&D agenda (e.g., Sorghum, Banana and vegetables), which are currently not priorities for surveys and/or management response trials, at least within RwaSIS.
 
