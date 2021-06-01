@@ -289,7 +289,7 @@ saveRDS(clist, fname)
 
 # Model stacking with `caret`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous training steps. Again, the fitting is done with cross-validation.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but we think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous training steps. Again, the fitting is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
@@ -434,7 +434,7 @@ The main takeaways of this notebook are the following:
 
 * The predictions can be flexibly extended to include other priority crop or cropping system distribution predictions and small area estimates that are needed for planning of response trials and monitoring activities.
 
-* We recommend a standard small equal area sampling frame (such as the `GID`) over administrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
+* We recommend a standard small equal-area sampling frame (such as the `GID`) over administrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
 
 * There are other notable and prevalent small-holder crops that probably warrant attention in Rwanda's R&D agenda (e.g., Sorghum, Banana and vegetables), which are currently not priorities for surveys and/or management response trials, at least within RwaSIS.
 
