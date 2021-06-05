@@ -223,6 +223,11 @@ fname <- paste("./Priority_crops/Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
+```{r, echo = FALSE, results = 'hide'}
+gm
+plot(1-gm.pred, axes = F)
+```
+
 ## Central place theory model with `caret`
 
 Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where specific crops are likely to occur (or not, e.g. in forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. 
@@ -253,6 +258,11 @@ cp.pred <- predict(grids, cp, type = "prob") ## central place predictions
 stopCluster(mc)
 fname <- paste("./Priority_crops/Results/", labs, "_cp.rds", sep = "")
 saveRDS(cp, fname)
+```
+
+```{r, echo = FALSE, results = 'hide'}
+cp
+plot(1-cp.pred, axes = F)
 ```
 
 ## Fitting several additional models with `caretEnsemble`
@@ -288,9 +298,13 @@ fname <- paste("./Priority_crops/Results/", labs, "_clist.rds", sep = "")
 saveRDS(clist, fname)
 ```
 
+```{r, echo = FALSE, results = 'hide'}
+clist
+```
+
 # Model stacking with `caret`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but we think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous training steps. Again, the fitting is done with cross-validation.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but we think that this approach provides a reasonable combination and weighting of the 7 models that were produced in the previous training steps. Again, the fitting of the stacked model is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
