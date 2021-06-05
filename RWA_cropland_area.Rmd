@@ -30,7 +30,7 @@ To actually run the notebook, you will need to load the packages indicated in th
 
 ```{r}
 # Package names
-packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "naivebayes", "plyr", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -290,12 +290,12 @@ fname <- paste("./RW_GS20/Results/", labs, "_cp.rds", sep = "")
 saveRDS(cp, fname)
 ```
 
-## Fitting several additional models with `caretEnsemble`
+## Fitting additional models with `caretEnsemble`
 
 The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work by following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
-and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be computationally challenging for larger countries like the DRC or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
+and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a relatively small ROI like Rwanda, but it might be computationally challenging for larger countries like the DRC, Tanzania or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -307,7 +307,7 @@ registerDoParallel(mc)
 tc <- trainControl(method = "cv", number = 10, classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = TRUE, savePredictions="final")
 
-# Fit 4 calibration models using all of the gridded features
+# Fit 4 additional calibration models using all of the gridded features
 clist <- caretList(fcal, lcal,
                    trControl = tc,
                    tuneList = NULL,
@@ -324,9 +324,11 @@ fname <- paste("./RW_GS20/Results/", labs, "_clist.rds", sep = "")
 saveRDS(clist, fname)
 ```
 
-# Model stacking with `caret`
+# Model stacking with `caretEnsemble`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+The main point here is not to evaluate a *best individual model* but rather to evaluate the combination of the previously fitted models (see the [No free lunch theorem](https://en.wikipedia.org/wiki/No_free_lunch_theorem)) against a 20% [hold-out](https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets) validation dataset. This provides robust statistical estimates of how the different models should be weighted against one-another. 
+
+This next chunk fits a model ensemble with both the `glmStepAIC` function from the `MASS` library and the `naive_bayes` function from the `naivebayes` library (see: [Naïve Bayes](https://www.youtube.com/watch?v=39OoS6BIcus)) library using the *validation dataframe* (`gs_val`). You could/should explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but I think that the two approaches that are provided here provide a reasonable combination and weighting of the 6 base models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
@@ -354,17 +356,19 @@ tc <- trainControl(method = "repeatedcv", number = 10, repeats = 3, classProbs =
                    summaryFunction = twoClassSummary, allowParallel = T)
 
 # Model training
-st <- train(fval, lval,
-            method = "glmStepAIC",
-            family = "binomial",
-            metric = "ROC",
-            trControl = tc)
+vlist <- train(fval, lval,
+               methodList = c("glmStepAIC", "naive_bayes"), 
+               family = "binomial",
+               metric = "ROC",
+               trControl = tc)
 
 # Model outputs & predictions
-st.pred <- predict(preds, st, type = "prob") ## stacked spatial predictions
+ga.pred <- predict(grids, vlist$glmStepAIC, type = "prob")
+nb.pred <- predict(grids, vlist$naive_bayes, type = "prob")
+
 stopCluster(mc)
-fname <- paste("./RW_GS20/Results/", labs, "_st.rds", sep = "")
-saveRDS(st, fname)
+fname <- paste("./RW_GS20/Results/", labs, "_vlist.rds", sep = "")
+saveRDS(vlist, fname)
 ```
 
 ```{r, echo = FALSE}
@@ -487,5 +491,5 @@ The main takeaways of this notebook are the following:
 
 * The workflow outputs can be used to improve the precision and accuracy of small area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost compared to conventional land cover mapping practices.
 
-* Most importantly I hope that GeoSurvey data and their analyses might provide you with a reasonable / reproducible backend for reliably evaluating land cover and land use changes in your own ROIs. I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Any questions or comments about this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
+* I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). Any questions or comments about this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
