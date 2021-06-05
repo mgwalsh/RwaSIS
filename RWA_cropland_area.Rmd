@@ -22,7 +22,7 @@ Quantifying the geographical extent, location and spatial dynamics of croplands,
 
 The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover those issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial features in hand.
 
-The main intent of this notebook is to illustrate starter code for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).
+The main intent of this notebook is to illustrate starter code guidelines for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI, based on GeoSurvey observations. I use Rwanda's most recent GeoSurvey data and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).
 
 # General data setup
 
@@ -30,7 +30,7 @@ To actually run the notebook, you will need to load the packages indicated in th
 
 ```{r}
 # Package names
-packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "naivebayes", "plyr", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "klaR", "plyr", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -326,9 +326,7 @@ saveRDS(clist, fname)
 
 # Model stacking with `caretEnsemble`
 
-The main point here is not to evaluate a *best individual model* but rather to evaluate the combination of the previously fitted models (see the [No free lunch theorem](https://en.wikipedia.org/wiki/No_free_lunch_theorem)) against a 20% [hold-out](https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets) validation dataset. This provides robust statistical estimates of how the different models should be weighted against one-another. 
-
-This next chunk fits a model ensemble with both the `glmStepAIC` function from the `MASS` library and the `naive_bayes` function from the `naivebayes` library (see: [Naïve Bayes](https://www.youtube.com/watch?v=39OoS6BIcus)) library using the *validation dataframe* (`gs_val`). You could/should explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but I think that the two approaches that are provided here provide a reasonable combination and weighting of the 6 base models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+This next chunk fits a model ensemble with the glmStepAIC function from the MASS library using the validation dataframe (gs_val). You could explore other meta-model options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
@@ -356,19 +354,17 @@ tc <- trainControl(method = "repeatedcv", number = 10, repeats = 3, classProbs =
                    summaryFunction = twoClassSummary, allowParallel = T)
 
 # Model training
-vlist <- train(fval, lval,
-               methodList = c("glmStepAIC", "naive_bayes"), 
-               family = "binomial",
-               metric = "ROC",
-               trControl = tc)
+st <- train(fval, lval,
+            method = "glmStepAIC",
+            family = "binomial",
+            metric = "ROC",
+            trControl = tc)
 
 # Model outputs & predictions
-ga.pred <- predict(grids, vlist$glmStepAIC, type = "prob")
-nb.pred <- predict(grids, vlist$naive_bayes, type = "prob")
-
+st.pred <- predict(preds, st, type = "prob") ## stacked spatial predictions
 stopCluster(mc)
-fname <- paste("./RW_GS20/Results/", labs, "_vlist.rds", sep = "")
-saveRDS(vlist, fname)
+fname <- paste("./RW_GS20/Results/", labs, "_st.rds", sep = "")
+saveRDS(st, fname)
 ```
 
 ```{r, echo = FALSE}
