@@ -224,8 +224,7 @@ saveRDS(gm, fname)
 ```
 
 ```{r, echo = FALSE, results = 'hide'}
-gm
-plot(1-gm.pred, axes = F)
+summary(gm)
 ```
 
 ## Central place theory model with `caret`
@@ -261,8 +260,7 @@ saveRDS(cp, fname)
 ```
 
 ```{r, echo = FALSE, results = 'hide'}
-cp
-plot(1-cp.pred, axes = F)
+summary(cp)
 ```
 
 ## Fitting several additional models with `caretEnsemble`
@@ -350,7 +348,7 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-The next chunk sets writes out the 8 prediction grids to a geotif file, which can be imported to a GIS of your choice. It also generates an overview map of the cropland occurrence probabilities for `beans` in this particular example.
+The next chunk sets writes out the 8 prediction grids to a geotif file `./Priority_crops/Results/"RW_bean_preds_2020.tif`, which can be imported to a GIS of your choice. It also generates an overview map of the cropland occurrence probabilities for `beans` in this particular example.
 
 ```{r}
 # Write prediction grids
@@ -384,6 +382,10 @@ w <- leaflet() %>%
   addRasterImage(stll, colors = pal, opacity = 0.5) %>%
   addLegend(pal = pal, values = values(stll), title = "Probability")
 w ## plot widget
+```
+
+```{r, echo = FALSE, results = 'hide'}
+plot(gspreds, axes = F)
 ```
 
 # Small area estimates
