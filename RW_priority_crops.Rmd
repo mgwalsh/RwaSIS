@@ -302,7 +302,7 @@ clist
 
 # Model stacking with `caret`
 
-This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but we think that this approach provides a reasonable combination and weighting of the 7 models that were produced in the previous training steps. Again, the fitting of the stacked model is done with cross-validation.
+This next chunk fits a model ensemble with the `glmStepAIC` function from the `MASS` library using the *validation dataframe* (`gs_val`). You could explore other [meta-model](https://machinelearningmastery.com/meta-learning-in-machine-learning/) options here, but we think that this approach provides a reasonable combination and weighting of the 7 models that were produced in the previous training steps (see the justification for this at: [No free lunch theorem](https://en.wikipedia.org/wiki/No_free_lunch_theorem)). Again, the fitting of the stacked model is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
