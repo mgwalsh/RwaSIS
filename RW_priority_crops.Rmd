@@ -161,7 +161,7 @@ w ## plot widget
 ```
 \
 
-Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey locations. You can use as waypoint input to a GPS (see e.g: [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units. 
+Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey labels. You can use as waypoint input to a GPS (see e.g: [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units. 
 
 # Ensemble machine learning based mapping with `caret` and `caretEnsemble`
 
