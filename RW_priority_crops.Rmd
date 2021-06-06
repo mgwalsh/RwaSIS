@@ -391,8 +391,8 @@ The term *small area* conventionally refers to small administrative areas such a
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors
 # Change dependent variable labels from `bean` ... `maize`, `cassava`, etc here
-m0 <- glmer(bean ~ 1 + (1|sector), family = binomial, gsout) ## base model
-m1 <- glmer(bean ~ st + (1|sector), family = binomial, gsout)
+m0 <- glmer(bean ~ scode + (1|sector), family = binomial, gsout) ## base model
+m1 <- glmer(bean ~ scode*st + (1|sector), family = binomial, gsout)
 ```
 
 ```{r, echo = FALSE, results = 'hide'}
@@ -408,7 +408,7 @@ The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`
 
 ```{r}
 # Small area hierarchical random-effect estimates by 233 GIDs
-m2 <- glmer(bean ~ st + (1|GID), family = binomial, gsout)
+m2 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
