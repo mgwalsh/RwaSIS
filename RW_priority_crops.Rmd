@@ -189,11 +189,11 @@ lcal <- ifelse(lcal == 1, "Y", "N")
 fcal <- gs_cal[ ,17:41,45:72]
 ```
 
-Note that while we are using the `bean` distribution data here, you can also substitute the other 5 crops as labels and specify those with the `labs` variable in the chunk above. The 5 additional crop labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the observational data to those.
+Note that while we are using the `bean` distribution data here, you can also substitute the other 5 crops as labels and specify those with the `labs` variable in the chunk above. The 5 additional crop labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the survey data to those.
 
 ## Spatial trend model with `caret`
 
-This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `bean` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. We use the standard `caret` syntax here to illustrate the general specification, output and prediction steps. Also note that we always save the current models as [`.Rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows us to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
+This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `bean` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. We use the standard `caret` syntax here to illustrate the general specification, output and prediction steps. Also note that we always save the current models as [`.Rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows us to load the models at a later stage to e.g., to re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
 
 ```{r}
 # Select spatial covariates
