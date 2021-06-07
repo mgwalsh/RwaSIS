@@ -418,7 +418,7 @@ The `anova` results in the chunk above, the SAEs reported by `GID` produce signi
 summary(m2)
 ``` 
 
-The data table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results for the combined survey. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. They are written out to your `./Priority_crops/Results` directory. Again, the estimates can be flexibly extended to include other crop distributions, and the current estimates for all 6 priority crops are provided at the [RwaSIS OSF repository]() for your consideration. 
+The data table of observations and the relevant SAE `bean` estimates by `GID` are generated in the chunk below based on the `m2` SAE model results for the combined survey. These should be consulted and updated for planning additional survey activities and/or experiments that require crop distribution and geographical guidance data. They are written out to your `./Priority_crops/Results` directory. Again, the estimates can be flexibly extended to include other crop distributions, and the current estimates for all 6 priority crops are provided at the [RwaSIS OSF repository](https://osf.io/k8y3z/) for your consideration. 
 
 ```{r}
 # Generate cross-tabulation of the observations
