@@ -447,7 +447,7 @@ The main takeaways of this notebook are the following:
 
 * The predictions can be flexibly extended to include other priority crop or cropping system distributions and small area estimates that are needed for planning of management response trials and monitoring activities.
 
-* Survey results can be harmonized and adjusted relative to a given baseline (in this case the ongoing RwaSIS survey, `scode`) for the purpose of SAE as well as national-level reporting of crop distributions, which makes disparate survey data sources more comparable and inclusive. 
+* Survey results can be harmonized and adjusted relative to a given baseline (in this case the ongoing RwaSIS survey, `scode = base`) for the purpose of SAE as well as national-level reporting of crop distributions, which makes disparate survey data sources more comparable and inclusive. 
 
 * We recommend a standard small equal-area sampling frame (such as the `GID`) over administrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
 
