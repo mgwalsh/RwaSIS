@@ -443,13 +443,11 @@ write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
 
 The main takeaways of this notebook are the following:
 
-* This notebook produces precise, accurate and reproducible spatial predictions of the observed presence/absence of bean occurrence data in Rwanda based on 4 *FAIRly* (see [FAIR](https://en.wikipedia.org/wiki/FAIR_data)) distributed crop/soil surveys and using a standard ensemble machine learning workflow.
-
-* The predictions can be flexibly extended to include other priority crop or cropping system distributions and small area estimates that are needed for planning of management response trials and monitoring activities.
+* This notebook produces precise, accurate and reproducible spatial predictions of the observed presence/absence of bean occurrence data in Rwanda based on 4 *FAIRly* (see [FAIR](https://en.wikipedia.org/wiki/FAIR_data)) distributed crop/soil surveys and using a standard ensemble machine learning workflow. The predictions can be flexibly extended to include other priority crop or cropping system distributions and small area estimates that are needed for planning of management response trials and monitoring activities.
 
 * Survey results can be harmonized and adjusted relative to a given baseline (in this case the ongoing RwaSIS survey, `scode = base`) for the purpose of SAE as well as national-level reporting of crop distributions, which makes disparate survey data sources more comparable and inclusive. 
 
-* We recommend a standard small equal-area sampling frame (such as the `GID`) over administrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
+* In going forward, we recommend a standard small equal-area sampling frame (such as the `GID`) over administrative regions for SAEs. The reasons for this are both operational and conceptual. Operationally, `GID` can be navigated to easily just by using a GPS. Conceptionally, `GID`, unlike administrative units, will not change over time in Rwanda ... barring any major meteor impacts.
 
 * There are other notable and prevalent smallholder crops that probably warrant attention in Rwanda's R&D agenda (e.g., Sorghum, Banana and various leafy vegetables), which are currently not priorities for surveys and/or management response trials, at least within RwaSIS.
 
