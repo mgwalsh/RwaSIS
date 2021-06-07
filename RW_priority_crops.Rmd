@@ -82,7 +82,7 @@ RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembl
 
 4. The [RAB](http://rab.gov.rw/index.php?id=180) soil survey of lowland rice areas of Rwanda, designated as `scode = other`. There are 916 observations in this survey for sites where only rice was present, by design. Note that this is an [oversample](https://en.wikipedia.org/wiki/Oversampling_and_undersampling_in_data_analysis) of the rice growing area of Rwanda, which should be treated as such for the purpose of the SAE analyses presented below. It is however very useful for mapping similar areas across Rwanda, which is why it is included here.
 
-The `scode` designations of `base` or `other` are important for adjusting/weighting the SAEs that are subsequently calculated as fixed effects, relative to the currently ongoing RwaSIS cropland survey and its associated planning procedures for management response and cropland monitoring trials. 
+The `scode` designations of either `base` or `other` are important for adjusting/weighting the SAEs that are subsequently calculated as auxiliary fixed effects relative to the currently ongoing RwaSIS cropland survey, and its associated planning procedures for management response and cropland monitoring trials. 
 
 ```{r, echo = FALSE, results = 'hide'}
 # summary crosstabs by individual surveys for reference
