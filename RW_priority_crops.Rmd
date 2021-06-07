@@ -282,7 +282,7 @@ clist <- caretList(fcal, lcal,
                    trControl = tc,
                    tuneList = NULL,
                    methodList = c("glmStepAIC", "rf", "xgbTree", "nnet", "nb"),
-                   preProcess = c("center","scale","pca"),
+                   preProcess = c("center","scale"),
                    metric = "ROC")
 
 # Generate spatial predictions
