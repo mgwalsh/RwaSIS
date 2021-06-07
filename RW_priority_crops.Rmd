@@ -20,11 +20,11 @@ The main intent of this notebook is to demonstrate starter code for predictive c
 
 # General data setup
 
-To actually run this notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide observations, link those to the spatial data and then model them using machine learning. 
+To actually run this notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the Rwanda-wide survey labels, link those to the spatial data and then model them using machine learning. 
 
 ```{r}
 # Package names
-packages <- c("downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "klaR", "nnet", "plyr", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "klaR", "nnet", "plyr", "dplyr", "doParallel", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -111,7 +111,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and we w
 * r - relief / topographical variables
 * s - parent material and soil related variables
 
-The main notion is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa (and many other parts of the world).
+The main notion is that the occurrence and distribution of croplands and crop types must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa, and many other parts of the world.
 
 ## Combined Rwanda crop occurrence survey dataframe
 
@@ -265,7 +265,7 @@ summary(cp)
 
 ## Fitting several additional models with `caretEnsemble`
 
-The next chunk fits 5 additional ML models that use the that use all of gridded calibration data with 10-fold cross-validation. You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be more computationally challenging for larger countries like Tanzania or Ethiopia. We fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)). Note that if you would like more control over the model fits, you can use the `tuneList` argument.
+The next chunk fits 5 additional ML models that use the that use all of gridded calibration data with 10-fold cross-validation. You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a ROI like Rwanda, but it might be more computationally challenging for larger countries like Tanzania or Ethiopia. We fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)). Note that if you would like more control over the model fits, you can also use the respective `tuneList` arguments.
 
 ```{r, warning = FALSE, results='hide'}
 # Start doParallel to parallelize model fitting
@@ -386,7 +386,7 @@ w ## plot widget
 
 # Small area estimates
 
-The term *small area* conventionally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. Conversely, the purpose may be to generate larger and/or denser coverages from different surveys of smaller sub-areas. To deal with such problems, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to these common estimation problems. The next chunk initially calculates small area estimates using [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for the *sector* level administrative units. They can also be used to assess the effect of auxiliary variables that were used in deriving the estimates (i.e., `scode` and `st`).
+The term *small area* conventionally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. Conversely, the purpose may be to generate larger and/or denser coverages from different surveys of smaller sub-areas. To deal with such problems, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to these common estimation problems. The next chunk initially calculates small area estimates using [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for the *sector* level administrative units. They are also used to estimate the fixed effects of the relevant auxiliary variables; that is, `scode`, `st` and their interaction.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 399 sectors
@@ -402,7 +402,7 @@ summary(m1)
 
 The use of of administrative units tends to be operationally problematic for small area monitoring, as administrative units change over time ... sometimes very quickly. Imagine that at some point in future that you would want to assess how crop distributions or soil condition have changed in different parts of the country, but the actual survey areas have been redistricted/renamed for some other purpose (e.g., for population growth accounting, migration and/or politics). 
 
-We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This SAE approach would avoid confusion for including both new survey data and/or data for change detection, monitoring and local planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main operational consideration in this context is simply to provide an accurate georeference of the individual observations and measurements ... *are there beans grown here or not, and what other crops occur here at this time*.
+We therefore recommend using static, equal area units such as the 10 × 10 km grid IDs (`GID`), which are ubiquitous. Note that there are other options in this context. This SAE approach would avoid confusion for including both new survey data and/or data for change detection, monitoring and local planning. It also provides straight-forward technical solutions for field survey team navigation and various area-based data analyses. The main operational consideration in this context is simply to provide an accurate georeference of the individual observations and measurements.
 
 The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. A comparison of the `m1` & `m2` models can be assessed via mixed model `anova`. Note that the only difference between the 2 models are the `sector` vs `GID` random intercept effects, which are estimated below.
 
@@ -412,7 +412,7 @@ m2 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
-The `anova` results in the chunk above, the SAEs reported by `GID` produce significantly more precise estimates than those produced by reporting by `sector`, and relative to the `m0` base model, which does not take the stacked model (`st`) predictions into account. This may be an artifact of the current `bean` distribution survey data that were available and used in this particular SAE model comparison that bear further investigation and more recent data. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind (see the `m2` SAE model estimates below).
+The `anova` results in the chunk above, the SAEs reported by `GID` produce significantly more precise estimates than those produced by reporting by `sector`, and relative to the `m0` base model, which does not take the stacked model (`st`) predictions into account. Note that this may be an artifact of the current `bean` distribution survey data that were available and used in this particular SAE model comparison that bear further investigation and more recent data. Nonetheless, surveys of new geographical areas or for monitoring and/or planning and experimentation would be well informed to keep the statistical procedures provided by this notebook in mind (see the `m2` SAE model estimates below).
 
 ```{r, echo = FALSE}
 summary(m2)
