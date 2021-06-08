@@ -1,7 +1,7 @@
 ---
 title: Crop distribution predictions from survey data and small area estimates
 author: M.G. Walsh, J. Rutebuka and R. Manners
-date: "`r format(Sys.time(), '%d, %B, %Y')`"
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: true
@@ -74,7 +74,7 @@ unzip("RW_CP_mask.zip", exdir = exdir, overwrite = T)
 
 RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
 
-1. The currently ongoing RwaSIS survey designated as `scode = base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,404 observations in this survey (date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"). Note that the number of observations will change rapidly during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
+1. The currently ongoing RwaSIS survey designated as `scode = base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 1,404 observations in this survey. Note that the number of observations will change rapidly during 2021/22 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
 2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey designated as `scode = other`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
 
