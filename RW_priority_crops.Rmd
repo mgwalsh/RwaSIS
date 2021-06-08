@@ -279,7 +279,7 @@ registerDoParallel(mc)
 tc <- trainControl(method = "cv", number = 10, classProbs = T,
                    summaryFunction = twoClassSummary, allowParallel = TRUE, savePredictions="final")
 
-# Fit 4 calibration models using all of the gridded features
+# Fit 5 calibration models using all of the gridded features
 clist <- caretList(fcal, lcal,
                    trControl = tc,
                    tuneList = NULL,
