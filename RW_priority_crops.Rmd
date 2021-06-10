@@ -180,7 +180,7 @@ GID <- as.data.frame(cbind(GID, gx, gy))
 GID$gx <- as.numeric(as.character(GID$gx))
 GID$gy <- as.numeric(as.character(GID$gy))
 
-# Calculate total number of survey labels (n) and center coordinates
+# Calculate total number of current survey labels (n) per GID, and their center coordinates
 gidxy <- ddply(GID, c("GID", "gx", "gy"), summarise,
                n = length(gx),
                gx = mean(gx),
