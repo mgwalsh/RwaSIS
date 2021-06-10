@@ -142,12 +142,14 @@ gsdat <- gsdat[complete.cases(gsdat[ ,c(17:72)]),] ## removes incomplete cases
 
 # Define unique grid ID's (GID)
 res.pixel <- 10000 ## specifies GID scale (res.pixel, in m) ... you can change this
+xcen <- ceiling(gsdat$x/res.pixel)*res.pixel ## center x coordinate of GID
+ycen <- ceiling(gsdat$y/res.pixel)*res.pixel ## center y coordinate of GID
 xgid <- ceiling(abs(gsdat$x)/res.pixel)
 ygid <- ceiling(abs(gsdat$y)/res.pixel)
 gidx <- ifelse(gsdat$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
 gidy <- ifelse(gsdat$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
 GID <- paste(gidx, gidy, sep="")
-gsdat <- cbind(GID, gsdat)
+gsdat <- cbind(GID, xcen, ycen, gsdat)
 
 # Randomize and writeout dataframe
 set.seed(1235813)
@@ -424,21 +426,20 @@ The data table of observations and the relevant SAE `bean` estimates by `GID` ar
 
 ```{r}
 # Generate cross-tabulation of the observations
-bean <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
-bean$GID = rownames(bean)
+sae <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
+sae$GID = rownames(sae)
 
 # Generate SAE model estimates and merge
-sae.ran <- ranef(m2)
+sae.ran <- coef(m2)
 sae.rse <- se.ranef(m2)
 sae.est <- as.data.frame(rownames(sae.ran$GID))
 colnames(sae.est) <- c("GID")
-sae.est$ranef <- sae.ran$GID[,1]
-sae.est$se <- sae.rse$GID[,1]
-bean <- merge(bean, sae.est, by = "GID")
-colnames(bean) <- c("GID", "absent", "present", "ranef", "SE")
+sae.est$ran <- sae.ran$GID
+sae.est$se <- sae.rse$GID
+# colnames(sae.est) <- c("GID", "absent", "present", "int", "other", "st", "other_st", "se")
 
 # Write out the file
-write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
+# write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
 ```
 
 # Takeaways
