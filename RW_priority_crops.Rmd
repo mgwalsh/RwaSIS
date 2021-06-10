@@ -142,14 +142,12 @@ gsdat <- gsdat[complete.cases(gsdat[ ,c(17:72)]),] ## removes incomplete cases
 
 # Define unique grid ID's (GID)
 res.pixel <- 10000 ## specifies GID scale (res.pixel, in m) ... you can change this
-xcen <- ceiling(gsdat$x/res.pixel)*res.pixel ## center x coordinate of GID
-ycen <- ceiling(gsdat$y/res.pixel)*res.pixel ## center y coordinate of GID
 xgid <- ceiling(abs(gsdat$x)/res.pixel)
 ygid <- ceiling(abs(gsdat$y)/res.pixel)
 gidx <- ifelse(gsdat$x<0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
 gidy <- ifelse(gsdat$y<0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
 GID <- paste(gidx, gidy, sep="")
-gsdat <- cbind(GID, xcen, ycen, gsdat)
+gsdat <- cbind(GID, gsdat)
 
 # Randomize and writeout dataframe
 set.seed(1235813)
@@ -168,14 +166,29 @@ w ## plot widget
 Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey labels. You can use as waypoint input to a GPS (see e.g., [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units.
 
 ```{r, echo = FALSE, results = 'hide'}
-# Assemble existing survey GID coordinates
-gx <- gsdat %>% dplyr::group_by(GID) %>% summarise(mean(xcen))
-gy <- gsdat %>% dplyr::group_by(GID) %>% summarise(mean(ycen)-res.pixel)
-gidxy <- merge(gx, gy, by = "GID")
-colnames(gidxy) <- c("GID", "x", "y")
+# Extract current survey GID coordinates
+gx <- ceiling(gsdat$x/res.pixel)*res.pixel ## center x coordinate of GID
+gy <- ceiling(gsdat$y/res.pixel)*res.pixel ## center y coordinate of GID
+
+# Assemble dataframe
+xgid <- ceiling(abs(gx)/res.pixel)
+ygid <- ceiling(abs(gy)/res.pixel)
+gidx <- ifelse(gx < 0, paste("W", xgid, sep=""), paste("E", xgid, sep=""))
+gidy <- ifelse(gy < 0, paste("S", ygid, sep=""), paste("N", ygid, sep=""))
+GID <- paste(gidx, gidy, sep="")
+GID <- as.data.frame(cbind(GID, gx, gy))
+GID$gx <- as.numeric(as.character(GID$gx))
+GID$gy <- as.numeric(as.character(GID$gy))
+
+# Calculate total number of survey labels and center coordinates
+gidxy <- ddply(GID, c("GID", "gx", "gy"), summarise,
+               N = length(gx),
+               gx = mean(gx),
+               gy = mean(gy))
 
 # Write out file
 write.csv(gidxy, "./Priority_crops/Results/GID_center_points.csv", row.names = F)
+# also see [square buffer](https://www.neonscience.org/resources/learning-hub/tutorials/field-data-polygons-centroids)
 ```
 
 # Ensemble machine learning based mapping with `caret` and `caretEnsemble`
