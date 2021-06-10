@@ -165,7 +165,18 @@ w ## plot widget
 ```
 \
 
-Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey labels. You can use as waypoint input to a GPS (see e.g., [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units. 
+Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey labels. You can use as waypoint input to a GPS (see e.g., [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units.
+
+```{r, echo = FALSE, results = 'hide'}
+# Assemble existing GID coordinates
+gx <- gsdat %>% dplyr::group_by(GID) %>% summarise(mean(xcen))
+gy <- gsdat %>% dplyr::group_by(GID) %>% summarise(mean(ycen)-res.pixel)
+gidxy <- merge(gx, gy, by = "GID")
+colnames(gidxy) <- c("GID", "x", "y")
+
+# Write out file
+write.csv(gidxy, "./Priority_crops/Results/GID_center_points.csv", row.names = F)
+```
 
 # Ensemble machine learning based mapping with `caret` and `caretEnsemble`
 
