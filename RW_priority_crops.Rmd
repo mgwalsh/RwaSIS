@@ -460,7 +460,8 @@ colnames(sae.est) <- c("GID")
 sae.est$ranef <- sae.ran$GID[,1]
 sae.est$se <- sae.rse$GID[,1]
 sae <- merge(sae, sae.est, by = "GID")
-colnames(sae) <- c("GID", "absent", "present", "ran", "se")
+sae <- merge(gidxy, sae, by = "GID")
+colnames(sae) <- c("GID", "n", "gx", "gy", "absent", "present", "ran", "se")
 
 # Write out the file
 write.csv(sae, "./Priority_crops/Results/sae_dist_by_GID.csv", row.names = F)
