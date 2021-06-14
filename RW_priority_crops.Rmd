@@ -452,7 +452,7 @@ The data table of observations and the relevant SAE `bean` estimates by `GID` ar
 sae <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0)) ## substitute other priority crop names here
 sae$GID = rownames(sae)
 
-# Generate SAE model estimates and merge
+# Generate SAE model estimates and merge by GID
 sae.ran <- ranef(m2)
 sae.rse <- se.ranef(m2)
 sae.est <- as.data.frame(rownames(sae.ran$GID))
