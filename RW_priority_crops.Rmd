@@ -449,7 +449,7 @@ The data table of observations and the relevant SAE `bean` estimates by `GID` ar
 
 ```{r}
 # Generate cross-tabulation of the observations
-sae <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
+sae <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0)) ## substitute other priority crop names here
 sae$GID = rownames(sae)
 
 # Generate SAE model estimates and merge
@@ -463,7 +463,7 @@ sae <- merge(sae, sae.est, by = "GID")
 colnames(sae) <- c("GID", "absent", "present", "ran", "se")
 
 # Write out the file
-write.csv(sae, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
+write.csv(sae, "./Priority_crops/Results/sae_dist_by_GID.csv", row.names = F)
 ```
 
 # Takeaways
