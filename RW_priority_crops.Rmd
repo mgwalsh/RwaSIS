@@ -182,7 +182,7 @@ GID$gy <- as.numeric(as.character(GID$gy))
 
 # Calculate total number of current survey labels (n) per GID, and their center coordinates
 gidxy <- ddply(GID, c("GID", "gx", "gy"), summarise,
-               n = length(gx),
+               n = length(GID),
                gx = mean(gx), ## GID center x coordinate
                gy = mean(gy)) ## GID center y coordinate
 
@@ -460,8 +460,7 @@ colnames(sae.est) <- c("GID")
 sae.est$ranef <- sae.ran$GID[,1]
 sae.est$se <- sae.rse$GID[,1]
 sae <- merge(sae, sae.est, by = "GID")
-sae <- merge(gidxy, sae, by = "GID")
-colnames(sae) <- c("GID", "n", "gx", "gy", "absent", "present", "ran", "se")
+colnames(sae) <- c("GID", "absent", "present", "ran", "se")
 
 # Write out the file
 write.csv(sae, "./Priority_crops/Results/sae_dist_by_GID.csv", row.names = F)
