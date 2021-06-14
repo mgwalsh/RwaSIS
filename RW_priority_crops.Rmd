@@ -453,16 +453,17 @@ sae <- as.data.frame.matrix(table(gsout$GID, gsout$bean > 0))
 sae$GID = rownames(sae)
 
 # Generate SAE model estimates and merge
-sae.ran <- coef(m2)
+sae.ran <- ranef(m2)
 sae.rse <- se.ranef(m2)
 sae.est <- as.data.frame(rownames(sae.ran$GID))
 colnames(sae.est) <- c("GID")
-sae.est$ran <- sae.ran$GID
-sae.est$se <- sae.rse$GID
-# colnames(sae.est) <- c("GID", "absent", "present", "int", "other", "st", "other_st", "se")
+sae.est$ranef <- sae.ran$GID[,1]
+sae.est$se <- sae.rse$GID[,1]
+sae <- merge(sae, sae.est, by = "GID")
+colnames(sae) <- c("GID", "absent", "present", "ran", "se")
 
 # Write out the file
-# write.csv(bean, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
+write.csv(sae, "./Priority_crops/Results/bean_dist_by_GID.csv", row.names = F)
 ```
 
 # Takeaways
