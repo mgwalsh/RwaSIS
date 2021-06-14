@@ -167,8 +167,8 @@ Note that the defined `GID` variable in the chunk above is sort of like a milita
 
 ```{r}
 # Extract current survey GID coordinates
-gx <- ceiling(gsdat$x/res.pixel)*res.pixel ## center x coordinate of GID
-gy <- ceiling(gsdat$y/res.pixel)*res.pixel ## center y coordinate of GID
+gx <- ceiling(gsdat$x/res.pixel)*res.pixel - 5000 ## center x coordinate of GID
+gy <- ceiling(gsdat$y/res.pixel)*res.pixel - 5000 ## center y coordinate of GID
 
 # Assemble dataframe
 xgid <- ceiling(abs(gx)/res.pixel)
