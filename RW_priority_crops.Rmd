@@ -163,7 +163,7 @@ w ## plot widget
 ```
 \
 
-Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey labels. You can use as waypoint input to a GPS (see e.g., [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units. The next chunk writes out the number of the current survey labels per `GID` as well as the center coordinates of those. You could also try something similar with the [`dggridsR` package](https://www.rdocumentation.org/packages/dggridR/versions/2.0.4), which implements several kinds of discreet glogal grids.
+Note that the defined `GID` variable in the chunk above is sort of like a military style 10 × 10 km grid ID that will usually contain several survey labels. You can use as waypoint input to a GPS (see e.g., [GPSBabel](https://www.gpsbabel.org)), tablet or smart phone for in-the-field navigation. We will also use it further on in the script for SAE as an alternative to using potentially problematic administrative units. The next chunk writes out the number of the current survey labels per `GID` as well as the center coordinates of those. You could also try something similar with the [`dggridsR` package](https://www.rdocumentation.org/packages/dggridR/versions/2.0.4), which implements several kinds of discreet global grids.
 
 ```{r}
 # Extract current survey GID coordinates
