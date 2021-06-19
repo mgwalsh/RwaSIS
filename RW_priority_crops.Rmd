@@ -203,7 +203,7 @@ seed <- 12358
 set.seed(seed)
 
 # Split data into calibration and validation sets
-gsIndex <- createDataPartition(gsdat$bean, p = 4/5, list = F, times = 1)
+gsIndex <- createDataPartition(gsdat$potato, p = 4/5, list = F, times = 1)
 gs_cal <- gsdat[ gsIndex,]
 gs_val <- gsdat[-gsIndex,]
 
