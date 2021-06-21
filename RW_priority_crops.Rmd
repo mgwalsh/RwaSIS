@@ -154,6 +154,10 @@ set.seed(1235813)
 gsdat <- gsdat[sample(1:nrow(gsdat)), ]
 write.csv(gsdat, "./Priority_crops/Results/RW_priority_crop_dist.csv", row.names = F)
 
+# Write out number of survey observations by GID and survey code
+gidsc <- as.data.frame(table(gsdat$GID, gsdat$scode))
+write.csv(gidsc, "./Priority_crops/Results/GID_scode_table.csv", row.names = F)
+
 # Plot combined crop survey locations
 w <- leaflet() %>%
   setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 9) %>%
