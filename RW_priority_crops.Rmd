@@ -186,12 +186,17 @@ GID$gx <- as.numeric(as.character(GID$gx))
 GID$gy <- as.numeric(as.character(GID$gy))
 
 # Calculate total number of current survey labels (n) per GID, and their center coordinates
-gidxy <- ddply(GID, c("GID", "gx", "gy"), summarise,
+gidxy <- ddply(GID, c("GID"), summarise,
                n = length(GID),
-               gx = mean(gx),
-               gy = mean(gy))
+               x = mean(gx),
+               y = mean(gy))
 
 # Write out file
+coordinates(gidxyxy) <- ~x+y
+crs(gidxy) <- "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"
+gidll <- spTransform(gidxy, CRS(proj4string(shape)))
+colnames(gidll) <- c("lon","lat")
+gidxy <- cbind(gidxy, gidll)
 write.csv(gidxy, "./Priority_crops/Results/GID_center_points.csv", row.names = F)
 ```
 
