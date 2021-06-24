@@ -212,7 +212,7 @@ seed <- 12358
 set.seed(seed)
 
 # Split data into calibration and validation sets
-gsIndex <- createDataPartition(gsdat$potato, p = 4/5, list = F, times = 1)
+gsIndex <- createDataPartition(gsdat$bean, p = 4/5, list = F, times = 1)
 gs_cal <- gsdat[ gsIndex,]
 gs_val <- gsdat[-gsIndex,]
 
@@ -222,7 +222,7 @@ lcal <- as.vector(t(gs_cal[labs]))
 lcal <- ifelse(lcal == 1, "Y", "N")
 
 # Raster calibration features
-fcal <- gs_cal[ ,17:41,45:72]
+fcal <- gs_cal[ ,c(17:41,45:72)]
 ```
 
 Note that while we are using the `bean` distribution data here, you can also substitute any of the other 5 priority crops as labels and specify those with the `labs` variable in the chunk above. The 5 additional crop labels are included in the `crop` dataframe, but we shall leave those for you to explore. Presented next are some starter models, which we consider to be *contrasting* both in terms of the gridded calibration features that are used, as well as the MLAs that are used in fitting the survey data to those.
@@ -265,7 +265,7 @@ summary(gm)
 
 ## Central place theory model with `caret`
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where specific crops are likely to occur (or not, e.g. in forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled or infrastructure variables. 
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where specific crops are likely to occur (or not, e.g., in city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled or infrastructure variables. 
 
 ```{r, results='hide'}
 # Select central place covariates
