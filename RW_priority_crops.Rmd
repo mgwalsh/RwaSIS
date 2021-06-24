@@ -424,7 +424,7 @@ w ## plot widget
 
 The term *small area* conventionally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* (e.g., `GID` or similar) within a given larger ROI. If, for example, a ground survey has been carried out for a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. Conversely, the purpose may be to generate larger and/or denser coverages from different surveys of smaller sub-areas. To deal with such problems, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional auxiliary variables, which should have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the possible approaches to these common estimation problems. The next chunk initially calculates small area estimates using [random intercept models](https://www.bristol.ac.uk/cmm/learning/videos/random-intercepts.html) that include random effects for the *sector* level administrative units. They are also used to estimate the effects of the relevant fixed variables, `scode`, `st`, and their interaction.
 
-```{r}
+```{r, warning = FALSE}
 # Small area hierarchical random-effect estimates by 399 sectors
 # Change dependent variable labels from `bean` ... `maize`, `cassava`, etc here
 m0 <- glmer(bean ~ scode + (1|sector), family = binomial, gsout) ## base model
@@ -442,7 +442,7 @@ We therefore recommend using static, equal area units such as the 10 × 10 km gr
 
 The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. A comparison of the `m1` & `m2` models can be assessed via mixed model `anova`. Note that the only difference between the 2 models are the `sector` vs `GID` random intercept effects, which are estimated below.
 
-```{r}
+```{r, warning = FALSE}
 # Small area hierarchical random-effect estimates by 233 GIDs
 m2 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
