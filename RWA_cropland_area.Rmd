@@ -30,7 +30,7 @@ To actually run the notebook, you will need to load the packages indicated in th
 
 ```{r}
 # Package names
-packages <- c("osfr", "downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "klaR", "plyr", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("osfr", "downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "klaR", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -44,7 +44,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (2019), 48 raster covariates and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating *small cropland area estimates* by administrative units, which are useful for national and sub-national monitoring and reporting of various [ecosystem services](https://en.wikipedia.org/wiki/Ecosystem_service). 
 
-```{r}
+```{r results = 'hide'}
 # Set working directory
 dir.create("RW_GS20", showWarnings = F)
 setwd("./RW_GS20")
@@ -132,7 +132,7 @@ geos <- geos[order(geos$time), ] ## sort back into original random sample order
 
 The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland occupies virtually the entire quadrat. The applied if-else rule is that if cropland is present, then `ccount` is set to a count between 1-16 depending on the amount of cropland cover that is present within the quadrat. If cropland is absent, then `ccount` is set to 0. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these land cover archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
-```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%', }
+```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%' }
 knitr::include_graphics("./RW_GS20/GeoSurvey_examples.png")
 ```
 
