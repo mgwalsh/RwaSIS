@@ -11,7 +11,7 @@ output:
 ---
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
 # Introduction
@@ -26,7 +26,7 @@ The main intent of this notebook is to illustrate starter code guidelines for pr
 
 # General data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide GeoSurvey observations, link those to the spatial data and then model them using machine learning and/or geostatistics. The notebook itself is maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
+To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide GeoSurvey observations, link those to the spatial data and then model them using machine learning algorithms [MLA](https://en.wikipedia.org/wiki/Outline_of_machine_learning) and/or [geostatistics](https://en.wikipedia.org/wiki/Geostatistics). The notebook itself is maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
 
 ```{r}
 # Package names
@@ -42,7 +42,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (2019), 48 raster covariates and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html) for calculating *small cropland area estimates* by administrative units, which are useful for national and sub-national monitoring and reporting of various [ecosystem services](https://en.wikipedia.org/wiki/Ecosystem_service). 
+The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (labels), 48 raster covariates (features) and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html). 
 
 ```{r results = 'hide'}
 # Set working directory
@@ -483,7 +483,7 @@ The main takeaways of this notebook are the following:
 
 * The workflow can be flexibly extended to map other land cover variables (e.g., the occurrence and distribution of buildings, dense woody vegetation cover, built-up infrastructures and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs with new observations, geodata and/or MLAs.
 
-* The workflow outputs can be used to improve the precision and accuracy of small area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost compared to conventional land cover mapping practices.
+* The workflow outputs can be used to improve the precision and accuracy of small cropland area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost compared to conventional land cover mapping practices.
 
 * I'll update the introductory examples in this notebook as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
 
