@@ -382,7 +382,7 @@ cpa <- subset(cp_val, cp_val=="N", select=c(Y))
 cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 ```
 
-```{r, echo = FALSE, fig.align = "center", fig.cap = "Cropland classification ROC curve for the validation set."}
+```{r, echo = FALSE, fig.align = "center", fig.height = 4, fig.width = 4, fig.cap = "Cropland classification ROC curve for the validation set."}
 par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
