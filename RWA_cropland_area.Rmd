@@ -143,7 +143,7 @@ The processed Rwanda grid data (in the `grids` raster stack) were derived and re
 \
 ```{r, echo=FALSE, results='asis'}
 osf_retrieve_file("ag6fk") %>% osf_download(conflicts = "overwrite")
-vars <- read.table("./RW_GS20/GS variables.csv", header = T, sep = ",")
+vars <- read.table("GS variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
