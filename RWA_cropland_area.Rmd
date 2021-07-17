@@ -132,7 +132,7 @@ geos <- geos[order(geos$time), ] ## sort back into original random sample order
 
 The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland occupies virtually the entire quadrat. The applied if-else rule is that if cropland is present, then `ccount` is set to a count between 1-16 depending on the amount of cropland cover that is present within the quadrat. If cropland is absent, then `ccount` is set to 0. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these land cover archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
-```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%' }
+```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%'}
 knitr::include_graphics("./RW_GS20/GeoSurvey_examples.png")
 ```
 
@@ -141,9 +141,12 @@ knitr::include_graphics("./RW_GS20/GeoSurvey_examples.png")
 The processed Rwanda grid data (in the `grids` raster stack) were derived and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
 
 \
-```{r, echo=FALSE, results='asis'}
+```{r, echo=FALSE, results='hide'}
 osf_retrieve_file("ag6fk") %>% osf_download(conflicts = "overwrite")
 vars <- read.table("GS variables.csv", header = T, sep = ",")
+```
+
+```{r, echo = FALSE, results = 'asis'}
 datatable(vars)
 ```
 \
@@ -382,7 +385,7 @@ cpa <- subset(cp_val, cp_val=="N", select=c(Y))
 cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 ```
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 4, fig.width = 4, fig.cap = "Cropland classification ROC curve for the validation set."}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, fig.cap = "Cropland classification ROC curve for the validation set."}
 par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
