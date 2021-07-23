@@ -1,5 +1,5 @@
 ---
-title: "Workflow for assesing the spatial distribution of cropping systems in Rwanda"
+title: Workflow for assesing the spatial distribution of cropping systems
 author: "M.G Walsh, R. Manmers and J. Rutembuka"
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
