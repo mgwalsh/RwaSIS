@@ -1,0 +1,18 @@
+---
+title: "Workflow for assesing the spatial distribution of cropping systems in Rwanda"
+author: "M.G Walsh, R. Manmers and J. Rutembuka"
+date: "`r format(Sys.time(), '%d, %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 1
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+The term [Cropping system](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/cropping-system) refers to the crops and crop sequences and the management techniques used on a particular field, farm or region over a period of years. 
