@@ -1,5 +1,5 @@
 ---
-title: Workflows for mapping cropping systems using staple food indicator species
+title: Workflows for mapping agroecological systems using staple food indicator species
 author: M.G Walsh, R. Manners, J. Meliyo, and J. Rutembuka
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
