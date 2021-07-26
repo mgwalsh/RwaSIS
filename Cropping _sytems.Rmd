@@ -1,11 +1,12 @@
 ---
-title: Workflow for assesing the spatial distribution of cropping systems
-author: "M.G Walsh, R. Manmers and J. Rutembuka"
+title: Workflows for mapping cropping systems using staple food indicator species
+author: M.G Walsh, R. Manners, J. Meliyo, and J. Rutembuka
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
     toc: true
-    toc_depth: 1
+    toc_depth: 2
+    fig_caption: true
     css: style.css
 ---
 
@@ -15,4 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-The term [Cropping system](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/cropping-system) refers to the crops and crop sequences and the management techniques used on a particular field, farm or region over a period of years. 
+The term [*Cropping system*](https://www.sciencedirect.com/science/article/pii/B9780123948076000241) refers to the crops and crop sequences and management techniques that are used on a given field, farm or region over a period of years. The prevailing [Multicropping systems](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/cropping-system) in East Africa are often a direct contrast to the industrial model of agriculture that has reduced labor needs through mechanization, consolidation of farms and fields, and an increased reliance on external agricultural inputs such as fossil fuels, GMOs, improved / patented seed, chemical fertilizers and pesticides. The increased reliance external inputs in turn usually comes at economic, health / nutritional, environmental and/or [Ecosystem service](https://en.wikipedia.org/wiki/Ecosystem_service) costs to smallholder farmers and rural households. It is not possible to manage the ensuing interactions and complexities without knowing where these agroecological systems are located and how they might be evolving.
+
+*The objective of this notebook is to provide starter code in [R](https://www.r-project.org/) for exploratory data analyses ([EDA](https://en.wikipedia.org/wiki/Exploratory_data_analysis)) and spatial mapping of the staple food crops (including: maize, millet, wheat, sorghum, rice, bean, chickpea, pigeon pea, soybean, Irish potatoes, sweet potatoes, and cassava, in addition to banana, livestock as well as numerous other more localized food crops) that are often grown in combination (and/or sequence) in Rwanda and Tanzania. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/Bioavailability/blob/master/CoDa_workflow.Rmd), and you can fork and alter it from there for your reference and as you see fit.*
+
