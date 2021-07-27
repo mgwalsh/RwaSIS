@@ -1,6 +1,6 @@
 ---
 title: Workflows for mapping cropping systems using staple food indicator species
-author: M.G Walsh, R. Manners, R. Rodríguez Iglesias, J. Meliyo, and J. Rutembuka
+author: M.G Walsh, R. Manners, R. Rodríguez Iglesias, J. Meliyo, and J. Rutebuka
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 The term ["Agroecology"](https://www.agroecologyfund.org/what-is-agroecology) refers to farming that “centers on food production that makes the best use of nature’s goods and services while not damaging those resources.” Agroecological practices are or should be closely linked to near-real-time knowledge about crop (and livestock) combinations, crop sequences and management practices; i.e., ["Cropping  systems"](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/cropping-system) that are applied on a given field, farm or region over a period of years. 
 
-The prevailing smallholder cropping systems in East Africa often stand in stark contrast to the industrial agricultural practices elsewhere that rely on reduced labor through mechanization, consolidation of farms and fields, the occurrence of large areas of monocrops, and increased external agricultural inputs such as fossil fuels, electricity, irrigation, GMOs, improved / patented seed, chemical fertilizers, lime, pesticides and herbicides. The increased reliance on external inputs in turn usually comes at economic, health / nutritional, environmental and/or [Ecosystem service](https://en.wikipedia.org/wiki/Ecosystem_service) costs to smallholder farmers and rural communities (see [Rockström et al., 2017](https://link.springer.com/article/10.1007/s13280-016-0793-6)). It is not possible to gauge or manage the ensuing agroecological interactions and complexities without knowing where specific cropping systems are located and how they may be evolving. As to whether agroecological management actually outperforms industrial agriculture in the long-term remains an open empirical question that is largely not supported by adequate data and evidence. We set some reproducible [Staple food](https://en.wikipedia.org/wiki/Staple_food) baselines here to help test this contention in the future, using a relatively large, georeferenced survey dataset from Tanzania and Rwanda. We also point to potential improvements in survey designs that should be implemented in going forward.
+The prevailing smallholder cropping systems in East Africa often stand in stark contrast to the industrial agricultural practices elsewhere that rely on reduced labor through mechanization, consolidation of farms and fields, the occurrence of large areas of monocrops, and increased external agricultural inputs such as fossil fuels, electricity, irrigation, GMOs, improved / patented seed, chemical fertilizers, lime, pesticides and herbicides. The increased reliance on external inputs in turn usually comes at economic, health / nutritional, environmental and/or [Ecosystem service](https://en.wikipedia.org/wiki/Ecosystem_service) costs to smallholder farmers and rural communities (see [Rockström et al., 2017](https://link.springer.com/article/10.1007/s13280-016-0793-6)). It is not possible to gauge or manage the ensuing agroecological interactions and complexities without knowing where specific cropping systems are located and how they may be evolving. As to whether agroecological management actually outperforms industrial agriculture in the long-term remains an open question that is largely not supported by adequate data and evidence. We set some reproducible [Staple food](https://en.wikipedia.org/wiki/Staple_food) baselines here to help test this contention in the future, using a relatively large, georeferenced survey dataset from Tanzania and Rwanda. We also point to potential improvements in survey designs and implementation that may be useful in going forward.
 
 *The main objective of this notebook is to provide starter code in [R](https://www.r-project.org/) for classifying and delineating of cropping systems in Tanzania and Rwanda. The data include georeferenced observations of the occurrence of: maize, millet, wheat, sorghum, rice, bean, chickpea / pigeon pea / cowpea (collectively "other pulses"), soybean, Irish potatoes, sweet potatoes, cassava and banana / plantain, in addition to livestock as well as the combined presence/absence of numerous other more localized food, oil, beverage and fiber crops. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
@@ -48,6 +48,18 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 The survey (label) and gridded (feature) data downloads can be obtained with this next chunk. The chunk (not shown but in the markdown document) also generates an overview map of where the observations were collected in Tanzania and Rwanda ... you can click and zoom into the individual locations.
 
+```{r}
+# Create a data folder in  your current working directory
+dir.create("Cropping_systems", showWarnings=F)
+setwd("./Cropping_systems")
+dir.create("Results", showWarnings=F)
+
+# Download crop survey data
+osf_retrieve_file("zqh9y") %>% osf_download()
+unzip("priority_crops.csv.zip", overwrite = T)
+crop <- read.table("priority_crops.csv", header = T, sep = ",")
+```
+
 # Graphical models of crop species interactions
 
 The aim of this next section is to illustrate an empirical multivariate basis that describes the relevant conditional relationships between the different staple crops with graphical interaction models. The types of models that we will be using are well described and illustrated in [Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0) including the code and references therein. There is also an open R tutorial by [Højsgaard (2012)](https://people.math.aau.dk/~sorenh/misc/2012-Oslo-GMwR/GMwR-notes.pdf) available, which you might want to consult.
@@ -63,7 +75,7 @@ To run this section of the notebook you will initially need to install the relev
 #    install.packages("BiocManager")
 # BiocManager::install(version = "3.13")
 
-# note that this will query you in the console as to whether to update other associated packages ... (a/s/n). Reply with n if all of the listed packages are up to date.
+# note that this will query you in the console as to whether to update other associated packages ... (a/s/n). Respond with n if all of the listed packages are up to date.
 
 # Then install and load gRbase, gRim and statnet 
 packages <- c("gRbase", "gRim", "statnet")
