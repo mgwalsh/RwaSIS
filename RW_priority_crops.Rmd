@@ -24,7 +24,7 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r}
 # Package names
-packages <- c("downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "klaR", "nnet", "plyr", "dplyr", "doParallel", "arm")
+packages <- c("osfr", "downloader", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "devtools", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "klaR", "nnet", "plyr", "dplyr", "doParallel", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -38,16 +38,16 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk downloads the data that are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), including Maize, Wheat, Rice, Potato, Cassava and Bean and links these to raster and GIS data features. Note that this chunk is Mac or Linux specific and so the directory structures should be changed to run on Windows machines.
+The following chunk downloads the data that are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), including Maize, Wheat, Rice, Potato, Cassava and Bean and links these to raster and GIS data features. Note that this chunk is Mac or Linux specific in R (not in Rstudio) and so the directory structures should be changed to run on Windows machines.
 
-```{r}
+```{r, results = 'hide'}
 # Create a data folder in  your current working directory
 dir.create("Priority_crops", showWarnings=F)
 setwd("./Priority_crops")
 dir.create("Results", showWarnings=F)
 
 # Download crop data
-download("https://osf.io/zqh9y/?raw=1", "priority_crops.csv.zip", mode = "wb")
+osf_retrieve_file("zqh9y") %>% osf_download(conflicts = "overwrite")
 unzip("priority_crops.csv.zip", overwrite = T)
 crop <- read.table("priority_crops.csv", header = T, sep = ",")
 
@@ -57,7 +57,7 @@ unzip("RWA_level5.zip", overwrite = T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
 # Download raster stacks
-download("https://osf.io/hp6v7?raw=1", "RW_250m_2020.zip", mode = "wb")
+osf_retrieve_file("hp6v7") %>% osf_download(conflicts = "overwrite")
 unzip("RW_250m_2020.zip", overwrite = T)
 download("https://osf.io/u73pd?raw=1", "RW_GS_preds.zip", mode = "wb")
 unzip("RW_GS_preds.zip", overwrite = T)
@@ -479,7 +479,7 @@ write.csv(sae, "./Priority_crops/Results/sae_dist_by_GID.csv", row.names = F)
 
 The main takeaways of this notebook are the following:
 
-* This notebook produces precise, accurate and reproducible spatial predictions of the observed presence/absence of bean occurrence data in Rwanda based on 4 *FAIRly* (see [FAIR](https://en.wikipedia.org/wiki/FAIR_data)) distributed crop/soil surveys and using a standard ensemble machine learning workflow. The predictions can be flexibly extended to include other priority crop or cropping system distributions and small area estimates that are needed for planning of management response trials and monitoring activities.
+* This notebook produces precise, accurate and reproducible spatial predictions of the observed presence/absence of bean occurrence data in Rwanda based on 4 *FAIR* (see [FAIR](https://en.wikipedia.org/wiki/FAIR_data)) distributed crop/soil surveys and using a standard ensemble machine learning workflow. The predictions can be flexibly extended to include other priority crop or cropping system distributions and small area estimates that are needed for planning of management response trials and monitoring activities.
 
 * Survey results can be harmonized and adjusted relative to a given baseline (in this case the ongoing RwaSIS survey, `scode = base`) for the purpose of SAE as well as national-level reporting of crop distributions, which makes disparate legacy survey data sources more comparable and inclusive. 
 
