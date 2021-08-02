@@ -118,7 +118,7 @@ The main notion is that the occurrence and distribution of croplands and crop ty
 
 ## Combined Rwanda crop occurrence survey dataframe
 
-This next chunk reprojects the crop data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_priority_crop_dist.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 7.5k+ crop survey labels were obtained.
+This next chunk reprojects the crop data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_priority_crop_dist.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 7k+ crop survey labels were obtained.
 
 ```{r}
 # Attach GADM-L5 administrative unit names from shape
