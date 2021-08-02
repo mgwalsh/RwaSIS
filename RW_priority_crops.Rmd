@@ -100,7 +100,7 @@ vars <- read.table("Grid variables.csv", header = T, sep = ",")
 datatable(vars)
 ```
 \
-These Rwanda-wide (actually Africa-wide) features will change over time and we will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f* (*crop*) ~ (*a, c, o, r, s*) where:
+These Rwanda-wide features will change over time and we will update them if and when needed. Also note that these are grouped by factor variables that designate the occurrence of a given crop as a [Jenny-type](https://soilandhealth.org/wp-content/uploads/01aglibrary/010159.Jenny.pdf) function *f* (*crop*) ~ (*a, c, o, r, s*) where:
 
 * a - anthropic variables
 * c - climatic variables
