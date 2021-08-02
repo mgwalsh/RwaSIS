@@ -1,5 +1,5 @@
 ---
-title: Crop distribution predictions from survey data and small area estimates
+title: Crop distribution predictions from survey data and small area estimates in Rwanda
 author: M.G. Walsh, J. Rutebuka and R. Manners
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output:
@@ -63,19 +63,15 @@ osf_retrieve_file("u73pd") %>% osf_download(conflicts = "overwrite")
 unzip("RW_GS_preds.zip", overwrite = T)
 glist <- list.files(pattern="tif")
 grids <- stack(glist)
-
-# Download cropland mask
-# osf_retrieve_file("bmysp") %>% osf_download(conflicts = "overwrite")
-# unzip("RW_CP_mask.zip", overwrite = T)
 ```
 
 ## Priority crop occurrence data
 
 RAB's 6 priority crop occurrence data (presence/absence) for Rwanda were assembled from 4 georeferenced surveys:
 
-1. The currently ongoing RwaSIS survey designated as `scode = base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 2,457 observations in this survey. Note that the number of observations will change rapidly during the remainder of 2021 as the RwaSIS crop and soil surveys progress, and we will update the numbers accordingly. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
+1. The currently ongoing RwaSIS survey designated as `scode = base` (see and download the raw data at: [Kobo](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/summary)). There are currently 2,457 observations as per the compile of this survey. We will update the numbers as they accumulate. Also note that to the best of our knowledge these are the only crop distribution and soil data that are being collected using a spatially balanced sampling frame covering all of Rwanda's croplands (see the notebook about this at: [Cropland sample notebook](https://osf.io/wn3my)). 
 
-2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey designated as `scode = other`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the actual locations of fields.
+2. The [CIALCA Farm Heterogeneity Survey of Rwanda, (2018)](https://cialca.shinyapps.io/cialca_base_2files/) survey designated as `scode = other`. There are 3,199 georeferenced observations covering Rwanda in this survey. Note that the spatial coordinates for this survey are slightly offset to the GPS locations of the surveyed households rather than to the locations of the actual fields.
 
 3. The [CNLS](https://cropnuts.com/) soil survey of Rwanda's croplands, designated as `scode = other`, which is openly accessible at: [OSF](https://osf.io/shvpd/). There are 597 observations in this survey where at least one of the priority crops was present. We extracted these from the crop type descriptions of the soil survey's meta-data.
 
@@ -116,7 +112,7 @@ The main notion is that the occurrence and distribution of croplands and crop ty
 
 ## Combined Rwanda crop occurrence survey dataframe
 
-This next chunk reprojects the crop data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_priority_crop_dist.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 6k+ crop survey labels were obtained.
+This next chunk reprojects the crop data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_priority_crop_dist.csv` into your `./Priority_crops/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 7.5k+ crop survey labels were obtained.
 
 ```{r}
 # Attach GADM-L5 administrative unit names from shape
