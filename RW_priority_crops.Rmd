@@ -94,7 +94,7 @@ bean <- as.data.frame.matrix(table(crop$survey, crop$bean > 0))
 The pre-processed Rwanda grid data (in the `grids` raster stack) were derived and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
 
 \
-```{r, echo=FALSE, results='asis'}
+```{r, echo=FALSE, results='hide'}
 osf_retrieve_file("e2x4s") %>% osf_download(conflicts = "overwrite")
 vars <- read.table("Grid variables.csv", header = T, sep = ",")
 datatable(vars)
