@@ -397,7 +397,7 @@ fname <- paste("./Priority_crops/Results/","RW_", labs, "_out.csv", sep = "")
 write.csv(gsout, fname, row.names = F)
 
 # Apply cropland mask
-cpmask <- raster("./Priority_crops/Mask/RW_CP_mask.tif")
+cpmask <- raster("./Priority_crops/CM20.tif")
 stm.pred <- mask(1-st.pred, cpmask, inverse=FALSE, maskvalue=NA, updatevalue=NA)
 
 # Project stm.pred to EPSG:3857
@@ -408,7 +408,7 @@ pal <- colorBin("Reds", domain = 0:1, na.color = "transparent")
 
 # Render map
 w <- leaflet() %>% 
-  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 9) %>%
+  setView(lng = mean(gsdat$lon), lat = mean(gsdat$lat), zoom = 8) %>%
   addProviderTiles(providers$OpenStreetMap.Mapnik) %>%
   addRasterImage(stll, colors = pal, opacity = 0.5) %>%
   addLegend(pal = pal, values = values(stll), title = "Probability")
@@ -438,7 +438,7 @@ We therefore recommend using static, equal area units such as the 10 × 10 km gr
 The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`) for the currently recorded distribution of the `bean` occurrence labels in Rwanda. A comparison of the `m1` & `m2` models can be assessed via mixed model `anova`. Note that the only difference between the 2 models are the `sector` vs `GID` random intercept effects, which are estimated below.
 
 ```{r, warning = FALSE}
-# Small area hierarchical random-effect estimates by 233 GIDs
+# Small area hierarchical random-effect estimates by GIDs
 m2 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
