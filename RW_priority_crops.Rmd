@@ -445,7 +445,7 @@ The next chunk estimates small areas on the basis of 10 × 10 km grid IDs (`GID`
 
 ```{r, warning = FALSE}
 # Small area hierarchical random-effect estimates by GIDs
-m2 <- glmer(bean ~ scode*st + (1|GID), family = binomial, gsout)
+m2 <- glmer(potato ~ scode*st + (1|GID), family = binomial, gsout)
 anova(m0, m1, m2)
 ```
 
@@ -473,7 +473,7 @@ sae <- merge(sae, sae.est, by = "GID")
 colnames(sae) <- c("GID", "absent", "present", "ran", "se")
 
 # Write out the file
-write.csv(sae, "./Priority_crops/Results/sae_dist_by_GID.csv", row.names = F)
+write.csv(sae, "./Priority_crops/Results/potato_dist_by_GID.csv", row.names = F)
 ```
 
 # Takeaways
