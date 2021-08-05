@@ -40,7 +40,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ## Data downloads
 
-The following chunk downloads the data that are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), including Maize, Wheat, Rice, Potato, Cassava and Bean and links these to raster and GIS data features. Note that this chunk is Mac or Linux specific in R (not in Rstudio) and so the directory structures should be changed to run on Windows machines.
+The following chunk downloads the data that are needed for running this particular example. Specifically, it assembles georeferenced field observations of priority crops that have been requested by [RAB](http://rab.gov.rw/index.php?id=180), including maize, wheat, rice, potato, cassava and bean and links these to raster and GIS data features. Note that this chunk is Mac or Linux specific in R (not in Rstudio) and so the directory structures should be changed to run on Windows machines.
 
 ```{r, results = 'hide'}
 # Create a data folder in  your current working directory
