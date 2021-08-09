@@ -193,11 +193,12 @@ gidxy <- ddply(GID, c("GID"), summarise,
                y = mean(gy))
 
 # Write out file
+write.csv(gidxy, "./Priority_crops/Results/GID_center_points.csv", row.names = F)
 coordinates(gidxy) <- ~x+y
 crs(gidxy) <- "+proj=laea +ellps=WGS84 +lon_0=20 +lat_0=5 +units=m +no_defs"
 gidll <- as.data.frame(spTransform(gidxy, CRS(proj4string(shape))))
 colnames(gidll) <- c("GID", "n", "lon", "lat")
-write.csv(gidll, "./Priority_crops/Results/GID_center_points.csv", row.names = F)
+write.csv(gidll, "./Priority_crops/Results/GID_center_points_ll.csv", row.names = F)
 ```
 
 # Ensemble machine learning based mapping with `caret` and `caretEnsemble`
