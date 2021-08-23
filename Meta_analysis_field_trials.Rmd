@@ -1,5 +1,5 @@
 ---
-title: Meta-analyses of agricultual lime application effects on crop yields with field trial data
+title: Meta-analyses of agricultual lime application effects on crop yields from field trial data
 author: M.G. Walsh, R. Manners, J.V. Silva and S. Aston
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # About this notebook
 
-Soil acidity affects soil nutrient availability and microbial activity and is thought to reduce crop growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5); also see the associated notebooks about Rwanda's [Cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [Crop distribution](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium (e.g., ammonium nitrate, urea, manure and compost) will decrease soil pH over time (see the extension advice from [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime)). The application of [Agricultural lime (aglime)](https://en.wikipedia.org/wiki/Agricultural_lime) can be used to mitigate the effects of soil acidity on soil nutrient availability, reduced microbial activity, and the occurrence of [Aluminium](https://www.sciencedirect.com/science/article/pii/B9780128031582000011) and/or [Manganese](https://www.tandfonline.com/doi/abs/10.1080/01904169809365409) toxicities. The rocks and minerals from which agricultural lime is derived, primarily [Limestone](https://en.wikipedia.org/wiki/Limestone), but also [Chalk](https://en.wikipedia.org/wiki/Chalk), is primarily composed of calcium carbonate (CaCO~3~) and/or magnesium carbonate (MgCO~3~). Limestone is typically pulverized and/or chemically altered to produce different aglime products of varying efficacy. Similar to chemical fertilizers, the use of aglime also generates significant greenhouse gas emissions in its production, to-farm-gate transport and through its field application, which should be minimized on that basis.
+Soil acidity affects soil nutrient availability and microbial activity and is thought to reduce crop growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5); also see the associated notebooks about Rwanda's [Cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [Crop distribution](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium (e.g., ammonium nitrate, urea, manure and compost) will decrease soil pH over time (see the extension advice from [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime)). The application of [Agricultural lime (aglime)](https://en.wikipedia.org/wiki/Agricultural_lime) can be used to mitigate the effects of soil acidity on soil nutrient availability, reduced microbial activity, and the occurrence of [Aluminium](https://www.sciencedirect.com/science/article/pii/B9780128031582000011) and/or [Manganese](https://www.tandfonline.com/doi/abs/10.1080/01904169809365409) toxicities. The rocks and minerals from which agricultural lime is derived, primarily [Limestone](https://en.wikipedia.org/wiki/Limestone), but also [Chalk](https://en.wikipedia.org/wiki/Chalk), is primarily composed of calcium (CaO) and/or magnesium (MgO) oxides, which are readily measured by e.g., [X-ray fluorescence](https://en.wikipedia.org/wiki/X-ray_fluorescence). Limestone is typically pulverized and/or chemically altered to produce different aglime products of varying efficacy. Similar to chemical fertilizers, the use of aglime also generates significant greenhouse gas emissions in its production, to-farm-gate transport and through its field application, which should be minimized on that basis.
 
 *The main objective of this notebook is to illustrate the use of standard meta-analysis techniques for assessing the effects of aglime applications on maize and bean yields in Rwanda. Rwanda was selected for this illustration because of the high prevalence of acid soils within its croplands, as well as the availability of a relatively large, recent, multi-year, field trial dataset that is suitable for this purpose. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Meta_analysis_field_trials.Rmd), and you can fork and modify it from there as you see fit.*
 
@@ -40,7 +40,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads eligibility pre-screened trial data from the [RwaSIS OSF repository](https://doi.org/10.17605/OSF.IO/Y9ZUT). The raw data are also openly available from [1AF](mailto:step.aston@oneacrefund.org ) on request, if you would like to trace our initial data screening and wrangling processes.
+The next chunk downloads eligibility pre-screened trial data from the [RwaSIS OSF repository](https://doi.org/10.17605/OSF.IO/Y9ZUT). The raw data are also openly available from [1AF](mailto:step.aston@oneacrefund.org) on request, if you would like to trace our initial data screening and wrangling efforts.
 
 ```{r, results = 'hide'}
 # Create a data folder in your current working directory
@@ -53,17 +53,19 @@ osf_retrieve_file("ngmjy") %>% osf_download(conflicts = "overwrite")
 lime <- read.table("RW_1AF_lime.csv", header=T, sep=",")
 ```
 
+This is the structure of the resulting dataframe that we shall be using. 
+
 ```{r, echo = FALSE}
 str(lime)
 ```
 
 # Population, interventions, comparators and outcome (PICO)
 
-The data we will be using in this notebook were generated by the [One Acre Fund (1AF)](https://oneacrefund.org/). Two separate field studies were conducted by 1AF as part of their soil acidity management intervention testing and monitoring activities in Rwanda during 2016-2017 and 2019-2020. They consist of 2,166 individual (multi-location, on-farm) trials with n = 10,526 crop yield (kg/ha) measurments × `crop` × `lime`, to assess the effects of aglime applications on crop (maize & bean) yields against the relevant control yields i.e., those without lime application. The 2 studies were conducted in 20 Level-4 administrative units (or so-called "Cells" in Rwanda), two of which overlap temporally by `study`. Crop yield measurements were generally repeated at least over 2 cropping seasons in each study, defined by the relevant `year` × `cell` × `crop` × `lime` × `fert` treatment combinations. Note that this also defines the main **PICO** data that are analyzed here.
+The data we will be using in this notebook were generated by the [One Acre Fund (1AF)](https://oneacrefund.org/). Two separate field studies were conducted by 1AF as part of their soil acidity management intervention testing and monitoring activities in Rwanda during 2016-2017 and 2019-2020. They consist of 2,166 individual (multi-location, on-farm) trials with n = 10,526 crop yield (kg/ha) measurments × `crop` × `lime`, to assess the effects of aglime applications on crop yields against the relevant control yields i.e., those without lime application. The 2 studies were conducted in 20 Level-4 administrative units (or so-called "Cells" in Rwanda), two of which overlap temporally by `study`. Crop yield measurements were generally repeated over at least 2 cropping seasons in each study, defined by the relevant `year` × `cell` × `crop` × `lime` × `fert` treatment combinations. Note that this also defines the main **PICO** data that are analyzed here.
 
 ## PICO Table 1
 
-It is common practice in meta-analysis that the first table of e.g., a [Cochrane review article](https://www.cochranelibrary.com/), referred to as “Table 1”, presents the descriptive statistics of the outcome characteristics of the study population that is stratified by the main individual treatment / comparator variables. The [table1](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html) package in R is useful and easy in this context. We use it here to illustrate both the fixed treatment (`crop` × `lime` × `fert`) and the associated random effects (`year` × `cell`) on maize and bean crop yields. The following chunk generates the table ... you can modify it as you see fit.
+It is common practice in meta-analysis that the first table of e.g., a [Cochrane review article](https://www.cochranelibrary.com/), referred to as “Table 1”, presents the descriptive statistics of the outcome characteristics of the study population that is stratified by the main individual treatment / comparator variables. The [table1](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html) package in R is useful and easy in this context. We use it here to illustrate both the fixed treatment (`crop` × `lime` × `fert`) and the associated random effects (`year` × `cell`) on maize and bean crop yields that would go into the specification of a standard [Production function](https://en.wikipedia.org/wiki/Production_function). The following chunk generates the table ... you can modify it as you see fit.
 
 ```{r}
 
@@ -81,15 +83,15 @@ The main takeaways of this notebook are the following:
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
-# Recommended trial protocol adjustments for 1AF
+# Recommended trial protocol adjustments
 
-* Put all raw survey and experiment data on KoBoToolbox. This is easy to set up and implement under realistic field conditions for which it is designed using [ODK](https://opendatakit.org/). Just go to [KoBoToolbox](https://www.kobotoolbox.org/) ... set it up in Excel (or anything else) and deploy it for your surveys or experiments ... it's free and easy to use! Then georeference, time stamp, and photograph all individual field trials. This is done easily with virtually any smart-phone these days. 
+* Put all raw survey and experiment data on KoBoToolbox. This is easy to set up and implement under realistic field conditions for which it is designed using [ODK](https://opendatakit.org/). Just go to [KoBoToolbox](https://www.kobotoolbox.org/) ... set it up in Excel (or anything else) and deploy it for your surveys and experiments ... it's free and easy to use! Then georeference, time stamp, and photograph all individual field trials and survey locations. This is done easily with virtually any cheap smart-phone. 
 
-* Record intercrops. East Africa is not California or Nebraska. Intercrops occur virtually everywhere. Start designing trials input trials that actually reflect those facts.
+* East Africa is not Nebraska or Brazil. Intercrops occur virtually everywhere in Rwanda and elsewhere in East Africa. Start designing your agricultural input trials in ways that actually reflect those facts rather than on the basis of standard monocropping practices.
 
-* Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need a spectrometer to do that though it might help. [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for <50U$.
+* Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need a spectrometer to do that, though it might help. [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for <50U$ on Amazon.
 
-* Systematically document crop varieties used in trials. This would help enormously in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop crop varieties in different places. 
+* Systematically document the crop varieties that are used in trials. This would help enormously in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
 * Specify lime provenance data (see e.g., [Rwanda aglime sources]()). Lime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate reactivity equivalents (CCE), Ca/Mg ratios and estimated extractable reserves.
 
