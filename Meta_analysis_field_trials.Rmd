@@ -85,7 +85,7 @@ ran
 
 ## PICO outlier screening
 
-The PICO tables (above) show some quite high crop yield outliers that should be screened before proceeding to any data modeling and/or machine learning steps. There are also zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the crop yield data follow-ups with `trial_age` in both studies based on ... 
+The PICO tables (above) show crop yield outliers that should be screened before proceeding to any data modeling and/or machine learning steps. There are also zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the yield data follow-ups by `trial_age` in both studies based on ... 
 
 ```{r}
 tri <- aggregate(lime$yield, list(lime$trial_age, lime$study), FUN = length)
@@ -124,6 +124,6 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 * Specify lime provenance data (see e.g., [Rwanda aglime sources]()). Aglime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate equivalents (CCE), Ca/Mg ratios and estimated extractable limestone source reserves.
 
-* Generate more efficient agronomic response trial designs. 
+* Generate more efficient agronomic response trial designs. Field trials can be a quite expensive operational undertaking. The quality of the recorded data is also an important consideration ... sometimes less is more this context. We encourage you to explore leaner, more optimized designs (e.g., d-optimized, hypercube etc.) trial designs than the ones that were used to generate the data here. This will save money and improve the quality of the results.
 
 * Put all of the analysis code on Github and/or OSF! Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help you more easily!
