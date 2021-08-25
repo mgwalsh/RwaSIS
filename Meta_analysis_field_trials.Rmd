@@ -1,6 +1,6 @@
 ---
 title: Meta-analyses of agricultual lime application effects on crop yields from field trial data
-author: M.G. Walsh, R. Manners, J.V. Silva and S. Aston
+author: M.G. Walsh, R. Manners, J.V. Silva, S. Gameda and S. Aston
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # Introduction
 
-Soil acidity affects soil nutrient availability and microbial activity and is generally thought to reduce crop growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5). Also see the associated notebooks about Rwanda's [Cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [Maize & Bean distributions](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium, such as ammonium nitrate, urea, manure and compost, will decrease soil pH over time (also see the extension advice from [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime)). 
+Soil acidity affects soil nutrient availability and microbial activity and is generally thought to reduce crop growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acidic (with pH < 5.5). Also see the associated notebooks about Rwanda's [Cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [maize & bean distributions](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium, such as ammonium nitrate, urea, manure and compost, will decrease soil pH over time (also see the extension advice provided by [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime)). 
 
 The application of [Agricultural lime (aglime)](https://en.wikipedia.org/wiki/Agricultural_lime) can be used to mitigate the effects of soil acidity on nutrient availability, reduced microbial activity, and the occurrence of [Aluminium](https://www.sciencedirect.com/science/article/pii/B9780128031582000011) and/or [Manganese](https://www.tandfonline.com/doi/abs/10.1080/01904169809365409) toxicities. The rocks and minerals from which agricultural lime is derived, primarily [Limestone](https://en.wikipedia.org/wiki/Limestone), but also [Chalk](https://en.wikipedia.org/wiki/Chalk), is primarily composed of calcium (CaO) and/or magnesium (MgO) oxides, which are readily measured by e.g., [X-ray fluorescence](https://en.wikipedia.org/wiki/X-ray_fluorescence). Limestone is typically pulverized and/or chemically altered to produce different aglime products of varying efficacy in increasing soil pH. Similar to chemical fertilizers, the use of aglime also generates significant greenhouse gas emissions in its production, to-farm-gate transport and through its field application, which should be minimized on that basis.
 
@@ -55,7 +55,7 @@ osf_retrieve_file("ngmjy") %>% osf_download(conflicts = "overwrite")
 lime <- read.table("RW_1AF_lime.csv", header=T, sep=",")
 ```
 
-The below is the structure of the resulting dataframe that we shall be using. The only variable, which has not been properly cleaned yet in these data is the crop variety indicator (`crop_var`). We will not be using that in this notebook. However, we have included it for reference and any potential updates in future versions (e.g., see [Jaleta et al., 2020](https://doi.org/10.1371/journal.pone.0235484) as to why this might be important).
+The below is the structure of the resulting dataframe that we shall be using. The only variable, which has not been properly cleaned yet in these data is the crop variety indicator (`crop_var`). We will not be using that in this notebook. However, we have included it for reference and any potential updates in future versions of this notebook (e.g., see [Jaleta et al., 2020](https://doi.org/10.1371/journal.pone.0235484) as to why this might be important).
 
 ```{r, echo = FALSE}
 str(lime)
@@ -85,6 +85,22 @@ ran
 
 ## PICO outlier screening
 
+The PICO tables (above) show some quite high crop yield outliers that should be screened before proceeding to any data modeling and/or machine learning steps. There are also zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the crop yield data follow-ups with `trial_age` in both studies based on ... 
+
+```{r}
+tri <- aggregate(lime$yield, list(lime$trial_age, lime$study), FUN = length)
+colnames(tri) <- c("trial_age", "study", "n")
+tri
+```
+
+However, because of the lack georeferencing of the individual trials it is not possible to tell which trials were dropped-out during the second year in each study. Indeed, new trials may also have come into the studies during the follow-up period, which were not recorded as such ... but we have no way of telling. This might also have affected some of the counter-intuitive crop yield differences that were recorded over time.
+
+```{r}
+tri <- aggregate(lime$yield, list(lime$trial_age, lime$study, lime$crop), FUN = quantile, probs = c(0.05, 0.5, 0.95))
+colnames(tri) <- c("trial_age", "study", "crop", "Q")
+tri
+```
+
 # Data modeling
 
 # Takeaways
@@ -105,7 +121,7 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 * Systematically document the crop varieties that are used in trials. This would help enormously in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
-* Specify lime provenance data (see e.g., [Rwanda aglime sources]()). Lime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate equivalents (CCE), Ca/Mg ratios and estimated extractable source reserves.
+* Specify lime provenance data (see e.g., [Rwanda aglime sources]()). Lime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate equivalents (CCE), Ca/Mg ratios and estimated extractable limestone source reserves.
 
 * Generate more efficient agronomic response trial designs. 
 
