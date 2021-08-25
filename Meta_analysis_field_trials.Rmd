@@ -83,9 +83,9 @@ colnames(ran) <- c("trial_age", "cell", "Q")
 ran
 ```
 
-## PICO outlier screening
+## Outlier screening
 
-The PICO tables (above) show crop yield outliers that should be screened before proceeding to any data modeling and/or machine learning steps. There are also zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the yield data follow-ups by `trial_age` in both studies based on ... 
+The PICO tables (above) show crop yield outliers (e.g., the Bihembe `cell` above) that should be screened before proceeding to any data modeling and/or machine learning steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the yield data follow-ups by `trial_age` in both studies based on ... 
 
 ```{r}
 tri <- aggregate(lime$yield, list(lime$trial_age, lime$study), FUN = length)
@@ -93,7 +93,7 @@ colnames(tri) <- c("trial_age", "study", "n")
 tri
 ```
 
-However, because of the lack georeferencing of the individual trials it is not possible to tell which trials dropped-out during the second year in each study. Indeed, new trials may also have come into the studies during the follow-up period, that were not recorded as such ... but we have no way of telling. This might also have affected the somewhat counter-intuitive crop yield differences that were recorded by time-period in the 2 studies.
+However, because of the lack of georeferencing of the individual trials it is not possible to tell which trials dropped-out during the second year in each study. Also, new trials may have come into the studies during the follow-up period that were not recorded as such ... but we have no way of telling. This may have affected the somewhat counter-intuitive crop yield differences that were recorded by time-period in the 2 studies.
 
 ```{r}
 tri <- aggregate(lime$yield, list(lime$year, lime$crop), FUN = quantile, probs = c(0.05, 0.5, 0.95))
@@ -101,6 +101,7 @@ colnames(tri) <- c("year", "crop", "Q")
 tri
 ```
 
+The simplest way of removing the outliers from these data is to consider the quantiles.
 
 # Data modeling
 
@@ -124,6 +125,6 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 * Specify lime provenance data (see e.g., [Rwanda aglime sources]()). Aglime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate equivalents (CCE), Ca/Mg ratios and estimated extractable limestone source reserves.
 
-* Generate more efficient agronomic response trial designs. Field trials can be a quite expensive operational undertaking. The quality of the recorded data is also an important consideration ... sometimes less is more this context. We encourage you to explore leaner, more optimized designs (e.g., d-optimized, hypercube etc.) trial designs than the ones that were used to generate the data here. This will save money and improve the quality of the results.
+* Generate more efficient agronomic response trial designs. Field trials can be a quite expensive operational undertaking. The quality of the recorded data is also an important consideration ... sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, hypercube, etc) trial designs than the ones that were used to generate the data here. This will save money and improve the quality of the results.
 
-* Put all of the analysis code on Github and/or OSF! Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help you more easily!
+* Put all of the data and analysis code on Github and/or OSF ... unless there are actual [IRB](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/institutional-review-boards-frequently-asked-questions) concerns! Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help you more easily!
