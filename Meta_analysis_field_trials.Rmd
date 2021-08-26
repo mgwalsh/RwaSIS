@@ -85,7 +85,7 @@ ran
 
 ## Outlier screening
 
-The PICO tables (above) show crop yield outliers (e.g., in the Bihembe cell above) that should be examined and potentially screened before proceeding to any data modeling and/or machine learning steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the follow-up years (of 2017 & 2020, i.e., `trial_age = 1`) in both studies based on ... 
+The PICO tables (above) show crop yield outliers (e.g., in the Bihembe cell above) that should be examined and potentially screened before proceeding to any data modeling and/or machine learning steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also substantial trial drop-outs in the follow-up years (of 2017 & 2020, i.e., at `trial_age = 1`), in both studies based on ... 
 
 ```{r}
 out <- aggregate(lime$yield, list(lime$trial_age, lime$study), FUN = length)
@@ -101,7 +101,7 @@ The simplest, shortest and fasted way of screening extreme value outliers from t
 out.rq <- rq(yield ~ factor(crop) - 1, tau = c(0.01, 0.025, 0.5, 0.975, 0.99), data = lime)
 out.val <- as.data.frame(predict(out.rq, lime))
 
-# you can always cbind the out.val dataframe for further processing with ...
+# you can always cbind the out.val dataframe for further processing with e.g., ...
 # lime <- cbind(lime, out.val)
 
 out.rq
