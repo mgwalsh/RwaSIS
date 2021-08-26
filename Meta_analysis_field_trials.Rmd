@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # Introduction
 
-Soil acidity affects soil nutrient availability and microbial activity and is generally thought to reduce crop growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5). Also see the associated notebooks about Rwanda's [Cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [maize & bean distributions](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium, such as ammonium nitrate, urea, manure and compost, will decrease soil pH over time (also see the extension advice provided by [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime)). 
+Soil acidity affects soil nutrient availability, rhizobial and other microbial activity and is generally thought to reduce crop growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5). Also see the associated notebooks about Rwanda's [Cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [maize & bean distributions](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium, such as ammonium nitrate, urea, manure and compost, will decrease soil pH over time (also see the extension advice provided by [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime)). 
 
 The application of [Agricultural lime (aglime)](https://en.wikipedia.org/wiki/Agricultural_lime) can be used to mitigate the effects of soil acidity on nutrient availability, reduced microbial activity, and the occurrence of [Aluminium](https://www.sciencedirect.com/science/article/pii/B9780128031582000011) and/or [Manganese](https://www.tandfonline.com/doi/abs/10.1080/01904169809365409) toxicities. The rocks and minerals from which agricultural lime is derived, primarily [Limestone](https://en.wikipedia.org/wiki/Limestone), but also [Chalk](https://en.wikipedia.org/wiki/Chalk), is primarily composed of calcium (CaO) and/or magnesium (MgO) oxides, which are readily measured by e.g., [X-ray fluorescence](https://en.wikipedia.org/wiki/X-ray_fluorescence). Limestone is typically pulverized and/or chemically altered to produce different aglime products of varying efficacy in increasing soil pH and crop yields. Similar to chemical fertilizers, the use of aglime also generates significant greenhouse gas emissions in its production, to-farm-gate transport and through its field application, which should be minimized on that basis.
 
@@ -113,9 +113,20 @@ lime <- lime %>% mutate(out = case_when(yield < lo | yield > hi ~ 'y', TRUE ~ 'n
 table(lime$out)
 ```
 
-The table above shows that ~5% of the crop yield measurements at its distributional (low and high) tail ends were flagged as potential extreme values ... which is what we were going for in this example. You can always adjust the percentiles in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
+The table above shows that ~5% of the crop yield measurements at its distributional (low and high) tail ends were flagged as potential extreme values ... which is what we were going for in this example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
 
 # Data modeling
+
+Many surveys, such as this one, face difficulties in obtaining representative samples of individual trials across national and subnational areas. However, with proper statistical adjustment, many nonrepresentative surveys can be used to generate accurate yield estimates.
+
+We will run some initial multilevel models using the [`lmer`]() package here on the main PICO variables for these studies. Unfortunately, we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time in the data that are available to us currently. 
+
+```{r}
+# We will use the outlier removed data here
+lime <- lime[which(lime$out == 'n'), ]
+
+m0 <- lmer(yield ~ factor(crop) + factor(lime) * factor(fert) + (1|year/cell), data = lime)
+```
 
 # Takeaways
 
