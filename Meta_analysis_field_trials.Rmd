@@ -98,7 +98,7 @@ Because of the lack of georeferencing of the individual trials it is not possibl
 Extreme values in the remaining data are much more readily identified. The simplest and shortest way of doing this with the data in hand is to consider the yield percentiles by the main fixed PICO factors. We can examine this with [quantile regression]() as follows in the next chunk. Based on the results, we can subsequently decide which (if any), of the extreme values to screen from further analyses.
 
 ```{r}
-out.rq <- rq(yield ~ factor(crop) + factor(lime) + factor(fert), tau = c(0.025, 0.975), data = lime)
+out.rq <- rq(yield ~ factor(crop) + factor(lime) * factor(fert), tau = c(0.025, 0.975), data = lime)
 out.val <- as.data.frame(predict(out.rq, lime))
 colnames(out.val) <- c("lo", "hi") 
 out.rq
