@@ -121,15 +121,19 @@ The table above shows that ~5% of the crop yield measurements at its distributio
 
 # Data modeling
 
-Many surveys, such as this one, have difficulties in obtaining representative samples of individual trials across national and subnational areas. However, with proper statistical adjustment, nonrepresentative surveys could be used to generate accurate yield estimates. We just write the code here for reference because the data here would not support such analyses. We will run some initial multilevel models using the [`lmer`]() package here on the main PICO variables for these studies. Unfortunately, we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time. 
+Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across national and subnational areas. However, with proper statistical adjustment, non-representative surveys could be used to generate accurate yield estimates. We just write the code here for reference because the data available here do not support such analyses. So unfortunately, we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time. Instead, we will run some initial, plausible, multilevel production functions using the [`lme4`]() package on the main PICO variables for the 2 studies.
 
 ```{r}
 # We will use the outlier removed data here
 lime <- lime[which(lime$out == 'n'), ]
 
-m0 <- lmer(yield ~ factor(crop) + factor(lime) * factor(fert) + (1|study), data = lime)
-m1 <- lmer(yield ~ factor(crop) + factor(lime) * factor(fert) + (1|cell/year), data = lime)
+m0 <- lmer(log(yield) ~ factor(crop) + factor(lime) * factor(fert) + (1|study), data = lime)
+m1 <- lmer(log(yield) ~ factor(crop) + factor(lime) * factor(fert) + (1|study) + (1|cell/year), data = lime)
+m2 <- lmer(log(yield) ~ factor(crop) + factor(lime_amt) * factor(fert) + (1|study) + (1|cell/year), data = lime)
+anova(m0, m1, m2)
 ```
+
+The big difference occurs between the `m0` and `m1` models. ...
 
 # Takeaways
 
