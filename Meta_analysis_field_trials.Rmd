@@ -95,15 +95,19 @@ out
 
 Because of the lack of georeferencing of the individual trials it is not possible to tell which trials dropped-out during the second year in each study. Also, new trials may have come into the studies during the follow-up period that were not recorded as such ... but we have no way of telling. This may have affected the somewhat counter-intuitive crop yield differences that were recorded by time-period in the 2 studies.
 
-The simplest, shortest and fasted way of screening extreme value outliers from these data is to consider the yield percentiles by crop. We can initially examine this by using [quantile regression]() as follows in the next chunk and subsequently decide which (if any), of the extreme values to screen from further analyses.
+The simplest, shortest and fasted way of screening extreme value outliers from these data is to consider the yield percentiles by crop. We can initially examine this by using [quantile regression]() as follows in the next chunk to subsequently decide which (if any), of the extreme values to screen from further analyses.
 
 ```{r}
 out.rq <- rq(yield ~ factor(crop) - 1, tau = c(0.01, 0.025, 0.5, 0.975, 0.99), data = lime)
-out.rq
 out.val <- as.data.frame(predict(out.rq, lime))
+
+# you can always cbind the out.val dataframe for further processing with ...
+# lime <- cbind(lime, out.val)
+
+out.rq
 ```
 
-The other convenient is that you could also other PICO factors in the respective regressions for more comprehensive outlier explorations, but we shall leave to you to try those.
+The other convenient thing about  is that you could also other PICO factors in the respective regressions for more comprehensive outlier / extreme values explorations. We shall leave those for you to test. 
 
 # Data modeling
 
@@ -127,6 +131,6 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 * Specify lime provenance data (see e.g., [Rwanda aglime sources]()). Aglime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate equivalents (CCE), Ca/Mg ratios and estimated extractable limestone source reserves.
 
-* Generate more efficient agronomic response trial designs. Field trials can be a quite expensive operational undertaking. The quality of the recorded data is also an important consideration ... sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, hypercube, etc) trial designs than the ones that were used to generate the data here. This will save money and improve the quality of the results.
+* Generate more efficient agronomic response trial designs. Field trials can be a quite expensive operational undertaking. The quality of the recorded data is also an important consideration ... sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, latin-hypercube, etc) trial designs than the ones that were used to generate the data here. This may save money and improve the quality of the results.
 
 * Put all of the data and analysis code on Github and/or OSF ... unless there are actual [IRB](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/institutional-review-boards-frequently-asked-questions) concerns! Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help you more easily!
