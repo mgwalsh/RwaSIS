@@ -113,7 +113,7 @@ lime <- lime %>% mutate(out = case_when(yield < lo | yield > hi ~ 'y', TRUE ~ 'n
 table(lime$out)
 ```
 
-The table above shows that ~5% of the yield measurements were flagged as potential extreme values ... which is what we were going for. You can always adjust in the out.rq regressions above. The other convenient thing about this approach is that you could also use additional PICO and/or other factors in the respective regressions for more comprehensive extreme value explorations. We shall leave those for you to test. 
+The table above shows that ~5% of the crop yield measurements at its distributional (low and high) tail ends were flagged as potential extreme values ... which is what we were going for in this example. You can always adjust the percentiles in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
 
 # Data modeling
 
