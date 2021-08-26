@@ -110,6 +110,7 @@ lime <- cbind(lime, out.val)
 
 # Which is useful for outlier screening with e.g., <dplyr>
 lime <- lime %>% mutate(out = case_when(yield < lo | yield > hi ~ 'y', TRUE ~ 'n'))
+table(lime$out)
 ```
 
 The other thing about this is that you could also use additional PICO and/or other factors in the respective regressions for more comprehensive extreme value explorations. We shall leave those for you to test. 
