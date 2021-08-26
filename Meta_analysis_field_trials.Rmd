@@ -71,21 +71,21 @@ It is common practice in meta-analysis that the first table of e.g., a [Cochrane
 
 ```{r}
 # main fixed effects on yields (kg / ha)
-fix <- aggregate(lime$yield, list(lime$lime, lime$fert, lime$crop), FUN = quantile, probs = c(0.05, 0.5, 0.95))
+fix <- aggregate(lime$yield, list(lime$lime, lime$fert, lime$crop), FUN = quantile, probs = c(0.025, 0.5, 0.975))
 colnames(fix) <- c("lime", "fert", "crop", "Q")
 fix
 ```
 
 ```{r}
 # random effects on yields (kg / ha)
-ran <- aggregate(lime$yield, list(lime$trial_age, lime$cell), FUN = quantile, probs = c(0.05, 0.5, 0.95))
+ran <- aggregate(lime$yield, list(lime$trial_age, lime$cell), FUN = quantile, probs = c(0.025, 0.5, 0.975))
 colnames(ran) <- c("trial_age", "cell", "Q")
 ran
 ```
 
 ## Outlier screening
 
-The PICO tables (above) show crop yield outliers (e.g., in the Bihembe cell above) that should be examined and potentially screened before proceeding to any data modeling and/or machine learning steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the follow-up years (of 2017 & 2020, `trial_age = 1`) in both studies based on ... 
+The PICO tables (above) show crop yield outliers (e.g., in the Bihembe cell above) that should be examined and potentially screened before proceeding to any data modeling and/or machine learning steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also a systematic trial drop-outs in the follow-up years (of 2017 & 2020, i.e., `trial_age = 1`) in both studies based on ... 
 
 ```{r}
 out <- aggregate(lime$yield, list(lime$trial_age, lime$study), FUN = length)
@@ -93,21 +93,17 @@ colnames(out) <- c("trial_age", "study", "n")
 out
 ```
 
-However, because of the lack of georeferencing of the individual trials it is not possible to tell which trials dropped-out during the second year in each study. Also, new trials may have come into the studies during the follow-up period that were not recorded as such ... but we have no way of telling. This may have affected the somewhat counter-intuitive crop yield differences that were recorded by time-period in the 2 studies.
+Because of the lack of georeferencing of the individual trials it is not possible to tell which trials dropped-out during the second year in each study. Also, new trials may have come into the studies during the follow-up period that were not recorded as such ... but we have no way of telling. This may have affected the somewhat counter-intuitive crop yield differences that were recorded by time-period in the 2 studies.
+
+The simplest, shortest and fasted way of screening extreme value outliers from these data is to consider the yield percentiles by crop. We can initially examine this by using [quantile regression]() as follows in the next chunk and subsequently decide which (if any), of the extreme values to screen from further analyses.
 
 ```{r}
-out <- aggregate(lime$yield, list(lime$year, lime$crop), FUN = quantile, probs = c(0.025, 0.975))
-colnames(out) <- c("year", "crop", "Q")
-out
+out.rq <- rq(yield ~ factor(crop) - 1, tau = c(0.01, 0.025, 0.5, 0.975, 0.99), data = lime)
+out.rq
+out.val <- as.data.frame(predict(out.rq, lime))
 ```
 
-The simplest way of screening the outliers from these data is to consider the crop yield quantiles by the main fixed PICO factors. We can initially examine this by using [quantile regression]() as follows in the next chunk and subsequently decide which values to screen from further analyses.
-
-```{r}
-out.rq <- rq(yield ~ factor(crop)*factor(lime)*factor(fert), tau = c(0.025, 0.975), data = lime)
-# gsdat$silab <- as.factor(ifelse(exp(predict(si.rq, gsdat)) > gsdat$yield, "B", "A")) ## classify the residuals
-# summary(si.rq)
-```
+The other convenient is that you could also other PICO factors in the respective regressions for more comprehensive outlier explorations, but we shall leave to you to try those.
 
 # Data modeling
 
