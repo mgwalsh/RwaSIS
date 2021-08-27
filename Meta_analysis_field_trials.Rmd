@@ -137,12 +137,14 @@ anova(m0, m1)
 The big differences in AIC, BIC and logLik occur between the `m0` and `m1` models. 
 
 ```{r}
-summary(m1)
+display(m1)
 ```
 
 # Takeaways
 
 The main takeaways of this notebook are the following:
+
+* In the two studies presented where the application of lime did not have large effects on either bean or maize crop control yields (i.e., no lime application) that were observed over a two year period.
 
 * 
 
