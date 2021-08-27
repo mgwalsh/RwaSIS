@@ -1,6 +1,6 @@
 ---
 title: Meta-analyses of agricultual lime application effects on crop yields from field survey data
-author: M.G. Walsh, R. Manners, J.V. Silva and S. Aston
+author: M.G. Walsh, R. Manners, J.V. Silva, S. Gameda and S. Aston
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -120,21 +120,24 @@ table(lime$out)
 
 The table above shows that ~5% of the crop yield measurements at its distributional (low and high) tail ends were flagged as extreme values ... which is what we were going for in this example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
 
-# Multilevel regression
+# Multilevel regressions
 
-Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across geographical areas of interest. However, with proper statistical adjustment, non-representative surveys could be used to generate and monitor crop yields more accurately. So unfortunately, we cannot build response models for individual trials because those were not identified (georeferenced) or tracked over time. Instead, we will run some initial multilevel models grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies.
+Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across geographical areas of interest. However, with proper statistical adjustment, non-representative surveys can be used to generate and monitor crop yields more accurately. While we cannot build response models for individual trials because those were not identified (georeferenced) or tracked over time, we will run some initial multilevel models grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies.
 
 ```{r}
 # We will use the outlier removed data here
 lime <- lime[which(lime$out == 'n'), ]
 
-m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study), data = lime)
+m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study),
+           data = lime)
 m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study) +
           (1|cell:trial_age), data = lime)
-anova(m0, m1)
+m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) + (1|study) +
+          (1|cell:trial_age), data = lime)
+anova(m0, m1, m2)
 ```
 
-The big differences in AIC, BIC and logLik occur between the `m0` and `m1` models. 
+Model `m1` is preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons. The `m2` model, which substitutes the `lime amount` that was used for if `lime` was used.   
 
 ```{r}
 display(m1)
@@ -144,7 +147,7 @@ display(m1)
 
 The main takeaways of this notebook are the following:
 
-* In the two studies presented where the application of lime did not have large effects on either bean or maize crop control yields (i.e., no lime application) that were observed over a two year period.
+* In the two studies presented where the application of lime did not have large effects on either bean or maize crop control yields (i.e., no lime application) that were observed over a two year followup period.
 
 * 
 
