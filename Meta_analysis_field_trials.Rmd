@@ -163,7 +163,7 @@ The main takeaways of this notebook are the following:
 
 * The simple question: "By how much do aglime applications improve maize and bean crop yields on the acid soils in Rwanda?", cannot be satisfactorily answered in this notebook. At present we can only infer that there were quite modest yield improvements in some of the surveyed cells (administrative units). What we do not know is if these local improvements warrant the associated lime application costs to farmers, in those places, over the long-term.
 
-* The associated analyses run fast (< 1 min) on a normal, 8 core, 16 Gb memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as new survey and trial data become available in Rwanda or elsewhere. 
+* The associated analyses run fast (< 1 min) on a normal, 8 core, 16 Gb memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as additional and/or new survey and trial data become available in Rwanda or elsewhere. 
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
