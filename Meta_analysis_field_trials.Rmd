@@ -125,9 +125,9 @@ Circa 5% of the total crop yield measurements at the distributional (low and hig
 
 # Multilevel models
 
-Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across geographical areas of interest. However, with proper statistical adjustment of the relevant variance components, non-representative surveys can be used to generate and monitor crop yields more accurately. A multilevel model is a hierarchical linear model, which assumes that the data being analyzed are drawn from a hierarchy of different populations whose differences relate to that hierarchy. 
+Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across the relevant geographical areas of interest. However, with proper statistical adjustment of the relevant variance components (random effects), non-representative surveys can be used to generate and monitor crop yields more accurately. A multilevel model is a hierarchical linear regression model, which assumes that the data being analyzed are drawn from a hierarchy of different populations whose differences relate to that hierarchy. 
 
-While we cannot build response models for individual trials because those were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models that are grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples which, could be ammended once all of the individual trial PICO have been recorded.
+While we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models that are grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples which, could be ammended once all of the individual trial PICO have been recorded.
 
 ```{r}
 # Note that we will use the outlier removed data here
