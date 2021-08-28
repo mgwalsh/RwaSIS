@@ -161,7 +161,7 @@ The main takeaways of this notebook are the following:
 
 * The simple question: "By how much aglime applications can improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there are modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places.
 
-* **Based on the two recent crop yield studies analyzed here, we currently would not be able to justify or recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, are insufficient to do that at a national level.**
+* Based on the two recent crop yield studies analyzed here, we currently would not be able to justify or recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, are insufficient to warrant those interventions at a national level.
 
 # Recommended survey / field trial protocol adjustments
 
