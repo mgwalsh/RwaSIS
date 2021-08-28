@@ -177,7 +177,7 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 * Systematically document the crop varieties that are used in trials. This would help in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
-* Specify lime provenance data  (https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)). Aglime sources in Rwanda (e.g, see [Sirikare et. al., 2012](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)) and elsewhere are quite variable in terms of their calcium carbonate equivalents (CCE), Ca/Mg ratios, fineness and estimated extractable limestone source reserves (also see [Nduwumuremyi et. al, 2013](https://doi.org/10.5897/JSSEM2013.0386)).
+* Specify lime provenance data. Aglime sources in Rwanda (e.g., see [Sirikare et. al., 2012](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)) and elsewhere are quite variable in terms of their calcium carbonate equivalents (CCE), Ca/Mg ratios, fineness and estimated extractable limestone source reserves (also see [Nduwumuremyi et. al, 2013](https://doi.org/10.5897/JSSEM2013.0386)).
 
 * Generate more efficient agronomic response trial designs. Field trials can be a quite expensive operational undertaking. Therefore, the quality of the recorded data is also an important consideration ... also sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, latin-hypercube, or other) trial designs than the ones that were used to generate the data here. This would save money and may improve data quality.
 
