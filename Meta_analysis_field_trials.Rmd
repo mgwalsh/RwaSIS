@@ -1,5 +1,5 @@
 ---
-title: Meta-analyses of agricultual lime application effects on crop yields from field survey data
+title: Meta-analysis of agricultual lime application effects on crop yields from field survey data
 author: M.G. Walsh, R. Manners, J.V. Silva, S. Gameda and S. Aston
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -42,7 +42,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads eligibility pre-screened trial data from the [RwaSIS OSF repository](https://doi.org/10.17605/OSF.IO/Y9ZUT). The raw data are also openly available from [1AF](mailto:step.aston@oneacrefund.org) on email request, if you would like to trace our initial data screening and wrangling efforts.
+The next chunk downloads eligibility pre-wrangled trial data from the [RwaSIS OSF repository](https://doi.org/10.17605/OSF.IO/Y9ZUT). The raw data are also openly available from [1AF](mailto:step.aston@oneacrefund.org) on email request, if you would like to trace our initial data screening and wrangling efforts.
 
 ```{r, results = 'hide'}
 # Create a data folder in your current working directory
@@ -175,7 +175,7 @@ The main takeaways of this notebook are the following:
 
 * Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need a spectrometer to do that, though it might help ... also with other related soil properties. [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for ~50 U$ on Amazon.
 
-* Systematically document the crop varieties that are used in trials. This would help enormously in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
+* Systematically document the crop varieties that are used in trials. This would help in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
 * Specify lime provenance data (see e.g., [Rwanda aglime sources](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)). Aglime sources in Rwanda and elsewhere are quite variable in terms of their calcium cabonate equivalents (CCE), Ca/Mg ratios and estimated extractable limestone source reserves.
 
