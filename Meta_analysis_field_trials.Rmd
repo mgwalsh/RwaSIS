@@ -145,13 +145,13 @@ m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * fa
 anova(m0, m1, m2)
 ```
 
-Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the model `anova`. The `m2` model, which substitutes the approximate `lime amount` that was used for if (or not) `lime` was used provides a slightly better fit to the data. However, the choice between the `m1` and `m2` models is a matter preference. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The parameter estimates for `m1` are shown below.   
+Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the model `anova`. The `m2` model, which substitutes the approximate `lime amount` that was used for if (or not) `lime` was used provides a slightly better fit to the data. However, the choice between the `m1` and `m2` models is a matter preference. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The parameter estimates for `m1` are shown directly below.   
 
 ```{r}
 display(m1)
 ```
 
-Other multilevel model analyses in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc., but the data would need to be assembled to better reflect treatment and importantly spatial variation in crop yields. 
+Other multilevel model analyses in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc., but the data would need to be assembled to better reflect treatment and very importantly spatial variation in crop yields. 
 
 # Takeaways
 
@@ -159,7 +159,7 @@ The main takeaways of this notebook are the following:
 
 * In the two studies presented the application of lime had only modest positive effects on either bean or maize crop yields that were observed over a two year followup period vis-à-vis their respective control yields.
 
-* The simple question: "By how much aglime applications can improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there are modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places.
+* The simple question: "By how much aglime applications can improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there were modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places.
 
 *Based on the two recent crop yield studies analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive and very useful, are insufficient to warrant those interventions at a national level.*
 
