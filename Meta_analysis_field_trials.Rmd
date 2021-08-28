@@ -169,7 +169,7 @@ The main takeaways of this notebook are the following:
 
 * East Africa is certainly not Nebraska or Brazil. Intercropping occurs virtually everywhere in Rwanda's smallholder production systems and elsewhere in East Africa. Our recommendation is to start conducting agricultural input trials in ways that actually reflect those facts rather than on the basis of monocropping practices.
 
-* Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need a spectrometer to do that, though it might help ... also with other related soil properties. [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for < 50 U$ on Amazon.
+* Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need a spectrometer to do that, though it might help ... also with other related soil properties. [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for ~50 U$ on Amazon.
 
 * Systematically document the crop varieties that are used in trials. This would help enormously in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
