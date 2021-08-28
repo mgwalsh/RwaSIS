@@ -123,12 +123,14 @@ write.csv(lime, "./RW_lime/Results/RW_lime_trials.csv", row.names = FALSE)
 
 Circa 5% of the total crop yield measurements at the distributional (low and high) tail ends are flagged as extreme values ... which is what we were going for in this exploratory example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
 
-# Multilevel regressions
+# Multilevel models
 
-Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across geographical areas of interest. However, with proper statistical adjustment of the relevant variance components, non-representative surveys can be used to generate and monitor crop yields more accurately. While we cannot build response models for individual trials because those were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples.
+Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across geographical areas of interest. However, with proper statistical adjustment of the relevant variance components, non-representative surveys can be used to generate and monitor crop yields more accurately. A multilevel model is a kind of hierarchical linear model, which assumes that the data being analyzed are drawn from a hierarchy of different populations whose differences relate to that hierarchy. 
+
+While we cannot build response models for individual trials because those were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models that are grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples which, could be adjusted oncE all of the individual trial PICO are recorded.
 
 ```{r}
-# We will use the outlier removed data here
+# Note that we will use the outlier removed data here
 lime <- lime[which(lime$out == 'n'), ]
 
 m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study),
