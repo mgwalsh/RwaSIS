@@ -30,7 +30,7 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r, results = 'hide'}
 # Package names
-packages <- c("osfr", "dplyr", "MASS", "quantreg", "stargazer", "arm")
+packages <- c("osfr", "dplyr", "MASS", "quantreg", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -134,10 +134,11 @@ m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor
           (1|cell:trial_age), data = lime)
 m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) + (1|study) +
           (1|cell:trial_age), data = lime)
+
 anova(m0, m1, m2)
 ```
 
-Model `m1` is clearly preferable to the base (but overly simple) `m0` model based on the respective AIC, BIC and logLik comparisons in the model `anova`. Subsequently, the `m2` model, which substitutes the approximate `lime amount` that was used for if (or not) `lime` was used  provides a slightly better fit to the data. However, the choice between the `m1` and `m2` models is a matter preference. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The parameter estimates for `m1` are shown below.   
+Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the model `anova`. The `m2` model, which substitutes the approximate `lime amount` that was used for if (or not) `lime` was used provides a slightly better fit to the data. However, the choice between the `m1` and `m2` models is a matter preference. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The parameter estimates for `m1` are shown below.   
 
 ```{r}
 display(m1)
