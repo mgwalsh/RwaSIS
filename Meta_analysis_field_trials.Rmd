@@ -145,7 +145,7 @@ m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor
 anova(m0, m1, m2)
 ```
 
-Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appear to be a matter of preference. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
+Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference. The addition of more random effects might not be warranted in this case. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
 
 ```{r, echo = FALSE}
 display(m1)
