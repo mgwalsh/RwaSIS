@@ -167,7 +167,7 @@ The main takeaways of this notebook are the following:
 
 *Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, are insufficient to warrant those types of interventions at a national scale ... for either maize or bean crops.*
 
-## Recommended survey / field trial protocol adjustments
+## Recommended survey / field trial protocol adjustments (to 1AF and CIMMYT / GAIA)
 
 * Put all raw survey and experiment data on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set up the forms in Excel (or anything else) and deploy the forms for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then georeference, time stamp, and photograph all individual field trials and survey locations. 
 
