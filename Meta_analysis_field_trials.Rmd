@@ -159,7 +159,7 @@ The main takeaways of this notebook are the following:
 
 * In the two studies presented the application of lime showed only modest positive effects on either bean or maize crop yields that were observed over a two year followup period vis-à-vis their respective control yields.
 
-* The simple question: "By how much aglime applications can improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there were quite modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places over the long-term.
+* The simple question: "By how much do aglime applications improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there were quite modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places over the long-term.
 
 * The associated analyses run fast (< 1 min) on a normal, 8 core, 16 Gb memory computer and could be further automated for EDAs, outlier screening, monitoring and data modeling as new survey and trial data for this purpose become available in Rwanda or elsewhere. 
 
