@@ -163,7 +163,7 @@ The main takeaways of this notebook are the following:
 
 * The associated analyses run fast (< 1 min) on a normal, 8 core, 16 Gb memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as new survey and trial data become available in Rwanda or elsewhere. 
 
-## Main conclusion
+## Main case-study conclusion
 
 *Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, are insufficient to warrant those types of interventions at a national scale ... for either maize or bean crops.*
 
