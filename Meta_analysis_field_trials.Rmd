@@ -169,7 +169,7 @@ The main takeaways of this notebook are the following:
 
 ## Recommended survey / field trial protocol adjustments
 
-* Put all raw survey and experiment data on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set it up in Excel (or anything else) and deploy it for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then georeference, time stamp, and photograph all individual field trials and survey locations. 
+* Put all raw survey and experiment data on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set up the forms in Excel (or anything else) and deploy the forms for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then georeference, time stamp, and photograph all individual field trials and survey locations. 
 
 * East Africa is certainly not Nebraska or Brazil. Intercropping occurs virtually everywhere in Rwanda's smallholder production systems and elsewhere in East Africa. Our recommendation is to start conducting agricultural input trials in ways that actually reflect those facts rather than on the basis of monocropping practices.
 
