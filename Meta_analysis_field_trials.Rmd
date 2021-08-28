@@ -119,11 +119,9 @@ lime <- lime %>% mutate(out = case_when(yield < lo | yield > hi ~ 'y', TRUE ~ 'n
 
 # Write the data out to your Results directory
 write.csv(lime, "./RW_lime/Results/RW_lime_trials.csv", row.names = FALSE)
-
-table(lime$out)
 ```
 
-The table above shows that ~5% of the crop yield measurements at its distributional (low and high) tail ends were flagged as extreme values ... which is what we were going for in this exploratory example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
+Circa 5% of the total crop yield measurements at the distributional (low and high) tail ends are flagged as extreme values ... which is what we were going for in this exploratory example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
 
 # Multilevel regressions
 
