@@ -151,7 +151,7 @@ Model `m1` is clearly preferable to the overly simple `m0` model based on the re
 display(m1)
 ```
 
-Other multilevel model analyses in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc., but the data would need to be assembled to better reflect treatment and very importantly spatial variation in crop yields. 
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc., but the data would need to be assembled to better reflect treatment and very importantly spatial variation in crop yields. 
 
 # Takeaways
 
