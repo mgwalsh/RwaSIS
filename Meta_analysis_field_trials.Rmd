@@ -135,8 +135,10 @@ lime <- lime[which(lime$out == 'n'), ]
 
 m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study),
            data = lime)
+
 m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study) +
           (1|cell:trial_age), data = lime)
+
 m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) + (1|study) +
           (1|cell:trial_age), data = lime)
 
