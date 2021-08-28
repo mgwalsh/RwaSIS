@@ -151,7 +151,7 @@ Model `m1` is clearly preferable to the overly simple `m0` model based on the re
 display(m1)
 ```
 
-Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc., but the data would need to be assembled to better reflect treatment and very importantly spatial variation in crop yields. 
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc., but the data would need to be collected and assembled to better reflect treatment differences and very importantly spatial variation in crop yields. 
 
 # Takeaways
 
@@ -159,11 +159,15 @@ The main takeaways of this notebook are the following:
 
 * In the two studies presented the application of lime showed only modest positive effects on either bean or maize crop yields that were observed over a two year followup period vis-à-vis their respective control yields.
 
-* The simple question: "By how much aglime applications can improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there were modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places.
+* The simple question: "By how much aglime applications can improve maize and bean crop yields on the acid soils in Rwanda?", cannot be answered in this notebook. At present we can only infer that there were quite modest yield improvements in some of the surveyed cells. What we do not know is if these local improvements warrant the associated lime application costs to farmers in those places.
 
-*Based on the two recent crop yield studies analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive and very useful, are insufficient to warrant those types of interventions at a national scale ... for either maize or bean crops.*
+* The analyses run fast (< 2 min) on normal 8 core, 16 Gb memory computers and could be further automated for EDAs, outlier screening, monitoring and data modeling as new survey and trial data become available in Rwanda. 
 
-# Recommended survey / field trial protocol adjustments
+## Main conclusion
+
+*Based on the two recent crop yield studies analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, are insufficient to warrant those types of interventions at a national scale ... for either maize or bean crops.*
+
+## Recommended survey / field trial protocol adjustments
 
 * Put all raw survey and experiment data on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set it up in Excel (or anything else) and deploy it for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then georeference, time stamp, and photograph all individual field trials and survey locations. 
 
