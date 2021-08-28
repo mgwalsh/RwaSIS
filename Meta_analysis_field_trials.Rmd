@@ -151,7 +151,7 @@ Model `m1` is clearly preferable to the overly simple `m0` model based on the re
 display(m1)
 ```
 
-Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect treatment differences and very importantly spatial variation in crop yields for these more contingent factors to make any measurable differences in the yield outcome variable that is considered here. 
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect treatment differences and very importantly the spatial variation in crop yields for these more contingent factors to make any measurable differences in the yield outcome variable that is considered here. 
 
 # Main case-study conclusion and takeaways
 
