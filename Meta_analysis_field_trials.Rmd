@@ -167,7 +167,7 @@ The main takeaways of this notebook are the following:
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
-# Addenum: Recommended survey / field trial protocol adjustments (to 1AF, CIMMYT / GAIA and IITA / RwaSIS)
+# Addendum: Recommended field trial protocol adjustments
 
 * Put all raw survey and experiment data on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set up the forms in Excel (or anything else) and deploy the forms for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then systematically georeference, time stamp, and photograph all individual field trials and survey locations. 
 
