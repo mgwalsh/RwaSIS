@@ -136,22 +136,32 @@ lime <- lime[which(lime$out == 'n'), ]
 m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study),
            data = lime)
 
-m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) +
+m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study:cell) +
           (1|cell:trial_age) + (1|cell:crop), data = lime)
 
-m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) +
+m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) + (1|study:cell) +
           (1|cell:trial_age) + (1|cell:crop), data = lime)
 
 anova(m0, m1, m2)
 ```
 
-Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference as they differ only interms of the number of classes that are used to describe the lime treatment. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
+Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference as they differ only in terms of the number of classes that were used to describe the lime treatment levels. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
 
 ```{r, echo = FALSE}
 display(m1)
 ```
 
-Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect specific treatment differences and very importantly the spatial variation in crop yields for these more contingent factors to make any measurable differences in the yield outcome variable that is considered here. 
+We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this is not a prediction of what out-of-sample trials might look like.
+
+```{r}
+lime$m1 <- exp(fitted(m1, lime))
+
+# Generate fitted vs observed plot
+
+
+```
+
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO differences and very importantly the spatial variation in crop yields for these more contingent factors to make any measurable differences in the yield outcome variable that is considered here. 
 
 # Main case-study conclusion and takeaways
 
@@ -159,7 +169,7 @@ Other multilevel model specifications and analyses (e.g., see [Multilevel regres
 
 The main takeaways of this notebook are the following:
 
-* In the two studies presented the application of lime showed only modest positive effects on either maize or bean crop yields that were observed over a two year period vis-à-vis their respective control yields. Beans tended to be slightly more responsive to lime applications than maize.
+* In the two studies presented the application of lime showed only modest positive effects on either maize or bean crop yields that were observed over a two year period vis-à-vis their respective control yields.
 
 * The simple initial question posed: "By how much could maize and bean yields be increased with lime applications?", could not be satisfactorily answered in this notebook. From the presented data we can only infer that there were quite modest yield improvements in some of the surveyed administrative units. What we do not know is if these local improvements warrant the associated lime application costs to farmers, in those places, over the long-term.
 
