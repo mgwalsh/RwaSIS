@@ -156,11 +156,12 @@ display(m1)
 
 We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO-based multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this is not intended as a prediction of what out-of-sample trials might look like ... it just shows an unvalidated fit to the data.
 
-```{r, fig.align = "center", fig.cap = "Quantile regression plot of modeled vs observed crop yields in Rwanda. The blue lines are the 2.5% and 97.5% quantile regression estimates."}
+```{r, fig.align = "center", fig.cap = "Quantile regression plot of modeled vs observed crop yields in Rwanda. The blue lines are the 2.5% and 97.5% quantile regression estimates. The red line is the robust median fit."}
 
 par(pty="s", mar=c(4,4,1,1))
 plot(yield~m1, xlab="Production function fit", ylab="Observed yield (kg / ha)", cex.lab=1.3, 
      xlim=c(0,10000), ylim=c(0,10000), lime)
+
 curve(yq$coefficients[2]*x+yq$coefficients[1], add=T, from=0, to=10000, col="blue", lwd=2)
 curve(yq$coefficients[4]*x+yq$coefficients[3], add=T, from=0, to=10000, col="red", lwd=2)
 curve(yq$coefficients[6]*x+yq$coefficients[5], add=T, from=0, to=10000, col="blue", lwd=2)
