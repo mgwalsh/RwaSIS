@@ -145,23 +145,28 @@ m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * fa
 anova(m0, m1, m2)
 ```
 
-Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference as they differ only in terms of the number of classes that were used to describe the lime treatment levels. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
+Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference as they differ only in terms of the number of classes that were used to describe the lime treatment levels. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
 
-```{r, echo = FALSE}
+```{r}
+# Write the fits
+lime$m1 <- exp(fitted(m1, lime))
+yq <- rq(yield~m1, tau=c(0.025,0.5,0.975), data = lime) ## quantile regression fit
 display(m1)
 ```
 
-We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this is not a prediction of what out-of-sample trials might look like.
+We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO-based multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this is not intended as a prediction of what out-of-sample trials might look like ... it just shows an unvalidated fit to the data.
 
-```{r}
-lime$m1 <- exp(fitted(m1, lime))
+```{r, fig.align = "center", fig.cap = "Quantile regression plot of modeled vs observed crop yields in Rwanda. The blue lines are the 2.5% and 97.5% quantile regression estimates."}
 
-# Generate fitted vs observed plot
-
-
+par(pty="s", mar=c(4,4,1,1))
+plot(yield~m1, xlab="Production function fit", ylab="Observed yield (kg /ha)", cex.lab=1.3, 
+     xlim=c(0,10000), ylim=c(0,10000), lime)
+curve(yq$coefficients[2]*x+yq$coefficients[1], add=T, from=0, to=10000, col="blue", lwd=2)
+curve(yq$coefficients[4]*x+yq$coefficients[3], add=T, from=0, to=10000, col="red", lwd=2)
+curve(yq$coefficients[6]*x+yq$coefficients[5], add=T, from=0, to=10000, col="blue", lwd=2)
 ```
 
-Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO differences and very importantly the spatial variation in crop yields for these more contingent factors to make any measurable differences in the yield outcome variable that is considered here. 
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO-differences and very importantly also the spatial variation in crop yields for the more contingent factors in yield outcomes that have been considered here. 
 
 # Main case-study conclusion and takeaways
 
