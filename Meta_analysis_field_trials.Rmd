@@ -127,7 +127,7 @@ Circa 5% of the total crop yield measurements at the distributional (low and hig
 
 Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across the relevant geographical areas of interest. However, with proper statistical adjustment of the relevant variance components (random effects), non-representative surveys can be used to generate and monitor crop yields more accurately. A multilevel model is a hierarchical linear regression model, which assumes that the data being analyzed are drawn from a hierarchy of different populations whose differences relate to that hierarchy. 
 
-While we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models that are grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples which, could be ammended once all of the individual trial PICO have been recorded.
+While we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models that are grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples, which could be amended once all of the individual trial PICO have been specified.
 
 ```{r}
 # Note that we will use the outlier removed data here
@@ -136,16 +136,16 @@ lime <- lime[which(lime$out == 'n'), ]
 m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study),
            data = lime)
 
-m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study) +
+m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) +
           (1|cell:trial_age) + (1|cell:crop), data = lime)
 
-m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study) +
-          (1|cell:trial_age) + (1|cell:crop) + (1|cell:lime) + (1|cell:fert), data = lime)
+m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) +
+          (1|cell:trial_age) + (1|cell:crop), data = lime)
 
 anova(m0, m1, m2)
 ```
 
-Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference. The addition of more random effects might not be warranted in this case. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
+Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [Production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
 
 ```{r, echo = FALSE}
 display(m1)
