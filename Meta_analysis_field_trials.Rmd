@@ -172,11 +172,11 @@ Other multilevel model specifications and analyses (e.g., see [Multilevel regres
 
 # Main case-study conclusion and takeaways
 
-*Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, were insufficient to warrant those types of interventions at a national scale, for either maize or bean crops.*
+*Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, were insufficient to warrant those types of interventions at a national scale for either maize or bean crops.*
 
 The main takeaways of this notebook are the following:
 
-* In the two studies presented the application of lime showed only modest positive effects on either maize or bean crop yields that were observed over a two year period vis-à-vis their respective control yields.
+* In the two studies presented the application of lime showed only modest positive effects on either maize or bean crop yields that were observed over a two year period vis-à-vis their respective control yields. The fairly low lime application rates in these trials may not have been sufficient to overcome the exchangeable (reserve) acidity constraints nor to effectively alter soil pH.
 
 * The simple initial question posed: "By how much could maize and bean yields be increased with lime applications?", could not be satisfactorily answered in this notebook. From the presented data we can only infer that there were quite modest yield improvements in some of the surveyed administrative units. What we do not know is if these local improvements warrant the associated lime application costs to farmers, in those places, over the long-term.
 
