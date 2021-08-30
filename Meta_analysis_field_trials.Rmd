@@ -172,7 +172,7 @@ Other multilevel model specifications and analyses (e.g., see [Multilevel regres
 
 # Main case-study conclusion and takeaways
 
-*Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, were insufficient to warrant recommending that these types of interventions are applied at a national scale for either maize or bean crops.*
+*Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful, were insufficient to warrant recommending that these types of interventions should be applied at a national scale for either maize or bean crops.*
 
 The main takeaways of this notebook are the following:
 
