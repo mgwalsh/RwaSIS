@@ -154,7 +154,7 @@ yq <- rq(yield~m1, tau=c(0.025,0.5,0.975), data = lime) ## quantile regression f
 display(m1)
 ```
 
-We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO-based multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this is not intended as a prediction of what out-of-sample trials might look like ... it just shows an unvalidated fit to the data.
+We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO-based multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this plot is not intended as a prediction of what out-of-sample trials might look like ... it just shows an unvalidated fit to the data.
 
 ```{r, fig.align = "center", fig.cap = "Quantile regression plot of modeled vs observed crop yields in Rwanda. The blue lines are the 2.5% and 97.5% quantile regression estimates. The red line is the robust median fit."}
 
