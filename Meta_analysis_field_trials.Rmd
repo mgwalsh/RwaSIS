@@ -168,7 +168,7 @@ curve(yq$coefficients[6]*x+yq$coefficients[5], add=T, from=0, to=10000, col="blu
 abline(c(0,1), col="grey", lwd=1)
 ```
 
-Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO-differences and very importantly also the spatial variation in crop yields for the more contingent factors in yield outcomes that have been considered here. 
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO-differences and very importantly also the spatial variation for the more contingent factors in yield outcomes that were considered here. 
 
 # Main case-study conclusion and takeaways
 
