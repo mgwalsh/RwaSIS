@@ -1,5 +1,5 @@
 ---
-title: Meta-analysis of agricultual lime application effects on crop yields from field survey data
+title: Meta-analysis of agricultual lime application effects on crop yields from field trial data
 author: M.G. Walsh, R. Manners, J.V. Silva, S. Gameda and S. Aston
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
