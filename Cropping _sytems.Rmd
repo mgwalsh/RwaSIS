@@ -1,6 +1,6 @@
 ---
 title: Workflows for identifying staple food systems with association rule mining
-author: M.G. Walsh, R. Manners and M. Broadley
+author: M.G. Walsh, R. Manners J. Meliyo and J. Rutebuka
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -16,17 +16,17 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Staple food crops make up the dominant part of a population’s diet. There are >50,000 edible plants in the world. However, just 15 of these provide ~90% of the world’s [food energy intake (FEI)](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/food-energy). Rice, maize, and wheat alone make up ~60% of the world's FEI. Other, more regional/local, staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health, well-being as well as environmental outcomes that are not well supported by local evidence ... and yet the old adage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies levels of personal choice in this context.
+Staple food crops make up the dominant part of a population's diet. There are >50,000 edible plants in the world; however, just 15 of these provide ~90% of the world's [food energy intake (FEI)](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/food-energy). Rice, maize, and wheat alone make up ~60% of the world's FEI. Other, more regional/local, staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health as well as environmental outcomes that are not well supported by local evidence. The old adage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies a level of personal choice in this context.
 
-Association rule mining is frequently used answer exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that that random person will also buy steak (or chicken, Bar-B-Que sauce, beer, etc)? This is also why it is frequently referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). East African smallholder food production systems are analogous to a supermarket situation in that small cropland areas (or fields) are generally [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). The small cropland area in East Africa is analogous to a supermarket in e.g., the US or Europe. Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. Which specific crops are grown together in a given small-area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified.
+[Association rule mining (ARM)](https://en.wikipedia.org/wiki/Association_rule_learning) is used answer exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that that person will also buy steak (or chicken, Bar-B-Que sauce, etc)? This is also why it is referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). East African smallholder food production systems are analogous to a supermarket situation in that fields are generally [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha cropland areas will commonly be planted with multiple staple food crops during any given season. Which specific crops are grown together in a given small-area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified.
 
-*The main objective of this notebook is to provide starter code for identification of staple food systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum,	rice,	bean,	cowpea,	pigeon pea,	soybean, groundnut, Irish potato,	sweet potato,	cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
+*The main objective of this notebook is to provide starter code for identification of staple food systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
-We will be using [association rule mining](https://en.wikipedia.org/wiki/Association_rule_learning) workflows, based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). We'll explore these in this notebook to identify cropping combinations (systems) based on staple crop indicator species that can subsequently be used for practical mapping and monitoring applications of staple food crop distributions.
+We will be using workflows based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). We'll use ARM in this notebook to identify intercropped systems based on the occurence of staple crop indicator species that can subsequently be used for practical mapping and monitoring applications of staple food crop distributions.
 
 # General data setup
 
-The data we will be using were generated by the [TanSIS](https://doi.org/10.17605/OSF.IO/4NGAU) and [RwaSIS](https://doi.org/10.17605/OSF.IO/Y9ZUT) projects in Tanzania and Rwanda. They currently consist of >16k georeferenced, time stamped, and photo tagged, field survey observations of staple crops that were observed in 0.25 ha circular plots (~28.2 m radius), in proportion to their national occurrence, between 2015-2021. The spatially representative cropland sampling frames that are used in both currently still ongoing national survey data collections are described in [Walsh, Rutebuka and Manners (2021)](https://github.com/mgwalsh/RwaSIS/blob/master/RwaSIS_cropland_sample.Rmd). A field data collection framework (CropScout) has also been posted on [KoboToolbox](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/), which you can either use directly or modify for your own use with Open Data Kit ([ODK](https://opendatakit.org/)).
+The example data we will be using were generated by the [TanSIS](https://doi.org/10.17605/OSF.IO/4NGAU) and [RwaSIS](https://doi.org/10.17605/OSF.IO/Y9ZUT) projects in Tanzania and Rwanda. They currently consist of >16k georeferenced, time stamped, and photo tagged, field survey observations of staple crops that were observed in 0.25 ha circular plots (~28.2 m radius), in proportion to their national occurrence, between 2015-2021. The spatially representative cropland sampling frames that are used in both currently ongoing national survey data collections are described in [Walsh, Rutebuka and Manners (2021)](https://github.com/mgwalsh/RwaSIS/blob/master/RwaSIS_cropland_sample.Rmd). A field data collection framework (CropScout) has also been posted on [KoboToolbox](https://kobo.humanitarianresponse.info/#/forms/a3jwzkBTtDvdaZJgR6YjAe/), which you can either use directly or modify for your own use with Open Data Kit ([ODK](https://opendatakit.org/)).
 
 To actually run this notebook, you will need to load the R-packages that are indicated in the chunk directly below to download and assemble the data. You can find all of the documentation of these packages on [CRAN](https://cran.r-project.org/). Note that additional package installs will be needed to run the later sections of this notebook. We shall deal with those as they arise.
 
@@ -101,7 +101,7 @@ staple_ar$sunf <- as.logical(staple_ar$sunf)
 glimpse(staple_ar)
 ```
 
-The crop variables indicate the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato,	sweet potato,	cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location, and the number of staple crops that were observed in the respective 0.25 ha circular quadrats. It is also good practice to write out the resulting dataframe should you wish to use it in other applications.
+The crop variables indicate the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location, and the number of staple crops that were observed in the respective 0.25 ha quadrats. It is also good practice to write out the resulting dataframe should you wish to use it in other applications.
 
 ```{r}
 # Write out tidy dataframe
@@ -112,21 +112,24 @@ The crop variables indicate the occurrence of: cattle, sheep, goats, poultry, ma
 
 ## Discovery and exploratory analyses
 
+There are two quantities of interest to the user of this algorithm: support and confidence.
+
+Support tells us the percentage of the transactions where the combination of items A and B occur together. It helps identify combinations that are sufficiently frequent to be of interest (e.g., purchasing fish alone or purchasing fish and lemons together).
+
+Confidence tells us which percent of transactions that have an item A also have an item B (e.g., how many transactions that have fish also have lemons).
+
 Rule support and confidence are two measures of rule interestingness. They respectively reflect the usefulness and certainty of discovered rules. A support of 2% for Rule (6.1) means that 2% of all the transactions under analysis show that computer and antivirus software are purchased together. A confidence of 60% means that 60% of the customers who purchased a computer also bought the software. Typically, association rules are considered interesting if they satisfy both a minimum support threshold and a minimum confidence threshold. These thresholds can be a set by users or subject matter specialists.
 
 ## Mining
-
 
 # Main takeaways
 
 The main takeaways of this notebook are the following:
 
-* 
+-   
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
 # Aside note: Links to staple food recipes
 
 There are some delicious recipes out there for using the staple crops indicated this notebook for meals (some of these are also quite nutritious). Interestingly cooking advisories such as [Supercook](https://www.supercook.com/#/recipes) and [Allrecipes](https://www.allrecipes.com/search/results/?search=) are also using new recommendation algorithms to help provide meal options based on what ingredients you have available, or what you may want to have available, in your fridge and dry-goods store. If you are a smallholder in East Africa, those ingredients will largely depend on what you are growing on your land and whatever your breakfast, lunch or dinner preferences are. Maybe we (data scientists) should start to work back from what smallholders are currently growing and the attached preferences?
-
-
