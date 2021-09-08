@@ -1,6 +1,6 @@
 ---
 title: Workflows for association rule mining with staple food crop indicator species
-author: M.G. Walsh, R. Manners, J. Meliyo and J. Rutembuka
+author: M.G. Walsh, R. Manners and M. Broadley
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
@@ -16,11 +16,11 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Staples food crops make up the dominant part of a population’s diet. The food staples are eaten regularly supply a major proportion of a person’s energy and nutritional needs. There are >50,000 edible plants in the world. However, just 15 of these provide 90 percent of the world’s food energy intake. Rice, maize, and wheat alone make up ~60% of energy intake. Other staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health, well-being as well as environmental outcomes that are not well described ... and yet ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html).
+Staples food crops make up the dominant part of a population’s diet. The food staples are eaten regularly supply a major proportion of a person’s energy and nutritional needs. There are >50,000 edible plants in the world. However, just 15 of these provide ~90% of the world’s *"food energy intake"* (FEI). Rice, maize, and wheat alone make up ~60% of the world's FEI. Other, more regional/local, staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health, well-being as well as environmental outcomes that are not well described ... and yet ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html).
 
-Association rule mining is frequently used answer exploratory questions like ... If someone walks into a supermarket and buys charcoal, what is the probability that that person will also buy steak (or chicken, Bar-B-Que sauce, beer, etc)? This is also why it is frequently referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). East African smallholder food production systems are analogous to a supermarket situation in that small cropland areas (or fields) are generally [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). The small cropland area in East Africa is analogous to a supermarket. Even quite small e.g., 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. Which specific crops are grown together in a given place or environment, and how these combinations may be evolving due to external factors remains uncertain and unmonitored.
+Association rule mining is frequently used answer exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that that person will also buy steak (or chicken, Bar-B-Que sauce, beer, etc)? This is also why it is frequently referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). East African smallholder food production systems are analogous to a supermarket situation in that small cropland areas (or fields) are generally [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). The small cropland area in East Africa is analogous to a supermarket. Even quite small e.g., 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. Which specific crops are grown together in a given place or environment, and how these combinations may be evolving due to external factors remains uncertain and unmonitored.
 
-*The main objective of this notebook is to provide starter code for identification of staple food production systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle,	sheep, goats, poultry, maize, wheat, sorghum,	rice,	bean,	cowpea,	pigeon pea,	soybean, groundnut, Irish potato,	sweet potato,	cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
+*The main objective of this notebook is to provide starter code for identification of staple food production systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum,	rice,	bean,	cowpea,	pigeon pea,	soybean, groundnut, Irish potato,	sweet potato,	cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
 We will be using [association rule mining](https://en.wikipedia.org/wiki/Association_rule_learning) workflows, based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). We'll explore these in this notebook to identify cropping combinations (systems) based on staple crop indicator species that can subsequently be used for practical mapping and monitoring applications of staple food crop distributions.
 
@@ -44,7 +44,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The survey (label) data downloads can be obtained with this next chunk. It also generates an overview map of where the observations were collected in Tanzania and Rwanda (not shown, but in the markdown document) ... you can click and zoom into the individual locations.
+The survey (label) data downloads can be obtained with this next chunk. It also generates an overview map of where the observations were collected in Tanzania and Rwanda (not shown, but in the markdown document) ... you can click and zoom into the individual survey locations, which have been covered thus far.
 
 ```{r, results = 'hide'}
 # Create a data folder in  your current working directory
@@ -67,7 +67,7 @@ w <- leaflet() %>%
 w ## plot widget 
 ```
 
-To prepare the data that are used here for the association rule mining workflow we will need to do a bit wrangling initially to select and recode the variables of interest with the following. The [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package, which we will be using further below only processes factor and logical variables. Note that this chunk is a bit ugly, but it works, and we could always convert it into a proper function as more data with different staple crops become available.
+To prepare the data that are used here for the association rule mining workflow we will need to do a bit wrangling initially to select and recode the variables of interest with the following. The [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package, which we will be using further below only processes factor and logical variables. Note that this chunk is a bit ugly, but it works, and we could always convert it into a proper function as more data with different staple crops in different places become available.
 
 ```{r}
 # Initially select the variables (columns) of interest
@@ -96,7 +96,7 @@ staple_ar$bana <- as.logical(staple_ar$bana)
 staple_ar$cane <- as.logical(staple_ar$cane)
 staple_ar$sunf <- as.logical(staple_ar$sunf)
 
-# Provides a glimpse of the resulting data structure
+# Provides a glimpse of the resulting dataframe
 glimpse(staple_ar)
 ```
 
