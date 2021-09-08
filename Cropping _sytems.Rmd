@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
     toc: true
-    toc_depth: 1
+    toc_depth: 2
     fig_caption: true
     css: style.css
 ---
@@ -16,9 +16,9 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Staples food crops make up the dominant part of a population’s diet. The food staples are eaten regularly supply the major portion of a person’s energy needs. There are >50,000 edible plants in the world. However, just 15 of these provide ~90% of the world’s *"food energy intake"* (FEI). Rice, maize, and wheat alone make up ~60% of the world's FEI. Other, more regional/local, staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health, well-being as well as environmental outcomes that are not well supported by local evidence ... and yet ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html), to some degree implying a matter of personal choice in that context.
+Staples food crops make up the dominant part of a population’s diet. The food staples are eaten regularly supply the major portion of a person’s energy needs. There are >50,000 edible plants in the world. However, just 15 of these provide ~90% of the world’s *"food energy intake"* (FEI). Rice, maize, and wheat alone make up ~60% of the world's FEI. Other, more regional/local, staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health, well-being as well as environmental outcomes that are not well supported by local evidence ... and yet the old addage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies a certain level of personal choice in that context.
 
-Association rule mining is frequently used answer exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that that person will also buy steak (or chicken, Bar-B-Que sauce, beer, etc)? This is also why it is frequently referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). East African smallholder food production systems are analogous to a supermarket situation in that small cropland areas (or fields) are generally [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). The small cropland area in East Africa is analogous to a supermarket. Even quite small e.g., 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. Which specific crops are grown together in a given place or environment, and how these combinations may be evolving due to external factors remains uncertain and unmonitored.
+Association rule mining is frequently used answer exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that that person will also buy steak (or chicken, Bar-B-Que sauce, beer, etc)? This is also why it is frequently referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). East African smallholder food production systems are analogous to a supermarket situation in that small cropland areas (or fields) are generally [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). A small cropland area in East Africa is analogous to a supermarket. Even quite small e.g., 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. Which specific crops are grown together in a given place or environment, and how these combinations may be evolving due to external factors remains uncertain and largely unquantified.
 
 *The main objective of this notebook is to provide starter code for identification of staple food production systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum,	rice,	bean,	cowpea,	pigeon pea,	soybean, groundnut, Irish potato,	sweet potato,	cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
@@ -99,14 +99,20 @@ staple_ar$sunf <- as.logical(staple_ar$sunf)
 
 # Generates a glimpse of the resulting dataframe
 glimpse(staple_ar)
+
+# Write out tidy dataframe
+
 ```
 
-# Association rule discovery
+
+
+# Association rules
+
+## Discovery
 
 Rule support and confidence are two measures of rule interestingness. They respectively reflect the usefulness and certainty of discovered rules. A support of 2% for Rule (6.1) means that 2% of all the transactions under analysis show that computer and antivirus software are purchased together. A confidence of 60% means that 60% of the customers who purchased a computer also bought the software. Typically, association rules are considered interesting if they satisfy both a minimum support threshold and a minimum confidence threshold. These thresholds can be a set by users or subject matter specialists.
 
-
-# Association rule mining
+## Mining
 
 
 # Main takeaways
