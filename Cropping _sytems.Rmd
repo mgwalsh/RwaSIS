@@ -71,7 +71,7 @@ To prepare the data that are used here for the association rule mining workflow 
 
 ```{r}
 # Initially select the variables (columns) of interest
-staple_ar <- staple[ , c(3:4,1,6:25)]
+staple_ar <- staple[ , c(3:4,1,5:25,27)]
 
 # This does the recoding bits
 staple_ar$survey <- as.factor(staple_ar$survey)
