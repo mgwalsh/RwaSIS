@@ -110,11 +110,11 @@ write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food.csv")
 
 We will be using a workflow based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). There are two main summary quantities of interest in the application of strong rules: *support* and *confidence*.
 
-* Support tells us the percentage of the instances where combinations of crops A and B (C,D, ...) occur together. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize alone versus growing maize in combination with various other crops). Conversely, it also tells us about frequency of combinations that either do not exist or that may be rare (outliers).
+* Support tells us the proportion of the instances where combinations of crops A and B (C,D, ...) occur together. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize alone versus growing maize in combination with various other crops). Conversely, it also tells us about frequency of combinations that either do not exist or that may be rare (outliers).
 
 * Confidence tells us which proportion of instances that have a crop A and also have crop B (C,D, ...) e.g., the conditional probability of instances that have maize also have bean, cattle, etc.
 
-Typically, association rules are considered to be interesting if at minimum they satisfy both a support threshold and a confidence threshold. Both the support and confidence thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Other criteria (e.g., [lift]()) might also be considered when deciding if a given rule is of interest or not, but generally these can be derived from support and confidence using [Bayes rule](https://en.wikipedia.org/wiki/Bayes%27_theorem). 
+Typically, association rules are considered to be interesting if at minimum they satisfy both a support threshold and a confidence threshold. Both the support and confidence thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Other criteria (e.g., [Lift](https://en.wikipedia.org/wiki/Lift_(data_mining)) might also be considered when deciding if a given rule is of interest or not, but generally these can also be derived from support and confidence measures using [Bayes rule](https://en.wikipedia.org/wiki/Bayes%27_theorem). 
 
 ## Rule discovery and exploratory analyses
 
