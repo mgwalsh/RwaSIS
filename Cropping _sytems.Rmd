@@ -94,7 +94,7 @@ staple_ar$yam  <- as.logical(staple_ar$yam)
 staple_ar$bana <- as.logical(staple_ar$bana)
 staple_ar$cane <- as.logical(staple_ar$cane)
 staple_ar$sunf <- as.logical(staple_ar$sunf)
-staple_ar$inter <- as.logical(ifelse(staple_ar$sdiv > 1, "TRUE", "FALSE"))
+staple_ar$inter <- as.factor(ifelse(staple_ar$sdiv > 1, "TRUE", "FALSE"))
 
 # Generates a glimpse of the resulting dataframe
 glimpse(staple_ar)
@@ -115,7 +115,7 @@ We will be using a workflow based on the concept of strong rules. *"Strong rules
 
 * Confidence tells us which proportion of instances that have staple A and also have staple B (C,D, ...) e.g., the conditional probability of instances that have maize also have bean, cattle, etc.
 
-Typically, association rules are considered to be interesting if at minimum they satisfy both a support threshold and a confidence threshold. Both the support and confidence thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Other threshold criteria (e.g., [Lift](https://en.wikipedia.org/wiki/Lift_(data_mining)) might also be considered when deciding if a given rule is of interest or not, but these can generally also be calculated from the relevant support and confidence measures. 
+Typically, association rules are considered to be interesting if at minimum they satisfy both a support threshold and a confidence threshold. Both the support and confidence thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Other threshold metrics e.g., ([Lift](https://en.wikipedia.org/wiki/Lift_(data_mining)) might also be considered when deciding if a given rule is of interest or not, but these can generally also be calculated from the relevant support and confidence measures. There are some good, short tutorials available on YouTube that you might want to consult in this context (e.g., https://www.youtube.com/watch?v=WGlMlS_Yydk). 
 
 ## Rule discovery and exploratory analyses
 
