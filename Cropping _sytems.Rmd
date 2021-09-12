@@ -121,7 +121,7 @@ Typically, association rules are considered to be interesting if they satisfy bo
 
 ## Exploratory analyses (EDA)
 
-This section provides some initial EDAs for the data. One could also do this with R-base, but the ['arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this that run quickly.
+This section provides some initial EDAs for these data. One could also do this with R-base, but the ['arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this that run quickly.
 
 ```{r}
 # Select initial crop occurrence variables and convert these to "transactions"
@@ -160,20 +160,31 @@ itemFrequencyPlot(trans_RW, ylab = "Support (rel. frequency)", main = "Rwanda",
                   ylim = c(0, 0.7), cex.lab = 1.2)
 ```
 
-Based on this, you can to tell that the main staple crop combinations grown in Tanzania may be quite different from those in Rwanda. Also not surprisingly, the [beta-diversity](https://en.wikipedia.org/wiki/Beta_diversity) of staple crop combinations (`sdiv`) between the two countries is also quite different, as is shown in the next plot.
+Based on this, you can to tell that the main staple distributions grown in Tanzania are quite different from those in Rwanda. Also not surprisingly, the [beta-diversity](https://en.wikipedia.org/wiki/Beta_diversity) of staple crop combinations (`sdiv`) between the two national survey samples is also quite different, as is shown in the next plot.
 
 ```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by survey."}
 
 par(pty = "s")
-boxplot(sdiv~survey, notch = T, ylab = "No. of staples per quadrat", xlab = "Country (survey data)",
+boxplot(sdiv~survey, notch = T, ylab = "No. of staples per quadrat", xlab = "Country",
         cex.lab = 1.3, staple_ar)
 ```
 
-This will influence the different intercropped combinations that are likely to occur in the two countries, and those differences would need to be considered in any subsequent mapping and/or staple food distribution monitoring applications. There are good reasons for this that primarily appear to be associated with the differences of cropland occurrences in proximity to buildings between the two countries. In Rwanda a much greater proportion of samples are located within a 50 m radius of buildings than in Tanzania.
+This will influence the different intercropped combinations that are likely to occur in the two countries, and those differences would need to be considered in any subsequent mapping and/or staple food distribution monitoring applications. There are good reasons for differences that appear to be primarily associated with the differences of cropland occurrences in proximity to buildings between the two countries. In Rwanda a much greater proportion of the samples are located within a 50 m radius of buildings than in Tanzania.
 
 ```{r}
 table(staple_ar$survey, staple_ar$build)
 ```
+
+In general, there are large diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure.
+
+```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by proximity to buildings indicator."}
+
+par(pty = "s")
+boxplot(sdiv~build, notch = T, ylab = "No. of staples per quadrat", xlab = "Buildings within 50 m?",
+        cex.lab = 1.3, staple_ar)
+```
+
+In this case the differences between the two surveys may simply represent a [confounding variable](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Biological_Statistics_(McDonald)/01%3A_Basics/1.05%3A_Confounding_Variables) that can be accounted for by considering the potentially more causal proximity to buildings in each country. People do tend to plant more diverse crops in proximity to their homes.
 
 ## Association rule mining
 
