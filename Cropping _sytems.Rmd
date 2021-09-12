@@ -130,9 +130,9 @@ trans <- as(crops, "transactions")
 summary(trans)
 ```
 
-```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Over relative frequencies (support) of staple food crop occurrences in Tanzania and Rwanda."}
+```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Overall relative frequencies (support) of staple food crop occurrences in Tanzania and Rwanda."}
 
-itemFrequencyPlot(trans, topN = 20, ylab = "Overall support (rel. frequency)", cex.lab = 1.2)
+itemFrequencyPlot(trans, topN = 20, ylab = "Relative frequency (support)", cex.lab = 1.2)
 ```
 
 The graph provides an indication of the overall level of support for the individual staple crops that are presented here. Maize is the most frequent, yam is the most infrequent. This means that various staple combinations with maize are likely to have more overall support than any crop combinations with yam. You can also subset the data for comparison, e.g. by survey, with something like the following.
@@ -154,9 +154,13 @@ You can then plot the support comparison for the 2 surveys with:
 ```{r fig.align = "center", fig.show = 'hold', fig.height = 8, fig.width = 7, fig.cap = "Relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
 
 par(mfrow = c(2,1))
-itemFrequencyPlot(trans_TZ, ylab = "Support (rel. frequency)", main = "Tanzania", cex.lab = 1.2)
-itemFrequencyPlot(trans_RW, ylab = "Support (rel. frequency)", main = "Rwanda", cex.lab = 1.2)
+itemFrequencyPlot(trans_TZ, ylab = "Support (rel. frequency)", main = "Tanzania", 
+                  ylim = c(0,0.6), cex.lab = 1.2)
+itemFrequencyPlot(trans_RW, ylab = "Support (rel. frequency)", main = "Rwanda", 
+                  ylim = c(0, 0.6), cex.lab = 1.2)
 ```
+
+Based on this, you might imagine that the main cropping systems (crop combinations) in Tanzania are quite different from those in Rwanda. There are also different crop combinations that are likely to occur in the two countries.  
 
 ## Association rule mining
 
