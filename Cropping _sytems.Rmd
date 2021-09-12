@@ -198,10 +198,17 @@ basef <- apriori(trans, parameter = list(target = "frequent", support = mins, mi
 ``` 
 
 ```{r}
-inspect(head(sort(basef), n=27)) ## displays the 27 most common intercropped systems
+inspect(head(sort(basef), n=27)) ## lists the 27 most common intercropped systems
 ```
 
-We can also split this by national survey of the of the two countries 
+You can also plot the corresponding interaction graph with:
+
+```{r, fig.align ='center', fig.cap = "Interaction graph of the most frequent cropping systems in Tanzania and Rwanda."}
+
+plot(basef, method = "graph")
+```
+
+We can also split this by the national surveys of the of the two countries.
 
 ```{r}
 
