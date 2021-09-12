@@ -175,7 +175,7 @@ This will influence the different intercropped combinations that are likely to o
 table(staple_ar$survey, staple_ar$build)
 ```
 
-In general, there are large diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure.
+In general, there are large also diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure.
 
 ```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by proximity to buildings indicator."}
 
@@ -188,10 +188,11 @@ In this case the differences between the two surveys may simply represent a [con
 
 ## Association rule mining
 
-We can explore the various staple crop combinations with the `apriori` function in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package.
+We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not exhaustive will provide you with some realistic options in running the `apriori` algorithm in different configurations.
 
 ```{r}
-# Default rules
+# Baseline rules
+
 
 ``` 
 
@@ -201,7 +202,7 @@ The main takeaways of this notebook are the following:
 
 * Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. This observation is related to population density as indicated by the proximity of buildings in croplands. Smallholder farmers generally tend to grow a combination of more diverse staple crops to proximity to households. 
 
-*  There are certainly other analysis options, such as [graphical interaction models](), which we could use for the modeling the data that are presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in an additional notebook at a later stage.
+*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that are presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in an additional notebook at a later stage.
 
 *
 
