@@ -184,11 +184,16 @@ boxplot(sdiv~build, notch = T, ylab = "No. of staples per quadrat", xlab = "Buil
         cex.lab = 1.3, staple_ar)
 ```
 
-In this case the differences between the two surveys may simply represent a [confounding variable](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Biological_Statistics_(McDonald)/01%3A_Basics/1.05%3A_Confounding_Variables) that can be accounted for by considering the potentially more causal proximity to buildings in each country. People do tend to plant more diverse crops in proximity to their homes.
+In this case the differences between the two surveys may simply represent a [confounding variable](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Biological_Statistics_(McDonald)/01%3A_Basics/1.05%3A_Confounding_Variables) that can be accounted for by considering the potentially more causal proximity to buildings in each country. People do tend to plant more diverse crops in proximity to their homes. You can look at this in other, similar ways by running the script.
 
 ## Association rule mining
 
 We can explore the various staple crop combinations with the `apriori` function in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package.
+
+```{r}
+# Default rules
+
+``` 
 
 # Main takeaways
 
