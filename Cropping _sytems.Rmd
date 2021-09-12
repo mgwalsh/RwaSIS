@@ -121,7 +121,7 @@ Typically, association rules are considered to be interesting if they satisfy bo
 
 ## Exploratory analyses (EDA)
 
-This section provides some initial EDAs for these data. One could also do this with R-base, but the ['arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this that run quickly.
+This section provides some initial EDAs for these data. One could also do this with R-base and/or `dplyr`, but the ['arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this that run quickly.
 
 ```{r}
 # Select initial crop occurrence variables and convert these to "transactions"
@@ -188,11 +188,10 @@ In this case the differences between the two surveys may simply represent a [con
 
 ## Association rule mining
 
-We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not exhaustive will provide you with some realistic options in running the `apriori` algorithm in different configurations.
+We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not exhaustive will provide you with some realistic options in running the `apriori` algorithm in different configurations for identifying potentially intersting rules.
 
 ```{r}
 # Baseline rules
-
 
 ``` 
 
