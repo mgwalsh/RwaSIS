@@ -166,10 +166,10 @@ Based on this, you might imagine that the main staple crops compositions grown i
 
 par(pty = "s")
 boxplot(sdiv~survey, notch = T, ylab = "No. of staples per quadrat", xlab = "Survey",
-        cex.lab = 1.2, staple_ar)
+        cex.lab = 1.3, staple_ar)
 ```
 
-This will also influence the different intercropped combinations that are likely to occur in the two countries. Those may need to be considered in any subsequent mapping and/or staple food distribution monitoring applications.
+This will also influence the different intercropped combinations that are likely to occur in the two countries, and those will need to be considered in any subsequent mapping and/or staple food distribution monitoring applications.
 
 ## Association rule mining
 
