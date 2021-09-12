@@ -115,7 +115,7 @@ We will be using a workflow based on the concept of strong rules. *"Strong rules
 
 * *Support* tells us the joint probability of instances where crops A and B (i.e., `p(A ∪ B)`) occur. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize in combination with various other crops). Conversely, it also tells us about the probability of various combinations that are rare (*sensu* outliers).
 
-* *Confidence* tells us the conditional probability of instances that have staple B given that they have staple A (i.e., `p(B|A)`) e.g., the instances that have bean, cattle, banana, etc, given that they have maize. This also contrasts potentially rare conditional instances such as the probability of e.g., `p(rice|maize)`. 
+* *Confidence* tells us the conditional probability of instances that have staple B given that they have staple A (i.e., `p(B|A)`) e.g., the instances that have bean, cattle, banana, etc, given that they have maize. This also contrasts potentially rare conditional instances such as the probability of e.g., `p(yam|maize)`. 
 
 Typically, association rules are considered to be interesting if they satisfy both support and confidence thresholds. These thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Other threshold metrics (e.g., [Lift](https://en.wikipedia.org/wiki/Lift_(data_mining))) might also be considered when deciding if a given rule is of interest or not, but these can generally also be calculated from the relevant support and confidence metrics. Note that there are some good, short tutorials available on YouTube that you might wish to consult to clarify the terminology in this context (e.g., https://www.youtube.com/watch?v=WGlMlS_Yydk). 
 
@@ -128,7 +128,8 @@ trans <- as(crops, "transactions")
 summary(trans)
 ```
 
-```{r, }
+```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
+
 itemFrequencyPlot(trans, topN = 20, ylab = "Relative crop frequency")
 ```
 
