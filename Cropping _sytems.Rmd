@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE)
 
 # Introduction
 
-Staple food crops make up the dominant food energy intake in a population's diet. There are >50,000 edible plants in the world; however, just 15 of these provide ~90% of the world's [gross food energy (GE)](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/food-energy). Rice, maize, and wheat alone make up ~60% of the world's GE. Other, more regional/local staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health as well as environmental outcomes that are not well supported by local evidence. The old adage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies a level of personal choice and circumstances in this regard.
+Staple food crops make up the dominant food energy intake in a population's diet. While there are >50,000 edible plants in the world, just 15 of these provide ~90% of the world's [gross food energy (GE)](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/food-energy). Rice, maize, and wheat alone make up ~60% of the world's GE. Other, more regional/local staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health as well as environmental outcomes that are not well supported by local evidence. The old adage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies a level of personal choice and circumstances in this regard.
 
 [Association rule learning (ARL)](https://en.wikipedia.org/wiki/Association_rule_learning) is used answer common exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that this person will also buy steak (or chicken and Bar-B-Que sauce, etc)? This is also why it is often referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). 
 
@@ -121,6 +121,8 @@ Typically, association rules are considered to be interesting if they satisfy bo
 
 ## Exploratory analyses (EDA)
 
+This section provides some initial EDAs for the data. One could also do this with R-base, but the ['arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this that run quickly.
+
 ```{r}
 # Select initial crop occurrence variables and convert these to "transactions"
 crops <- staple_ar[ , c(5:24)]
@@ -128,14 +130,37 @@ trans <- as(crops, "transactions")
 summary(trans)
 ```
 
-```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
+```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Combined relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
 
-itemFrequencyPlot(trans, topN = 20, ylab = "Relative crop frequency", cex.lab = 1.3)
+itemFrequencyPlot(trans, topN = 20, ylab = "Support (rel. frequency)", cex.lab = 1.2)
+```
+
+The graph provides an indication of the overall level of support for the individual staple crops that are presented here. Maize is the most frequent, yam is the most infrequent. This means that various staple combinations with maize are likely to have more overall support than any crop combinations with yam. You can also subset the data for comparison, e.g. by survey, with something like the following.
+
+```{r}
+# Rwanda subset
+crops_RW <- staple_ar[which(staple_ar$survey == 'RW'), ]
+crops_RW <- crops_RW[ , c(5:24)]
+trans_RW <- as(crops_RW, "transactions")
+
+# Tanzania subset
+crops_TZ <- staple_ar[which(staple_ar$survey == 'TZ'), ]
+crops_TZ <- crops_TZ[ , c(5:24)]
+trans_TZ <- as(crops_TZ, "transactions")
+```
+
+You can then plot the support comparison for the 2 surveys with:
+
+```{r fig.align = "center", fig.show = 'hold', fig.height = 8, fig.width = 7, fig.cap = "Relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
+
+par(mfrow = c(2,1))
+itemFrequencyPlot(trans_TZ, ylab = "Support (rel. frequency)", main = "Tanzania", cex.lab = 1.2)
+itemFrequencyPlot(trans_RW, ylab = "Support (rel. frequency)", main = "Rwanda", cex.lab = 1.2)
 ```
 
 ## Association rule mining
 
-
+We can explore the various interactions with the `apriori` function.
 
 # Main takeaways
 
@@ -151,6 +176,6 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 # Aside note: Links to staple food recipes
 
-Of course there are some delicious recipes out there for using the staple crops indicated this notebook for meals (some of these are also quite nutritious). Interestingly, cooking advisories such as [Supercook](https://www.supercook.com/#/recipes) and [Allrecipes](https://www.allrecipes.com/search/results/?search=) are also using new recommendation algorithms to help provide meal options based on what ingredients you have available, or what you may want to have available, in your fridge and dry-goods store. If you are a smallholder in East Africa, those ingredients will largely depend on what you are growing on your land and whatever your breakfast, lunch or dinner preferences are. It might be interesting and informative to do a webscrape of recipe sites to see to what degree the staple foods explored here occur in African and global food recipes. We shall leave that for another day. 
+Of course there are some delicious recipes out there for using the staple crops indicated this notebook for meals (some of these are also quite nutritious). Interestingly, cooking advisories such as [Supercook](https://www.supercook.com/#/recipes) and [Allrecipes](https://www.allrecipes.com/search/results/?search=) are also using new recommendation algorithms to help provide meal options based on what ingredients you have available, or what you may want to have available in your fridge and dry-goods store. If you are a smallholder in East Africa, those ingredients will largely depend on what you are growing on your land and whatever your breakfast, lunch or dinner preferences are. It might be interesting and informative to do a webscrape of recipe sites to see to what degree the staple foods explored here occur in African and global food recipes. We shall leave that for another day. 
 
 
