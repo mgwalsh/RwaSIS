@@ -102,7 +102,7 @@ staple_ar$inter <- as.logical(ifelse(staple_ar$sdiv > 1, "TRUE", "FALSE"))
 glimpse(staple_ar)
 ```
 
-The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. These include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. Intercropped systems (`inter = TRUE`) contain at least 2 staple crops. You can write out the wrangled dataframe should you wish to use it in other applications.
+The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. These include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. Intercropped systems (`inter = TRUE`) contain at least 2 staple crops. You can write out the wrangled dataframe should you wish to use it in other applications, with:.
 
 ```{r}
 # Write out tidy dataframe
@@ -188,7 +188,7 @@ In this case the differences between the two surveys may simply represent a [con
 
 ## Association rule mining
 
-We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not exhaustive will provide you with some realistic options in running the `apriori` algorithm in different configurations for identifying potentially intersting rules.
+We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not intended to be exhaustive but will provide you with some realistic options for tuning the `apriori` algorithm in different configurations for identifying potentially interesting rules.
 
 ```{r}
 # Baseline rules
