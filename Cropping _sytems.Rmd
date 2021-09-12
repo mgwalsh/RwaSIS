@@ -188,19 +188,21 @@ In this case the differences between the two surveys may simply represent a [con
 
 ## Association rule mining
 
-We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not intended to be exhaustive, but they will provide you with some realistic options for tuning the `apriori` algorithm for identifying potentially interesting rules.
+We can explore the various staple crop combinations with the `apriori` algorithm in the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package. We step through various rule sets here. These are not intended to be exhaustive, but they will provide you with some realistic options for tuning the `apriori` algorithm for discovering potentially interesting rules.
 
 ```{r}
-# Baseline rules
-base <- apriori(trans, parameter = list(target = "frequent", supp=0.001, minlen = 2, maxlen=5))
-inspect(base)
+mins <- 1000/nrow(trans) ## set minimum support
+
+# Baseline itemset
+basi <- apriori(trans, parameter = list(target = "frequent", support = mins, confidence = 0.5, minlen = 2, maxlen=5))
+inspect(head(sort(basi), n=20)) ## displays the 20 most common intercropped systems
 ``` 
 
 # Main takeaways
 
 The main takeaways of this notebook are the following:
 
-* Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. This observation is related to population density as indicated by the proximity of buildings in croplands. Smallholder farmers generally tend to grow a combination of more diverse staple crops to proximity to households. 
+* Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. This observation is related to population density as indicated by the proximity of buildings in croplands. Smallholder farmers generally tend to grow combinations of staple crops to proximity to households. 
 
 *  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that are presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in an additional notebook at a later stage.
 
