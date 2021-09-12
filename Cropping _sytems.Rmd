@@ -130,9 +130,9 @@ trans <- as(crops, "transactions")
 summary(trans)
 ```
 
-```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Combined relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
+```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Over relative frequencies (support) of staple food crop occurrences in Tanzania and Rwanda."}
 
-itemFrequencyPlot(trans, topN = 20, ylab = "Support (rel. frequency)", cex.lab = 1.2)
+itemFrequencyPlot(trans, topN = 20, ylab = "Overall support (rel. frequency)", cex.lab = 1.2)
 ```
 
 The graph provides an indication of the overall level of support for the individual staple crops that are presented here. Maize is the most frequent, yam is the most infrequent. This means that various staple combinations with maize are likely to have more overall support than any crop combinations with yam. You can also subset the data for comparison, e.g. by survey, with something like the following.
