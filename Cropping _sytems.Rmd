@@ -127,7 +127,6 @@ This section provides some initial EDAs for these data. One could also do this w
 # Select initial crop occurrence variables and convert these to "transactions"
 crops <- staple_ar[ , c(5:24)]
 trans <- as(crops, "transactions")
-summary(trans)
 ```
 
 ```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Overall relative frequencies (support) of individual staple food crop occurrences in Tanzania and Rwanda."}
@@ -198,10 +197,10 @@ basef <- apriori(trans, parameter = list(target = "frequent", support = mins, mi
 ``` 
 
 ```{r}
-inspect(head(sort(basef), n=27)) ## lists the 27 most common intercropped systems
+inspectDT(basef) ## tables the 27 most common intercropped systems
 ```
 
-You can also plot the corresponding association graph with:
+We also plot the corresponding association graph with:
 
 ```{r, fig.align ='center', fig.width = 9, fig.cap = "Baseline association graph of the 27 most frequent intercropping systems in Tanzania and Rwanda."}
 
@@ -222,7 +221,23 @@ plot(tzf, method = "graph")
 plot(rwf, method = "graph")
 ```
 
-However, we think that perhaps a better generalization, also for the purposes mapping and monitoring staple food crops, is by referencing where people live in close proximity to the food crops that they produce (e.g. as indexed by their proximity to buildings). In Rwanda most fields are located close to buildings. In Tanzania croplands are much more dispersed over larger areas relative to where people actually reside, reflecting a large difference in rural population density between the two countries. We can actually explore this contention here because the occurrence of buildings with a 50 m radius of the PSUs was recorded in both the Tanzania and the Rwanda surveys.
+We run this again for Rwanda using `target = "rules"` rather than `target = "frequent"` and set the minimum confidence level to >0.8
+
+```{r, results = FALSE}
+rwr <- apriori(trans_RW, parameter = list(target = "rules", support = mins, confidence = 0.8,
+                                          minlen = 2, maxlen=5))
+```
+
+```{r}
+inspectDT(rwr)
+```
+
+```{r, fig.align = "center", fig.cap = "Staple food crop association graph for Rwanda."}
+
+plot(rwr, method = "graph")
+```
+
+However, we think that perhaps a better generalization, also for the purposes mapping and monitoring staple food crops, is by referencing where people live in close proximity to the food crops that they produce (e.g. as indexed by their proximity to buildings). In Rwanda most smallholder fields are located close to buildings. In Tanzania croplands are much more dispersed over larger areas relative to where people actually reside, reflecting a large difference in rural population density between the two countries. We can actually explore this contention here because the occurrence of buildings with a 50 m radius of the PSUs was recorded in both the Tanzania and the Rwanda surveys.
 
 ```{r}
 
