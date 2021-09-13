@@ -1,5 +1,5 @@
 ---
-title: Workflows for discovering staple food systems with association rule mining
+title: Workflows for identifying staple food systems with association rule mining
 author: M.G. Walsh, R. Manners, J. Meliyo, J. Rutebuka and M. Broadley
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
@@ -22,7 +22,7 @@ Staple food crops make up the dominant food energy intake in a population's diet
 
 The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications.
 
-*The main objective of this notebook is to introduce starter code for discovering and identification of staple food systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
+*The main objective of this notebook is to introduce starter code for discovering and identification of staple food systems in Tanzania and Rwanda. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
 # General data setup
 
@@ -234,7 +234,7 @@ The main takeaways of this notebook are the following:
 
 * Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. This observation appears related to population density as indicated by the proximity of buildings in croplands.
 
-* Staple food cropping systems in both Tanzania and Rwanda tend to be more complex and diverse in proximity to buildings.
+* However, staple food cropping systems in both Tanzania and Rwanda tend to be more complex and diverse in proximity to buildings.
 
 *  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that are presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in an additional notebook at a later stage.
 
