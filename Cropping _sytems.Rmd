@@ -215,7 +215,7 @@ rwf <- apriori(trans_RW, parameter = list(target = "frequent", support = mins, m
 tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
 ```
 
-```{r, fig.align = "center", fig.show = 'hold', fig.height = 5 , fig.width = 9, fig.cap = "Common staple crop association graphs for Tanzania (top) and Rwanda (bottom)."}
+```{r, fig.align = "center", fig.show = 'hold', fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association graphs for Tanzania (top) and Rwanda (bottom)."}
 
 par(mfrow = c(2,1))
 plot(tzf, method = "graph")
