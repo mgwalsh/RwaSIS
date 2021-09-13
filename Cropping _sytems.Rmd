@@ -201,17 +201,25 @@ basef <- apriori(trans, parameter = list(target = "frequent", support = mins, mi
 inspect(head(sort(basef), n=27)) ## lists the 27 most common intercropped systems
 ```
 
-You can also plot the corresponding interaction graph with:
+You can also plot the corresponding association graph with:
 
-```{r, fig.align ='center', fig.cap = "Interaction graph of the most frequent cropping systems in Tanzania and Rwanda."}
+```{r, fig.align ='center', fig.cap = "Association graph of the 27 most frequent intercropping systems in Tanzania and Rwanda."}
 
 plot(basef, method = "graph")
 ```
 
-We can also split this by the national surveys of the of the two countries.
+We can also split this between the national surveys of the two countries with:
 
-```{r}
+```{r, results = FALSE}
+rwf <- apriori(trans_RW, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
+tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
+```
 
+```{r, fig.align = "center", fig.show = 'hold', fig.height = 4 , fig.width = 9, fig.cap = "Common staple crop association graphs for Tanzania (top) and Rwanda (bottom)."}
+
+par(mfrow = c(2,1))
+plot(tzf, method = "graph")
+plot(rwf, method = "graph")
 ```
 
 # Main takeaways
