@@ -20,7 +20,7 @@ Staple food crops make up the dominant food energy intake in a population's diet
 
 [Association rule learning (ARL)](https://en.wikipedia.org/wiki/Association_rule_learning) is used answer common exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that this person will also buy steak (or chicken and Bar-B-Que sauce, etc)? This is also why it is often referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). 
 
-The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple foods, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications.
+The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications.
 
 *The main objective of this notebook is to introduce starter code for discovering and identification of staple food systems in Rwanda and Tanzania. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
@@ -135,7 +135,7 @@ summary(trans)
 itemFrequencyPlot(trans, topN = 20, ylab = "Relative frequency (support)", cex.lab = 1.2)
 ```
 
-The graph provides an indication of the overall level of support for the individual staple crops that are presented here. Maize is the most frequent, yam is the most infrequent. This means that various staple combinations with maize are likely to have more overall support than any crop combinations with yam. You can also subset the data for comparison, e.g. by survey, with something like the following:
+The graph provides an indication of the overall level of support (marginal probabilities) for the individual staple crops that are presented here. Maize is the most frequent, yam is the most infrequent. This means that various staple combinations with maize are likely to have more overall support than any crop combinations with yam. You can also subset the data for comparison, e.g. by survey, with something like the following:
 
 ```{r}
 # Rwanda subset
@@ -215,18 +215,26 @@ rwf <- apriori(trans_RW, parameter = list(target = "frequent", support = mins, m
 tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
 ```
 
-```{r, fig.align = "center", fig.show = 'hold', fig.height = 4 , fig.width = 9, fig.cap = "Common staple crop association graphs for Tanzania (top) and Rwanda (bottom)."}
+```{r, fig.align = "center", fig.show = 'hold', fig.height = 5 , fig.width = 9, fig.cap = "Common staple crop association graphs for Tanzania (top) and Rwanda (bottom)."}
 
 par(mfrow = c(2,1))
 plot(tzf, method = "graph")
 plot(rwf, method = "graph")
 ```
 
+However, we think that perhaps a better generalization, also for the purposes mapping and monitoring staple food crops, is by referencing where people live in close proximity to the food crops that they produce (e.g. as indexed by their proximity to buildings). In Rwanda most fields are located close to buildings. In Tanzania croplands are much more dispersed over larger areas relative to where people actually reside, reflecting a large difference in rural population density between the two countries. We can actually explore this contention here because the occurrence of buildings with a 50 m radius of the PSUs was recorded in both the Tanzania and the Rwanda surveys.
+
+```{r}
+
+```
+
 # Main takeaways
 
 The main takeaways of this notebook are the following:
 
-* Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. This observation appears related to population density as indicated by the proximity of buildings in croplands. Smallholder farmers generally tend to grow combinations of staple crops to proximity to households. 
+* Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. This observation appears related to population density as indicated by the proximity of buildings in croplands.
+
+* Staple food cropping systems in both Tanzania and Rwanda tend to be more complex and diverse in proximity to buildings.
 
 *  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that are presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in an additional notebook at a later stage.
 
