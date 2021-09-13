@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # Introduction
 
-Staple food crops make up the dominant food energy intake in a population's diet. While there are >50,000 edible plants in the world, just 15 of these provide ~90% of the world's [gross food energy (GE)](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/food-energy). Rice, maize, and wheat alone make up ~60% of the world's GE. Other, more regional/local staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health as well as environmental outcomes that are not well supported by local evidence. The old adage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies a level of personal choice and circumstances in this regard.
+Staple foods make up the dominant food energy intake in a population's diet. While there are >50,000 edible plants in the world, just 15 of these provide ~90% of the world's [gross food energy (GE)](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/food-energy). Rice, maize, and wheat alone make up ~60% of the world's GE. Other, more regional/local staples include: millet and sorghum, pulses such as beans, lentils and chickpeas, roots and tubers such as potatoes, cassava, yams, and taro, and animal foods such as meat, fish, and dairy products (see [FAO](http://www.fao.org/3/AC832E/ac832e06.htm)). In turn the specific combinations of staple foods that are consumed by people are thought to have specific population-level nutritional, health as well as environmental outcomes that are not well supported by local evidence. The old adage ["You are what you eat"](https://www.phrases.org.uk/meanings/you-are-what-you-eat.html) also implies a level of personal choice and circumstances in this regard.
 
 [Association rule learning (ARL)](https://en.wikipedia.org/wiki/Association_rule_learning) is used answer common exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that this person will also buy steak (or chicken and Bar-B-Que sauce, etc)? This is also why it is often referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). 
 
@@ -221,7 +221,7 @@ plot(tzf, method = "graph")
 plot(rwf, method = "graph")
 ```
 
-We run this again for Rwanda using `target = "rules"` rather than `target = "frequent"` and set the minimum confidence level to >0.8
+We run this again for Rwanda using `target = "rules"` rather than `target = "frequent"` and set the minimum confidence level to >0.8. The convenient thing about the table that is generated is that you can by specific crops in the RHS (right-hand-side) column to view the relevant association rules.
 
 ```{r, results = FALSE}
 rwr <- apriori(trans_RW, parameter = list(target = "rules", support = mins, confidence = 0.8,
@@ -230,11 +230,6 @@ rwr <- apriori(trans_RW, parameter = list(target = "rules", support = mins, conf
 
 ```{r}
 inspectDT(rwr)
-```
-
-```{r, fig.align = "center", fig.cap = "Staple food crop association graph for Rwanda."}
-
-plot(rwr, method = "graph")
 ```
 
 However, we think that perhaps a better generalization, also for the purposes mapping and monitoring staple food crops, is by referencing where people live in close proximity to the food crops that they produce (e.g. as indexed by their proximity to buildings). In Rwanda most smallholder fields are located close to buildings. In Tanzania croplands are much more dispersed over larger areas relative to where people actually reside, reflecting a large difference in rural population density between the two countries. We can actually explore this contention here because the occurrence of buildings with a 50 m radius of the PSUs was recorded in both the Tanzania and the Rwanda surveys.
