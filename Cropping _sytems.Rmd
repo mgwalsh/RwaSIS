@@ -230,7 +230,7 @@ rwr <- apriori(trans_RW, parameter = list(target = "rules", support = mins, conf
 inspectDT(rwr)
 ```
 
-```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association rule graphs for the top 20 rules in Rwanda filtered by level of support."}
+```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association rule graph for the 20 highest ranked rules in Rwanda filtered by level of support."}
 
 plot(head(sort(rwr, by = "support"), n=20), method = "graph")
 ```
@@ -260,9 +260,18 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
+You can also export this rule file out for further processing e.g. for mapping and/or other applications with:
+
+```{r}
+builder_out <- DATAFRAME(buildr, separate = TRUE)
+write.csv(builder_out, "./Food_system/Results/TZ_RW_FS_rules.csv")
+```
+
 # Main takeaways
 
 The main takeaways of this notebook are the following:
+
+* The staple food crop combinations (systems), which are considered in this notebook are fairly complex, and probably require some machine learning to unravel.  
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda.
 
