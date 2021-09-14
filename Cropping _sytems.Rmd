@@ -234,12 +234,12 @@ rwr <- apriori(trans_RW, parameter = list(target = "rules", support = mins, conf
 inspectDT(rwr) ## 
 ```
 
-```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association rule graph for the 20 rules with most support in Rwanda."}
+```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association rule graphs for the top 20 rules in Rwanda filtered by level of support."}
 
 plot(head(sort(rwr, by = "support"), n=20), method = "graph")
 ```
 
-## Staple crop diversity and proximity to buildings
+## Staple crop diversity in proximity to buildings
 
 However, we think that perhaps a better generalization, also for the purposes mapping and monitoring staple food crops, is by referencing where people live in close proximity to the food crops that they produce (e.g. as indexed by their proximity to buildings). In Rwanda most smallholder fields are located close to buildings. In Tanzania croplands are much more dispersed over larger areas relative to where people actually reside, reflecting a large difference in the rural population densities between the two countries. We can actually explore this contention here because the occurrence of buildings with a 50 m radius of the PSUs was recorded in both the Tanzania and the Rwanda surveys.
 
