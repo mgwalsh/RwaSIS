@@ -281,7 +281,7 @@ The main takeaways of this notebook are the following:
 
 * ...
 
-*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that are presented here. We have not included these in this notebook to keep things relatively concise, but we might further explore those options in additional notebooks at a later stage.
+*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise, but we might further explore those options in additional notebooks at a later stage.
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
