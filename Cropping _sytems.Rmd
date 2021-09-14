@@ -1,5 +1,5 @@
 ---
-title: Workflows for identifying staple food systems with association rule mining
+title: Workflows for predicting staple food systems with association rule mining
 author: M.G. Walsh, R. Manners, J. Meliyo, J. Rutebuka and M. Broadley
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
