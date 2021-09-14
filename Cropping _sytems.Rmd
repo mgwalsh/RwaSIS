@@ -275,7 +275,7 @@ write.csv(buildr_out, "./Food_system/Results/TZ_RW_FS_rules.csv")
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel. We have simply scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relative simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
+* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relative simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. We will explore other geographical and environmental explanations in this context in subsequent analyses.
 
