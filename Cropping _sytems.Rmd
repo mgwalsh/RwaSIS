@@ -160,7 +160,7 @@ boxplot(sdiv~survey, notch = T, ylab = "No. of staples per quadrat", xlab = "Cou
 
 This will influence the different intercropped combinations that are likely to occur in the two countries, and those differences would need to be considered in any subsequent mapping and/or staple food distribution monitoring applications. There are good reasons for differences that appear to be primarily associated with the differences of cropland occurrences in proximity to buildings between the two countries.
 
-In general, there are large also diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure.
+In general, there are large also diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure. For example, livestock are now generally kept near buildings in agro-pastoral systems.
 
 ```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by proximity to buildings indicator."}
 
