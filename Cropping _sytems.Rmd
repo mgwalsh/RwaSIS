@@ -250,7 +250,7 @@ buildr <- apriori(inter, parameter = list(target = "rule", support = mins, confi
                                           minlen = 2))
 ```
 
-```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association rule graph of the main staple food cropping systems in Tanzania and Rwanda."}
+```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Association rule graph of the main staple food systems in Tanzania and Rwanda."}
 
 plot(buildr, method = "graph")
 ```
