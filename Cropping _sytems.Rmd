@@ -109,19 +109,7 @@ The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goa
 write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food.csv")
 ```
 
-# Association rules
-
-We will be using a workflow based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). There are three main metrics of interest in the application of strong rules are: *support*, *confidence* and *lift*.
-
-* *Support* tells us the joint probability of instances where crops A and B (i.e., `p(A,B)`) occur. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize in combination with various other crops). Conversely, it also tells us about the probability of various combinations that are rare (*sensu* outliers).
-
-* *Confidence* tells us the conditional probability of instances that have staple B given that they have staple A (i.e., `p(B|A)`) e.g., the instances that have bean, cattle, banana, etc, given that they have maize. This also contrasts potentially rare associations such as the probability of e.g., `p(yam|maize)`.
-
-* *Lift* can be calculated as the ratio of the joint probability of two crops A and B, divided by the product of their probabilities (i.e., `P(A,B) / [P(A)P(B)]`). If the two items are statistically independent, then the joint probability of the two items will be the same as the product of their probabilities. Or, in other words, `P(A,B) = P(A)P(B)`, which makes the Lift factor = 1. Worth mentioning is that anti-correlation can yield lift values less than 1, which correspond to mutually exclusive crops combinations that rarely occur together.
-
-Typically, association rules are considered to be interesting if they satisfy at least both support and confidence thresholds. These thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Note that there are some good, short tutorials available on YouTube that you might wish to consult to clarify the terminology in this context (e.g., https://www.youtube.com/watch?v=WGlMlS_Yydk). 
-
-## Exploratory analyses (EDA)
+# Exploratory analyses (EDA)
 
 This section provides some initial EDAs for these data. One could also do this with R-base and/or `dplyr`, but the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this, which run quickly.
 
@@ -186,6 +174,18 @@ boxplot(sdiv~build, notch = T, ylab = "No. of staples per quadrat", xlab = "Buil
 ```
 
 In this case the differences between the two surveys may simply represent a [confounding variable](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Biological_Statistics_(McDonald)/01%3A_Basics/1.05%3A_Confounding_Variables) that can be accounted for by considering the potentially more causal proximity to buildings in each country. People do tend to plant more diverse crops in proximity to their homes. We will look at this in more detail further below.
+
+# Association rules
+
+We will be using a workflow based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). There are three main metrics of interest in the application of strong rules are: *support*, *confidence* and *lift*.
+
+* *Support* tells us the joint probability of instances where crops A and B i.e., `p(A,B)` occur. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize in combination with various other crops). Conversely, it also tells us about the probability of various combinations that are rare (*sensu* outliers).
+
+* *Confidence* tells us the conditional probability of instances that have staple B given that they have staple A (i.e., `p(B|A)`) e.g., the instances that have bean, cattle, banana, etc, given that they have maize. This also contrasts potentially rare associations such as the probability of e.g., `p(yam|maize)`.
+
+* *Lift* can be calculated as the ratio of the joint probability of two crops A and B, divided by the product of their probabilities i.e., `P(A,B)/(P(A)P(B))`. If the two items are statistically independent, then the joint probability of the two items will be the same as the product of their probabilities. In other words, `P(A,B) = P(A)P(B)`, which makes the lift factor = 1. Worth mentioning is that anti-correlations can yield lift values that are less than 1, which correspond to mutually exclusive crops combinations that rarely occur together.
+
+Typically, association rules are considered to be interesting if they satisfy at least both support and confidence thresholds. These thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Note that there are some good, short tutorials available on YouTube that you might wish to consult to clarify the terminology in this context (e.g., https://www.youtube.com/watch?v=WGlMlS_Yydk). 
 
 ## Association rule mining
 
