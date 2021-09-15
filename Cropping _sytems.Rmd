@@ -109,7 +109,7 @@ The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goa
 write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food.csv")
 ```
 
-# Exploratory analyses (EDA)
+# Exploratory data analyses
 
 This section provides some initial EDAs for these data. One could also do this with R-base and/or `dplyr`, but the [`arules`](https://www.rdocumentation.org/packages/arules/versions/1.6-8) package provides some useful wrapper functions for this, which run quickly.
 
@@ -121,7 +121,7 @@ trans <- as(crops, "transactions")
 
 ```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Overall relative frequencies (support) of individual staple food crop occurrences in Tanzania and Rwanda."}
 
-itemFrequencyPlot(trans, topN = 20, ylab = "Relative frequency (support)", cex.lab = 1.2)
+itemFrequencyPlot(trans, topN = 20, ylab = "Support (rel. frequency)", cex.lab = 1.2)
 ```
 
 The graph provides an indication of the overall level of support for the individual staple crops that are presented here. Maize is the most frequent, yam is the most infrequent. This means that various staple combinations with maize are likely to have more overall support than any crop combinations with yam. You can also subset the data for comparison, e.g. by survey, with something like the following:
@@ -160,7 +160,7 @@ boxplot(sdiv~survey, notch = T, ylab = "No. of staples per quadrat", xlab = "Cou
 
 This will influence the different intercropped combinations that are likely to occur in the two countries, and those differences would need to be considered in any subsequent mapping and/or staple food distribution monitoring applications. There are good reasons for differences that appear to be primarily associated with the differences of cropland occurrences in proximity to buildings between the two countries.
 
-In general, there are large also diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure. For example, livestock are now generally kept near buildings in agro-pastoral systems.
+In general, there are large also diversity differences between staple crops that are grown in proximity to buildings versus those that are grown in more distant/outlying fields, as is shown in the next figure.
 
 ```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by proximity to buildings indicator."}
 
@@ -169,7 +169,7 @@ boxplot(sdiv~build, notch = T, ylab = "No. of staples per quadrat", xlab = "Buil
         cex.lab = 1.3, staple_ar)
 ```
 
-In this case the differences between the two surveys may simply represent a [confounding variable](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Biological_Statistics_(McDonald)/01%3A_Basics/1.05%3A_Confounding_Variables) that can be accounted for by considering the potentially more causal proximity to buildings in each country. People do tend to plant more diverse crops in proximity to their homes. We will look at this in more detail further below.
+In this case the differences between the two surveys may simply represent a [confounding variable](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Biological_Statistics_(McDonald)/01%3A_Basics/1.05%3A_Confounding_Variables) that can be accounted for by considering the potentially more causal proximity to buildings in each country. People do tend to plant more diverse staples in proximity to their homes. We will look at this in more detail further below. 
 
 # Association rules
 
@@ -277,7 +277,7 @@ The main takeaways of this notebook are the following:
 
 * The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
 
-* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. We will explore other geographical and environmental explanations in this context in subsequent analyses.
+* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. We will explore other geographical and environmental explanations in this context in subsequent analyses.
 
 * ...
 
