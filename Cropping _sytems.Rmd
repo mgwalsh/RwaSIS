@@ -296,8 +296,10 @@ We can now use this next chunk to generate the predictions based on the develope
 inter <- as(inter, "itemMatrix")
 preds <- recommend(buildr, inter)
 staple_ar$items <- DATAFRAME(preds)
-```
 
+# Write out tidy dataframe
+write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv")
+```
 
 # Main takeaways
 
