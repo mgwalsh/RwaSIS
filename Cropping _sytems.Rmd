@@ -283,7 +283,7 @@ recommend <- function(
 }
 ```
 
-We can now use this next chunk to generate the predictions based on the developed association rule-base. Of course, this could also be done for any new data.
+We can now use this next chunk to generate the predictions based on the developed association rule-base, and a write-out to a dataframe. Of course, this could also be done for any new data.
 
 ```{r}
 inter <- as(inter, "itemMatrix")
