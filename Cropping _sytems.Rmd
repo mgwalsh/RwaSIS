@@ -293,6 +293,9 @@ staple_ar <- cbind(staple_ar, items)
 
 # Write out tidy dataframe
 write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.names = FALSE)
+
+# Generates a glimpse of the resulting dataframe
+glimpse(staple_ar)
 ```
 
 # Main takeaways
