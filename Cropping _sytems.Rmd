@@ -260,13 +260,6 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-You can also export this rule file out for further processing e.g. for mapping and/or other applications with:
-
-```{r}
-buildr_out <- DATAFRAME(buildr, separate = TRUE)
-write.csv(buildr_out, "./Food_system/Results/TZ_RW_FS_rules.csv")
-```
-
 ## Predictions
 
 One thing that is missing from the `arules` package is a general function for predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
