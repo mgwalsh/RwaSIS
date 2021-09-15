@@ -241,7 +241,7 @@ However, we think that perhaps a better generalization, also for the purposes ma
 
 ```{r}
 # Select initial crop occurrence variables and buildings and convert these to "transactions"
-crops <- staple_ar[ , c(3:24)]
+crops <- staple_ar[ , c(4:24)]
 inter <- as(crops, "transactions")
 ```
 
@@ -267,12 +267,11 @@ buildr_out <- DATAFRAME(buildr, separate = TRUE)
 write.csv(buildr_out, "./Food_system/Results/TZ_RW_FS_rules.csv")
 ```
 
-## Predictions for new observations
+## Predictions
 
-One thing that is missing from `arules` package is a general function would predict for each combination of PSU and staple crop whether that particular crop could be recommended at a particular PSU. Fortunately, such a function has been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/), in a different context. We have stolen it here because it is elegant and fast.
+One thing that is missing from the `arules` package is a general function for predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
 
 ```{r}
-interm <- as(inter, "itemMatrix")
 
 recommend <- function(
   rules, # object with association rules
@@ -291,11 +290,20 @@ recommend <- function(
 }
 ```
 
+We can now use this next chunk to generate the predictions based on the developed rule-base. Of course, this could also be done for new data.
+
+```{r}
+inter <- as(inter, "itemMatrix")
+preds <- recommend(buildr, inter)
+staple_ar$items <- DATAFRAME(preds)
+```
+
+
 # Main takeaways
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
+* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. We will explore other geographical and environmental explanations in this context in subsequent analyses.
 
