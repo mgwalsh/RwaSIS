@@ -260,9 +260,9 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-## Predictions
+## Labelling and prediction
 
-One thing that is missing from the `arules` package is a general function for predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
+One thing that is missing from the `arules` package is a general function for labelling and predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
 
 ```{r}
 
