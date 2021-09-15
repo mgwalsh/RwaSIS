@@ -283,7 +283,7 @@ recommend <- function(
 }
 ```
 
-We can now use this next chunk to generate the predictions based on the developed rule-base. Of course, this could also be done for new data.
+We can now use this next chunk to generate the predictions based on the developed association rule-base. Of course, this could also be done for any new data.
 
 ```{r}
 inter <- as(inter, "itemMatrix")
@@ -309,6 +309,5 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 # Aside note: Links to staple food recipes
 
-Of course there are some delicious recipes out there for using the staple crops indicated this notebook for meals (some of these are also quite nutritious). Interestingly, cooking advisories such as [Supercook](https://www.supercook.com/#/recipes) and [Allrecipes](https://www.allrecipes.com/search/results/?search=) are also using new recommendation algorithms to help provide meal options based on what ingredients you have available, or what you may want to have available in your fridge and dry-goods store. If you are a smallholder in East Africa, those ingredients will largely depend on what you are growing on your land and whatever your breakfast, lunch or dinner preferences are. It might be interesting and informative to do a webscrape of recipe sites to see to what degree the staple foods explored here (co)occur in African and global food recipes. We shall leave that for another day. 
-
+Of course there are some delicious recipes out there for using the staple crops indicated this notebook for meals (some of these are also quite nutritious). Interestingly, cooking advisories such as [Supercook](https://www.supercook.com/#/recipes) and [Allrecipes](https://www.allrecipes.com/search/results/?search=) are also using new recommendation algorithms to help provide meal options based on what ingredients you have available, or what you may want to have available in your fridge and dry-goods store. If you are a smallholder in East Africa, those ingredients will largely depend on what you are growing on your land and whatever your breakfast, lunch or dinner preferences are. It might be interesting and informative to do a webscrape of recipe sites to see to what degree the staple foods explored here (co)occur in African and global food recipes. We shall leave that for another day.
 
