@@ -299,13 +299,11 @@ write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.na
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
+* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
-* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This appears to generalize the subsequent association rule predictions quite well.
+* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This appears to generalize the subsequent association rule predictions quite well.
 
-* ...
-
-*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise, but we might further explore those options in additional notebooks at a later stage.
+*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen (2012)](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in additional notebooks at a later stage.
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
