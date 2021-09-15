@@ -288,10 +288,11 @@ We can now use this next chunk to generate the predictions based on the develope
 ```{r}
 inter <- as(inter, "itemMatrix")
 preds <- recommend(buildr, inter)
-staple_ar$items <- DATAFRAME(preds)
+items <- DATAFRAME(preds)
+staple_ar <- cbind(staple_ar, items)
 
 # Write out tidy dataframe
-write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv")
+write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.names = FALSE)
 ```
 
 # Main takeaways
@@ -300,7 +301,7 @@ The main takeaways of this notebook are the following:
 
 * The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory analyses.
 
-* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. We will explore other geographical and environmental explanations in this context in subsequent analyses.
+* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This appears to generalize the subsequent association rule predictions quite well.
 
 * ...
 
