@@ -119,7 +119,7 @@ crops <- staple_ar[ , c(5:24)]
 trans <- as(crops, "transactions")
 ```
 
-```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Overall relative frequencies (support) of individual staple food crop occurrences in Tanzania and Rwanda."}
+```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "Overall support for individual staple food crop occurrences in Tanzania and Rwanda."}
 
 itemFrequencyPlot(trans, topN = 20, ylab = "Support (rel. frequency)", cex.lab = 1.2)
 ```
@@ -140,7 +140,7 @@ trans_TZ <- as(crops_TZ, "transactions")
 
 You can then plot the staple crop-level support comparison for the 2 surveys with:
 
-```{r fig.align = "center", fig.show = 'hold', fig.height = 8 , fig.width = 7, fig.cap = "Relative frequencies of staple food crop occurrences in Tanzania and Rwanda."}
+```{r fig.align = "center", fig.show = 'hold', fig.height = 8 , fig.width = 7, fig.cap = "Differences in support for staple food crop occurrences in Tanzania and Rwanda."}
 
 par(mfrow = c(2,1))
 itemFrequencyPlot(trans_TZ, ylab = "Support (rel. frequency)", main = "Tanzania", 
@@ -240,7 +240,7 @@ plot(head(sort(rwr, by = "support"), n=20), method = "graph")
 However, we think that perhaps a better generalization, also for the purposes mapping and monitoring staple food crops, is by referencing where people live in close proximity to the food crops that they produce (e.g. as indexed by their proximity to buildings). In Rwanda most smallholder fields are located close to buildings. In Tanzania croplands are more dispersed over larger areas relative to where people actually reside, reflecting a large difference in the rural population densities between the two countries. We can actually explore this contention here because the occurrence of buildings with a 50 m radius of the PSUs was recorded in both the Tanzania and the Rwanda surveys.
 
 ```{r}
-# Select initial crop occurrence variables and buildings and convert these to "transactions"
+# Select crop occurrence variables and buildings and convert these to "transactions"
 crops <- staple_ar[ , c(4:24)]
 inter <- as(crops, "transactions")
 ```
@@ -302,11 +302,11 @@ glimpse(staple_ar)
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they probably require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
+* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they will require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rule predictions quite well.
 
-*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in additional notebooks at a later stage.
+*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various clustering approaches (e.g., [Schubert and Rousseeuw, 2019](https://link.springer.com/chapter/10.1007%2F978-3-030-32047-8_16)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise but might explore those options in additional notebooks at a later stage.
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
