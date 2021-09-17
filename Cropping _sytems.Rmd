@@ -20,7 +20,7 @@ Staple foods make up the dominant food energy intake in a population's diet. Whi
 
 [Association rule learning (ARL)](https://en.wikipedia.org/wiki/Association_rule_learning) is used to answer common exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that this person will also buy steak (or chicken and Bar-B-Que sauce, etc)? This is also why it is often referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). 
 
-The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications. There is also the [*"Bear Grylls"*](https://www.beargrylls.com/) analogy that poses the question that if you observe chickens and banana what is the probability that you are close to buildings in a remote area of East Africa? It turns out that the odds of that are pretty good!
+The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications. There is also the [*"Bear Grylls"*](https://www.beargrylls.com/) analogy that poses a similar question that if you observe chickens and banana what is the probability that you are close to buildings in a remote area of East Africa? It turns out that the odds of that are pretty good!
 
 *The main objective of this notebook is to introduce starter code for exploration, discovery and identification of staple food systems in Tanzania and Rwanda. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
@@ -96,7 +96,7 @@ staple_ar$yam  <- as.logical(staple_ar$yam)
 staple_ar$bana <- as.logical(staple_ar$bana)
 staple_ar$cane <- as.logical(staple_ar$cane)
 staple_ar$sunf <- as.logical(staple_ar$sunf)
-staple_ar$inter <- as.logical(ifelse(staple_ar$sdiv > 1, "TRUE", "FALSE"))
+staple_ar$sdic <- discretize(staple_ar$sdiv, method = "fixed", breaks = c(0,1,2,12), labels = c("none", "mono", "inter"))
 
 # Generates a glimpse of the resulting dataframe
 glimpse(staple_ar)
@@ -310,7 +310,7 @@ The main takeaways of this notebook are the following:
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rule predictions quite well.
 
-* Association rules can be readily incorporated into subsequent machine learning and or geostatistical prediction procedures. We shall explore those possibilities in additional notebooks.
+* Association rules can be readily incorporated into subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in additional notebooks.
 
 *  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various clustering approaches (e.g., [Schubert and Rousseeuw, 2019](https://link.springer.com/chapter/10.1007%2F978-3-030-32047-8_16)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise but might explore those options in additional notebooks at a later stage.
 
