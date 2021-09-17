@@ -96,7 +96,8 @@ staple_ar$yam  <- as.logical(staple_ar$yam)
 staple_ar$bana <- as.logical(staple_ar$bana)
 staple_ar$cane <- as.logical(staple_ar$cane)
 staple_ar$sunf <- as.logical(staple_ar$sunf)
-staple_ar$sdic <- discretize(staple_ar$sdiv, method = "fixed", breaks = c(0,1,2,12), labels = c("none", "mono", "inter"))
+staple_ar$sdic <- discretize(staple_ar$sdiv, method = "fixed", breaks = c(0,1,2,12),
+                             labels = c("none", "mono", "inter"))
 
 # Generates a glimpse of the resulting dataframe
 glimpse(staple_ar)
@@ -284,7 +285,7 @@ glimpse(staple_ar)
 
 ## Using ARL for classification
 
-The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or used in various model ensembles. We use it here to illustrate a strategy, and starter code, for generating predictions of staple food diversity categories with the CBA (Classification Based on Association Rules) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or used in various model ensembles. We use it here to illustrate a strategy, and starter code, for generating predictions of staple food diversity categories with the Classification Based on Association Rules (CBA) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
 
@@ -294,7 +295,7 @@ The approach presented in the next chunks can be used to validate the mined asso
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they will require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
+* The staple food crop combination models, which are considered in this notebook are already fairly complex, but they will require more learning to unpack completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rules quite well.
 
