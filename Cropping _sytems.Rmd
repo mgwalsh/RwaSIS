@@ -268,13 +268,13 @@ recommend <- function(
 }
 ```
 
-We can now use this next chunk to generate the labels based on the developed association rule-base, and a write-out to a dataframe. Of course, this could also be done for any new data.
+We can now use this next chunk to generate the item labels based on the developed association rule-base, and a write-out to a dataframe. Of course, this could also be done for any new data.
 
 ```{r}
 inter <- as(inter, "itemMatrix")
 preds <- recommend(buildr, inter)
-staples <- DATAFRAME(preds)
-staple_ar <- cbind(staple_ar, staples)
+stapler <- DATAFRAME(preds)
+staple_ar <- cbind(staple_ar, stapler)
 
 # Write out tidy dataframe
 write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.names = FALSE)
@@ -283,9 +283,9 @@ write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.na
 glimpse(staple_ar)
 ```
 
-## Using ARL for classification
+## Class association rules
 
-The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or used in various model ensembles. We use it here to illustrate a strategy, and starter code, for generating predictions of staple food diversity categories with the Classification Based on Association Rules (CBA) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate a strategy, and starter code, for generating predictions of staple food diversity classes with the Classification Based on Association Rules (CBA) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
 
