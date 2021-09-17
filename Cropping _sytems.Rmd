@@ -20,7 +20,7 @@ Staple foods make up the dominant food energy intake in a population's diet. Whi
 
 [Association rule learning (ARL)](https://en.wikipedia.org/wiki/Association_rule_learning) is used to answer common exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that this person will also buy steak (or chicken and Bar-B-Que sauce, etc)? This is also why it is often referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). 
 
-The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications. There is also the [*"Bear Grylls"*](https://www.beargrylls.com/) analogy that poses a similar question in that if you observe chickens and banana what is the probability that you are close to buildings in a remote area of East Africa? It turns out that the odds of that are pretty good!
+The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications. There is also the [*"Bear Grylls"*](https://www.beargrylls.com/) analogy that poses a similar question in that if you observe chickens and banana what is the probability that you are close to buildings in a remote area of East Africa? It turns out that the odds of that are pretty good, though the the likelihood of encountering such a situation is not!
 
 *The main objective of this notebook is to introduce starter code for exploration, discovery and identification of staple food systems in Tanzania and Rwanda. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
@@ -179,7 +179,7 @@ We will be using a workflow based on the concept of strong rules. *"Strong rules
 
 * *Confidence* tells us the conditional probability of instances that have staple B given that they have staple A (i.e., `p(B|A)`) e.g., the instances that have bean, cattle, banana, etc, given that they have maize. This also contrasts potentially rare associations such as the probability of e.g., `p(yam|maize)`.
 
-* *Lift* can be calculated as the ratio of the joint probability of two crops A and B, divided by the product of their probabilities i.e., `P(A,B)/(P(A)P(B))`. If the two items are statistically independent, then the joint probability of the two items will be the same as the product of their probabilities. In other words, `P(A,B) = P(A)P(B)`, which makes the lift factor = 1. Worth mentioning is that anti-correlations can yield lift values that are less than 1, which correspond to mutually exclusive crops combinations that rarely occur together.
+* *Lift* is calculated as the ratio of the joint probability of two crops A and B, divided by the product of their probabilities i.e., `P(A,B)/(P(A)P(B))`. If the two items are statistically independent, then the joint probability of the two items will be the same as the product of their probabilities. In other words, `P(A,B) = P(A)P(B)`, which makes the lift factor = 1. Worth mentioning is that anti-correlations can yield lift values that are less than 1, which correspond to mutually exclusive crops combinations that rarely occur together.
 
 Typically, association rules are considered to be interesting if they satisfy at least both support and confidence thresholds. These thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Note that there are some good, short tutorials available on YouTube that you might wish to consult to clarify the terminology in this context (e.g., https://www.youtube.com/watch?v=WGlMlS_Yydk). 
 
@@ -191,7 +191,7 @@ We can explore the various staple crop combinations with the `apriori` algorithm
 mins <- 1000/nrow(trans) ## set minimum support threshold
 
 # Baseline itemset
-basef <- apriori(trans, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
+basef <- apriori(trans, parameter = list(target = "frequent", support = mins, minlen = 2))
 ``` 
 
 ```{r}
@@ -208,8 +208,8 @@ plot(basef, method = "graph")
 We can also split this between the national surveys of the two countries with:
 
 ```{r, results = FALSE}
-rwf <- apriori(trans_RW, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
-tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, minlen = 2, maxlen=5))
+rwf <- apriori(trans_RW, parameter = list(target = "frequent", support = mins, minlen = 2))
+tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, minlen = 2))
 ```
 
 ```{r, fig.align = "center", fig.show = 'hold', fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association graphs for Tanzania (top) and Rwanda (bottom)."}
@@ -217,22 +217,6 @@ tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, m
 par(mfrow = c(2,1))
 plot(tzf, method = "graph")
 plot(rwf, method = "graph")
-```
-
-We run this again for Rwanda using `target = "rules"` rather than `target = "frequent"` and set the minimum confidence level to e.g., >0.5.
-
-```{r, results = FALSE}
-rwr <- apriori(trans_RW, parameter = list(target = "rules", support = mins, confidence = 0.5,
-                                          minlen = 2, maxlen=6))
-```
-
-```{r}
-inspectDT(rwr)
-```
-
-```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association rule graph for the 20 highest ranked rules in Rwanda filtered by level of support."}
-
-plot(head(sort(rwr, by = "support"), n=20), method = "graph")
 ```
 
 ## Staple crop diversity in proximity to buildings
@@ -260,7 +244,7 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-## Rule labelling
+## Labelling itemsets
 
 One thing that is missing from the `arules` package is a general function for labelling and predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
 
@@ -300,7 +284,11 @@ glimpse(staple_ar)
 
 ## Using ARL for classification
 
-The approach presented in the next chunks can be used to validate the mined association rules with machine learning. We use it here to illustrate a strategy for generating predictions of staple food diversity categories with the CBA (Classification Based on Association Rules) algorithm in the [`arulesCBA`]() package. 
+The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or used in various model ensembles. We use it here to illustrate a strategy, and starter code, for generating predictions of staple food diversity categories with the CBA (Classification Based on Association Rules) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+
+```{r}
+
+```
 
 # Main takeaways
 
@@ -308,11 +296,11 @@ The main takeaways of this notebook are the following:
 
 * The staple food crop combinations (systems), which are considered in this notebook are already fairly complex, but they will require more learning to unravel completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
-* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rule predictions quite well.
+* At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rules quite well.
 
-* Association rules can be readily incorporated into subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in additional notebooks.
+* Association rules can be readily incorporated into subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in more depth with additional notebooks.
 
-*  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various clustering approaches (e.g., [Schubert and Rousseeuw, 2019](https://link.springer.com/chapter/10.1007%2F978-3-030-32047-8_16)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise but might explore those options in additional notebooks at a later stage.
+*  There are also other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various clustering approaches (e.g., [Schubert and Rousseeuw, 2019](https://link.springer.com/chapter/10.1007%2F978-3-030-32047-8_16)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise but might explore those options in additional notebooks at a later stage.
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
