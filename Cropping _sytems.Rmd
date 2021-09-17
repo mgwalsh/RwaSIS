@@ -316,9 +316,9 @@ Of course there are some delicious recipes out there for using the staple crops 
 
 # Side note: "Bear Grylls" type rules?
 
-```{r}
+```{r, echo = FALSE}
 # Package names
-packages <- c("caret", "caretEnsemble")
+packages <- c("doParallel", "caret", "caretEnsemble")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -329,4 +329,48 @@ if (any(installed_packages == FALSE)) {
 # Load packages
 invisible(lapply(packages, library, character.only = TRUE))
 ```
+
+```{r}
+# Set calibration/validation set randomization seed
+seed <- 12358
+set.seed(seed)
+
+# Split data into calibration and validation sets
+index <- createDataPartition(staple$build, p = 4/5, list = F, times = 1)
+cal <- staple[ index,]
+val <- staple[-index,]
+
+# Calibration labels
+labs <- c("build")
+lcal <- as.vector(t(cal[labs]))
+lcal <- ifelse(lcal == 1, "Y", "N")
+
+# Calibration features
+fcal <- cal[ ,6:25]
+```
+
+```{r, warning = FALSE, results='hide'}
+# Start doParallel to parallelize model fitting
+set.seed(seed)
+mc <- makeCluster(detectCores())
+registerDoParallel(mc)
+
+# Specify model training controls
+tc <- trainControl(method = "cv", number = 10, classProbs = T,
+                   summaryFunction = twoClassSummary, allowParallel = TRUE, savePredictions="final")
+
+# Fit 5 calibration models using all of the staple crops
+clist <- caretList(fcal, lcal,
+                   trControl = tc,
+                   tuneList = NULL,
+                   methodList = c("glmStepAIC", "rf", "xgbTree", "nnet", "nb"),
+                   preProcess = c("center","scale"),
+                   metric = "ROC")
+
+# Save models
+stopCluster(mc)
+fname <- paste("./Food_system/Results/", labs, "_clist.rds", sep = "")
+saveRDS(clist, fname)
+```
+
 
