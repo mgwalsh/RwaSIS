@@ -295,7 +295,7 @@ The approach presented in the next chunks can be used to validate the mined asso
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop combination models, which are considered in this notebook are already fairly complex, but they will require more learning to unpack completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
+* The staple food crop models, which are considered in this notebook are already fairly complex, but they will require more learning to unpack completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rules quite well.
 
