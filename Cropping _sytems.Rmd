@@ -20,7 +20,7 @@ Staple foods make up the dominant food energy intake in a population's diet. Whi
 
 [Association rule learning (ARL)](https://en.wikipedia.org/wiki/Association_rule_learning) is used to answer common exploratory questions like: If someone walks into a supermarket and buys charcoal, what is the probability that this person will also buy steak (or chicken and Bar-B-Que sauce, etc)? This is also why it is often referred to as [market basket analysis](https://www.sciencedirect.com/topics/computer-science/market-basket-analysis). 
 
-The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications. There is also the [*"Bear Grylls"*](https://www.beargrylls.com/) analogy that poses the question that if you observe chickens and maize what is the probability that you are close to people in a remote area of East Africa? ... the chances of that are pretty good!
+The majority of East African food production systems are analogous to a supermarket situation in that fields are [intercropped](https://en.wikipedia.org/wiki/Intercropping) with several staple food crops, rather than [monocropped](https://en.wikipedia.org/wiki/Monocropping). Even quite small, 0.25 ha, cropland areas will commonly be planted with multiple staple food crops during any given season. However, which specific crops are grown together in a given small area or environment, and how these combinations may be evolving due to external factors remain uncertain and largely unquantified. We'll use ARL in this notebook to explore staple food systems based on the occurrence of crop indicator species that can subsequently be used for practical mapping and monitoring applications. There is also the [*"Bear Grylls"*](https://www.beargrylls.com/) analogy that poses the question that if you observe chickens and banana what is the probability that you are close to buildings in a remote area of East Africa? It turns out that the odds of that are pretty good!
 
 *The main objective of this notebook is to introduce starter code for exploration, discovery and identification of staple food systems in Tanzania and Rwanda. The data include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.*
 
@@ -32,7 +32,7 @@ To actually run this notebook, you will need to load the R-packages that are ind
 
 ```{r}
 # Package names
-packages <- c("osfr", "tidyverse", "leaflet", "arules", "arulesViz")
+packages <- c("osfr", "tidyverse", "leaflet", "arules", "arulesViz", "caret", "arulesCBA")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -44,7 +44,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The survey (label) data downloads can be obtained with this next chunk. It also generates an overview map of where the PSUs were collected in Tanzania and Rwanda (not shown, but in the markdown document) ... you can click and zoom into the individual locations that have been surveyed thus far.
+The survey (label) data downloads can be obtained with this next chunk. It also generates an overview map of where the PSUs were collected in Tanzania and Rwanda (not shown, but in the markdown document) ... you can click and zoom into the individual locations that we have surveyed thus far.
 
 ```{r, results = 'hide'}
 # Create a data folder in  your current working directory
@@ -75,7 +75,7 @@ staple_ar <- staple[ , c(3:4,1,5:25,27)]
 
 # This does the recoding bits
 staple_ar$survey <- as.factor(staple_ar$survey)
-staple_ar$build <- as.logical(staple_ar$build)
+staple_ar$build <- as.factor(ifelse(staple_ar$build == 1, "present", "absent"))
 staple_ar$catt <- as.logical(staple_ar$catt)
 staple_ar$shee <- as.logical(staple_ar$shee)
 staple_ar$goat <- as.logical(staple_ar$goat)
@@ -260,7 +260,7 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-## Labelling and prediction
+## Rule labelling
 
 One thing that is missing from the `arules` package is a general function for labelling and predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
 
@@ -283,7 +283,7 @@ recommend <- function(
 }
 ```
 
-We can now use this next chunk to generate the predictions based on the developed association rule-base, and a write-out to a dataframe. Of course, this could also be done for any new data.
+We can now use this next chunk to generate the labels based on the developed association rule-base, and a write-out to a dataframe. Of course, this could also be done for any new data.
 
 ```{r}
 inter <- as(inter, "itemMatrix")
@@ -298,6 +298,10 @@ write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.na
 glimpse(staple_ar)
 ```
 
+## Using ARL for classification
+
+The approach presented in the next chunks can be used to validate the mined association rules with machine learning. We use it here to illustrate a strategy for generating predictions of staple food diversity categories with the CBA (Classification Based on Association Rules) algorithm in the [`arulesCBA`]() package. 
+
 # Main takeaways
 
 The main takeaways of this notebook are the following:
@@ -306,6 +310,8 @@ The main takeaways of this notebook are the following:
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rule predictions quite well.
 
+* Association rules can be readily incorporated into subsequent machine learning and or geostatistical prediction procedures. We shall explore those possibilities in additional notebooks.
+
 *  There are certainly other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various clustering approaches (e.g., [Schubert and Rousseeuw, 2019](https://link.springer.com/chapter/10.1007%2F978-3-030-32047-8_16)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise but might explore those options in additional notebooks at a later stage.
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
@@ -313,64 +319,4 @@ Any questions, comments or corrections related to this notebook are most welcome
 # Side note: Links to staple food recipes
 
 Of course there are some delicious recipes out there for using the staple crops indicated this notebook for meals (some of these are also quite nutritious). Interestingly, cooking advisories such as [Supercook](https://www.supercook.com/#/recipes) and [Allrecipes](https://www.allrecipes.com/search/results/?search=) are also using new recommendation algorithms to help provide meal options based on what ingredients you have available, or what you may want to have available in your fridge and dry-goods store. If you are a smallholder in East Africa, those ingredients will largely depend on what you are growing on your land and whatever your breakfast, lunch or dinner preferences are. It might be interesting and informative to do a webscrape of recipe sites to see to what degree the staple foods explored here (co)occur in African and global food recipes. We shall leave that for another day.
-
-# Side note: "Bear Grylls" type rules?
-
-```{r, echo = FALSE}
-# Package names
-packages <- c("doParallel", "caret", "caretEnsemble")
-
-# Install packages
-installed_packages <- packages %in% rownames(installed.packages())
-if (any(installed_packages == FALSE)) {
-  install.packages(packages[!installed_packages])
-}
-
-# Load packages
-invisible(lapply(packages, library, character.only = TRUE))
-```
-
-```{r}
-# Set calibration/validation set randomization seed
-seed <- 12358
-set.seed(seed)
-
-# Split data into calibration and validation sets
-index <- createDataPartition(staple$build, p = 4/5, list = F, times = 1)
-cal <- staple[ index,]
-val <- staple[-index,]
-
-# Calibration labels
-labs <- c("build")
-lcal <- as.vector(t(cal[labs]))
-lcal <- ifelse(lcal == 1, "Y", "N")
-
-# Calibration features
-fcal <- cal[ ,6:25]
-```
-
-```{r, warning = FALSE, results='hide'}
-# Start doParallel to parallelize model fitting
-set.seed(seed)
-mc <- makeCluster(detectCores())
-registerDoParallel(mc)
-
-# Specify model training controls
-tc <- trainControl(method = "cv", number = 10, classProbs = T,
-                   summaryFunction = twoClassSummary, allowParallel = TRUE, savePredictions="final")
-
-# Fit 5 calibration models using all of the staple crops
-clist <- caretList(fcal, lcal,
-                   trControl = tc,
-                   tuneList = NULL,
-                   methodList = c("glmStepAIC", "rf", "xgbTree", "nnet", "nb"),
-                   preProcess = c("center","scale"),
-                   metric = "ROC")
-
-# Save models
-stopCluster(mc)
-fname <- paste("./Food_system/Results/", labs, "_clist.rds", sep = "")
-saveRDS(clist, fname)
-```
-
 
