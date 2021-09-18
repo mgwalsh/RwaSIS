@@ -101,7 +101,7 @@ staple_ar$sunf <- as.logical(staple_ar$sunf)
 glimpse(staple_ar)
 ```
 
-The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. These include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. You can write out the wrangled dataframe should you wish to use it in other applications, with:.
+The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. These include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. You can write out the wrangled dataframe should you wish to use it in other applications, with:
 
 ```{r}
 # Write out tidy dataframe
@@ -304,10 +304,10 @@ crops <- staple_ar[ , c(4:24)]
 class <- CBA(build ~ ., crops, support = mins, confidence = 0.5)
 preds <- predict(class, crops)
 conf <- cbind(staple_ar, preds)
-confusionMatrix(data = conf$preds, reference = conf$build, positive = "y")
+confusionMatrix(conf$preds, reference = conf$build, positive = "yes")
 ```
 
-This does Ok. It is quite specific but not very sensitive. However it also only uses 3-rules and may be underfit (see the table below). [Bear Grylls]() rules would likely be much more complex.
+This does alright. It is quite specific but not very sensitive. However it also only uses 3-rules and may be underfit (see the table below). [Bear Grylls'](https://www.beargrylls.com/) rules would likely be much more complex.
 
 ```{r}
 # Classification rules
