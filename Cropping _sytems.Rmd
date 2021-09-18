@@ -244,11 +244,11 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-You can also look at association rules for specific crops e.g., maize in this case, with this next chunk.
+You can also look at association rules for specific crops e.g., maize in this case, with this next chunk. Note that you can also filter for these in the table directly above.
 
 ```{r, results = FALSE}
 maizr <- apriori(inter, parameter=list(support = mins, confidence = 0.5, minlen = 2), 
-                 appearance = list(default = "lhs", rhs = "maiz"),
+                 appearance = list(default = "lhs", rhs = "maize"),
                  control = list(verbose=T))
 ```
 
