@@ -75,7 +75,7 @@ staple_ar <- staple[ , c(3:4,1,5:25,27)]
 
 # This does the recoding bits
 staple_ar$survey <- as.factor(staple_ar$survey)
-staple_ar$build <- as.factor(ifelse(staple_ar$build == 1, "present", "absent"))
+staple_ar$build <- as.factor(ifelse(staple_ar$build == 1, "yes", "no"))
 staple_ar$catt <- as.logical(staple_ar$catt)
 staple_ar$shee <- as.logical(staple_ar$shee)
 staple_ar$goat <- as.logical(staple_ar$goat)
@@ -96,14 +96,12 @@ staple_ar$yam  <- as.logical(staple_ar$yam)
 staple_ar$bana <- as.logical(staple_ar$bana)
 staple_ar$cane <- as.logical(staple_ar$cane)
 staple_ar$sunf <- as.logical(staple_ar$sunf)
-staple_ar$sdic <- discretize(staple_ar$sdiv, method = "fixed", breaks = c(0,1,2,12),
-                             labels = c("none", "mono", "inter"))
 
 # Generates a glimpse of the resulting dataframe
 glimpse(staple_ar)
 ```
 
-The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. These include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. Intercropped systems (`inter = TRUE`) contain at least 2 staple crops. You can write out the wrangled dataframe should you wish to use it in other applications, with:.
+The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. These include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. You can write out the wrangled dataframe should you wish to use it in other applications, with:.
 
 ```{r}
 # Write out tidy dataframe
@@ -196,12 +194,13 @@ basef <- apriori(trans, parameter = list(target = "frequent", support = mins, mi
 ``` 
 
 ```{r}
+# Common itemset table
 inspectDT(basef) ## table of the 27 most common intercropped systems in Tanzania and Rwanda.
 ```
 
 We also plot the corresponding association graph with:
 
-```{r, fig.align ='center', fig.width = 9, fig.cap = "Baseline association graph of the 27 most frequent intercropping systems in Tanzania and Rwanda."}
+```{r, fig.align ='center', fig.width = 9, fig.cap = "Baseline association (itemset) graph of the 27 most frequent intercropping systems in Tanzania and Rwanda."}
 
 plot(basef, method = "graph")
 ```
@@ -213,7 +212,7 @@ rwf <- apriori(trans_RW, parameter = list(target = "frequent", support = mins, m
 tzf <- apriori(trans_TZ, parameter = list(target = "frequent", support = mins, minlen = 2))
 ```
 
-```{r, fig.align = "center", fig.show = 'hold', fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association graphs for Tanzania (top) and Rwanda (bottom)."}
+```{r, fig.align = "center", fig.show = 'hold', fig.height = 5 , fig.width = 9, fig.cap = "Staple food crop association (itemset) graphs for Tanzania (top) and Rwanda (bottom)."}
 
 par(mfrow = c(2,1))
 plot(tzf, method = "graph")
@@ -245,7 +244,20 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-## Labelling itemsets
+You can also look at association rules for specific crops e.g., maize in this case, with this next chunk.
+
+```{r, results = FALSE}
+maizr <- apriori(inter, parameter=list(support = mins, confidence = 0.5, minlen = 2), 
+                 appearance = list(default = "lhs", rhs = "maiz"),
+                 control = list(verbose=T))
+```
+
+```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Association rule graph for maize-based systems in Tanzania and Rwanda."}
+
+plot(maizr, method = "graph")
+```
+
+## Labelling staple combinations
 
 One thing that is missing from the `arules` package is a general function for labelling and predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
 
@@ -285,10 +297,21 @@ glimpse(staple_ar)
 
 ## Class association rules
 
-The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate a strategy, and starter code, for generating predictions of staple food diversity classes with the Classification Based on Association Rules (CBA) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating predictions of the overall occurrence of buildings with the "Classification Based on Association Rules" (CBA) algorithm from the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
+crops <- staple_ar[ , c(4:24)]
+class <- CBA(build ~ ., crops, support = mins, confidence = 0.5)
+preds <- predict(class, crops)
+conf <- cbind(staple_ar, preds)
+confusionMatrix(data = conf$preds, reference = conf$build, positive = "y")
+```
 
+This does Ok. It is quite specific but not very sensitive. However it also only uses 3-rules and may be underfit (see the table below). [Bear Grylls]() rules would likely be much more complex.
+
+```{r}
+# Classification rules
+inspectDT(rules(class))
 ```
 
 # Main takeaways
