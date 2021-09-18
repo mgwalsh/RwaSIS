@@ -252,7 +252,7 @@ maizr <- apriori(inter, parameter=list(support = mins, confidence = 0.5, minlen 
                  control = list(verbose=T))
 ```
 
-```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Association rule graph for maize-based systems in Tanzania and Rwanda."}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Association rule graph for maize-based systems in Tanzania and Rwanda."}
 
 plot(maizr, method = "graph")
 ```
