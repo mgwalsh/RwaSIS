@@ -248,7 +248,7 @@ You can also look at association rules for specific crops e.g., maize in this ca
 
 ```{r, results = FALSE}
 maizr <- apriori(inter, parameter=list(support = mins, confidence = 0.5, minlen = 2), 
-                 appearance = list(default = "lhs", rhs = "maize"),
+                 appearance = list(default = "lhs", rhs = "maiz"),
                  control = list(verbose=T))
 ```
 
