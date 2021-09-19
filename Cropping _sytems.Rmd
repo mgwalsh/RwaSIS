@@ -101,7 +101,7 @@ staple_ar$sunf <- as.logical(staple_ar$sunf)
 glimpse(staple_ar)
 ```
 
-The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. They do however include other crops such as tea, coffee, pineapple, sisal plantations, orchards, etc. You can write out the wrangled dataframe should you wish to use it in other applications, with:
+The crop variables indicate the occurrence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops described here. They do however include other crops such as tea, coffee, pineapple, sisal, cotton, orchards, etc. You can write out the wrangled dataframe should you wish to use it in other applications, with:
 
 ```{r}
 # Write out tidy dataframe
@@ -306,7 +306,7 @@ inspectDT(rules(class))
 
 The main takeaways of this notebook are the following:
 
-* The staple food crop models, which are considered in this notebook are already fairly complex, but they will require more learning to unpack completely. We have only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
+* The staple food crop models, which are considered in this notebook are already fairly complex, but they will require more learning to unpack completely. We have essentially only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rules quite well.
 
