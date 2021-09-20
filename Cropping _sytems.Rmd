@@ -174,7 +174,7 @@ In this case the differences between the two surveys may simply represent a [con
 
 We will be using a workflow based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). There are three main metrics of interest in the application of strong rules are: *support*, *confidence* and *lift*.
 
-* *Support* tells us the joint probability of instances where crops A and B i.e., `p(A,B)` occur. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize in combination with various other crops). Conversely, it also tells us about the probability of various combinations that are rare (*sensu* outliers).
+* *Support* tells us the joint probability of instances where crops A and B i.e., `p(A,B)` occur. This helps identify and contrast combinations that are sufficiently frequent to be of interest (e.g., growing maize in combination with various other crops). Conversely, it also tells us about the probability of various combinations that are rare (sensu [anomaly detection](https://en.wikipedia.org/wiki/Anomaly_detection)).
 
 * *Confidence* tells us the conditional probability of instances that have staple B given that they have staple A (i.e., `p(B|A)`) e.g., the instances that have bean, cattle, banana, etc, given that they have maize. This also contrasts potentially rare associations such as the probability of e.g., `p(yam|maize)`.
 
