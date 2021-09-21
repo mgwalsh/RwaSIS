@@ -148,7 +148,7 @@ itemFrequencyPlot(trans_RW, ylab = "Support (rel. frequency)", main = "Rwanda",
                   ylim = c(0, 0.7), cex.lab = 1.2)
 ```
 
-Based on this, you can to tell that the main staple distributions grown in Tanzania are quite different from those in Rwanda. Also not surprisingly, the [beta-diversity](https://en.wikipedia.org/wiki/Beta_diversity) of staple crop combinations (`sdiv`) between the two national survey samples is also quite different, as is shown in the next plot.
+Based on this, you can to tell that the main staple distributions grown in Tanzania are quite different from those in Rwanda. Also not surprisingly, the [beta-diversity](https://en.wikipedia.org/wiki/Beta_diversity) of staple crop combinations indexwd by `sdiv` between the two national survey samples is also quite different, as is shown in the next plot.
 
 ```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by survey."}
 
@@ -289,21 +289,9 @@ write.csv(staple_ar, "./Food_system/Results/TZ_RW_staple_food_rules.csv", row.na
 glimpse(staple_ar)
 ```
 
-## Top-10 association rules
-
-```{r}
-rules <- as.data.frame(staple_ar$items)
-trans <- as(rules, "transactions")
-```
-
-```{r, fig.align = "center", fig.height = 6, fig.width = 9, fig.cap = "Top-10  staple crop association rules in Tanzania and Rwanda."}
-
-itemFrequencyPlot(trans, topN = 10, ylab = "Support (rel. frequency)", cex.lab = 1.2, cex.names = 0.8)
-```
-
 ## Class association rules
 
-The approach presented in the next chunks can be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating predictions of detecting buildings with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can also be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating predictions of detecting buildings with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
 # Variable selection
@@ -323,6 +311,20 @@ This does alright. It is quite specific but not very sensitive. However, it also
 inspectDT(rules(class))
 ```
 
+# Top-10 staple food crop association rules
+
+This next chunk flags the main (identified) staple food crop association rules for Tanzania and Rwanda. These should guide and prioritize any subsequent surveys or experimental investigations of staple food systems (or a version thereof).
+
+```{r}
+rules <- as.data.frame(staple_ar$items)
+trans <- as(rules, "transactions")
+```
+
+```{r, fig.align = "center", fig.height = 6, fig.width = 9, fig.cap = "Top-10  staple crop association rules in Tanzania and Rwanda."}
+
+itemFrequencyPlot(trans, topN = 10, ylab = "Support (rel. frequency)", cex.lab = 1.2, cex.names = 0.8)
+```
+
 # Main takeaways
 
 The main takeaways of this notebook are the following:
@@ -330,6 +332,8 @@ The main takeaways of this notebook are the following:
 * The staple food crop models, which are considered in this notebook are already fairly complex, but they will require more learning to unpack completely. We have essentially only scratched the surface here. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rules quite well.
+
+* ...
 
 * Association rules can be readily incorporated into subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in more depth with additional notebooks.
 
