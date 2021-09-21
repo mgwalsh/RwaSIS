@@ -218,8 +218,14 @@ inter <- as(crops, "transactions")
 ```
 
 ```{r, results = FALSE}
+# Fit rules
 buildr <- apriori(inter, parameter = list(target = "rule", support = mins, confidence = 0.5,
                                           minlen = 2))
+```
+
+```{r}
+# Summarize rule set
+summary(buildr)
 ```
 
 ```{r, fig.align = "center", fig.height = 5 , fig.width = 9, fig.cap = "Association rule graph of the main staple food systems in Tanzania and Rwanda."}
