@@ -238,7 +238,7 @@ plot(buildr, method = "graph")
 inspectDT(buildr)
 ```
 
-You can also look at association rules for specific crops e.g., maize in this case, with this next chunk. Note that you can also filter these from the table directly above.
+You can also look at association rules for specific crops e.g., maize in this case, with this next chunk. Note that you can filter these from the table directly above.
 
 ```{r, results = FALSE}
 maizr <- apriori(inter, parameter=list(support = mins, confidence = 0.5, minlen = 2), 
@@ -295,16 +295,16 @@ The approach presented in the next chunks can also be used to validate the mined
 
 ```{r}
 # Variable selection
-crops <- staple_ar[ , c(4:24)]
+crops <- as.data.frame (staple_ar[ , c(4,26)])
 
 # Classification
-class <- CBA(build ~ ., crops, support = mins, confidence = 0.5)
+class <- CBA(build ~ ., crops)
 preds <- predict(class, crops)
 conf <- cbind(crops, preds)
 confusionMatrix(conf$preds, reference = conf$build, positive = "yes")
 ```
 
-This does alright. It is quite specific but not very sensitive. However, it also only uses 3-rules and may be underfit (see the table below). [Bear Grylls'](https://www.beargrylls.com/) rules would likely be much more complex.
+This does alright. It is quite sensitive but not very specific. However, it also only uses 3-rules and may be underfit (see the table below). [Bear Grylls'](https://www.beargrylls.com/) rules would likely be much more complex.
 
 ```{r}
 # Classification rules
@@ -313,7 +313,7 @@ inspectDT(rules(class))
 
 # Top-10 staple food crop association rules
 
-This next chunk flags the main (identified) staple food crop association rules for Tanzania and Rwanda. These should guide and prioritize any subsequent surveys or experimental investigations of staple food systems (or a version thereof).
+This next chunk flags the main (identified) staple food crop association rules for Tanzania and Rwanda. These should guide and prioritize any subsequent surveys or experimental investigations of staple food systems (or versions thereof).
 
 ```{r}
 rules <- as.data.frame(staple_ar$items)
