@@ -291,7 +291,7 @@ glimpse(staple_ar)
 
 ## Class association rules
 
-The approach presented in the next chunks can also be used to validate the mined association rules bis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating a supervised classification of intercropped (i.e., `sdiv > 1`) systems with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can also be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating a supervised classification of intercropped (i.e., `sdiv > 1`) systems with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
 # Variable selection
