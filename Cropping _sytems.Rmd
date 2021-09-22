@@ -148,7 +148,7 @@ itemFrequencyPlot(trans_RW, ylab = "Support (rel. frequency)", main = "Rwanda",
                   ylim = c(0, 0.7), cex.lab = 1.2)
 ```
 
-Based on this, you can to tell that the main staple distributions grown in Tanzania are quite different from those in Rwanda. Also not surprisingly, the [beta-diversity](https://en.wikipedia.org/wiki/Beta_diversity) of staple crop combinations indexwd by `sdiv` between the two national survey samples is also quite different, as is shown in the next plot.
+Based on this, you can to tell that the main staple distributions grown in Tanzania are quite different from those in Rwanda. Also not surprisingly, the [beta-diversity](https://en.wikipedia.org/wiki/Beta_diversity) of staple crop combinations indexed by `sdiv` between the two national survey samples is also quite different, as is shown in the next plot.
 
 ```{r, fig.align = "center", fig.cap = "Conditional staple food crop diversity by survey."}
 
@@ -259,7 +259,7 @@ One thing that is missing from the `arules` package is a general function for la
 
 recommend <- function(
   rules, # object with association rules
-  newdata # itemMatrix object
+  newdata # item Matrix object
 ) {
     lhs_match <- is.superset(
     newdata,
@@ -291,7 +291,7 @@ glimpse(staple_ar)
 
 ## Class association rules
 
-The approach presented in the next chunks can also be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating a supervised classification of intercropped (i.e., `sdiv > 1`) systems with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can also be used to validate the mined association rules bis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating a supervised classification of intercropped (i.e., `sdiv > 1`) systems with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
 # Variable selection
