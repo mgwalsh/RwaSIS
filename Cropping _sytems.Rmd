@@ -305,7 +305,7 @@ conf <- cbind(crops, preds)
 confusionMatrix(conf$preds, reference = conf$inter, positive = "yes")
 ```
 
-This does alright. The classifier is quite sensitive but not particularly specific. It does however generalize the intercropping observations in regard to the two surveys and the potentially confounding proximity to buildings quite well, as is shown in the table below.
+This does alright. The classifier is quite sensitive but not particularly specific. It does however generalize the intercropping observations in regard to filtering the two surveys and the potentially confounding proximity to buildings variable quite well, as is shown in the table below.
 
 ```{r}
 # Classification rules
