@@ -312,7 +312,7 @@ This does alright. The classifier is quite sensitive but not particularly specif
 inspectDT(rules(class))
 ```
 
-# Summary: Top-10 staple food crop association rules
+# Summary: Our top-10 staple food crop association rules
 
 This next chunk flags the main (identified) staple food crop association rules for Tanzania and Rwanda. These should guide and prioritize any subsequent surveys or experimental investigations of staple food systems (or versions thereof).
 
