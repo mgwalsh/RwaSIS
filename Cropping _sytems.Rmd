@@ -251,7 +251,7 @@ maizr <- apriori(inter, parameter=list(support = mins, confidence = 0.5, minlen 
 plot(maizr, method = "graph")
 ```
 
-## Labeling staple combinations
+## Labeling staple combinations (systems)
 
 One thing that is missing from the `arules` package is a general function for labeling and predicting all combinations of PSUs and staple crops at any particular observed and/or new PSU based on the developed association rules. Fortunately, such a function has already been written by [J. de Jong (2016)](https://johanndejong.wordpress.com/2016/11/22/efficient-recommending-with-the-arules-package/). We have stolen it here because it is elegant and fast.
 
