@@ -334,7 +334,7 @@ The main takeaways of this notebook are the following:
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent intercropping association rules quite well.
 
-* The associated ground observations are easy to conduct over large areas, and only require access to a motorcycle and a smart phone ... preferably using crowds of these in any given geography and during any given cropping season to be efficient.
+* The associated ground observations are easy to conduct over large areas, and only require access to a motorcycle and a smart phone ... preferably using  guided crowds of these in any given geography and during any given cropping season to be efficient.
 
 * Association rules can be readily incorporated into any subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in more depth with additional notebooks.
 
