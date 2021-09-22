@@ -291,27 +291,28 @@ glimpse(staple_ar)
 
 ## Class association rules
 
-The approach presented in the next chunks can also be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating predictions of detecting buildings with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
+The approach presented in the next chunks can also be used to validate the mined association rules vis-á-vis other machine learning algorithms and/or subsequently used in various model prediction ensembles. We use it here to illustrate starter code for generating a supervised classification of intercropped (i.e., `sdiv > 1`) systems with the "Classification Based on Association Rules" (CBA) algorithm with the [`arulesCBA`](https://www.webpages.uidaho.edu/~stevel/517/arulesCBA.pdf) package.
 
 ```{r}
 # Variable selection
-crops <- as.data.frame (staple_ar[ , c(4,26)])
+staple_ar$inter <- as.factor(ifelse(staple_ar$sdiv > 1, "yes", "no"))
+crops <- as.data.frame (staple_ar[ ,c(3,26,28)])
 
 # Classification
-class <- CBA(build ~ ., crops)
+class <- CBA(inter ~ ., crops)
 preds <- predict(class, crops)
 conf <- cbind(crops, preds)
-confusionMatrix(conf$preds, reference = conf$build, positive = "yes")
+confusionMatrix(conf$preds, reference = conf$inter, positive = "yes")
 ```
 
-This does alright. It is quite sensitive but not very specific. However, it also only uses 3-rules and may be underfit (see the table below). [Bear Grylls'](https://www.beargrylls.com/) rules would likely be much more complex.
+This does alright. The classifier is quite sensitive but not particularly specific. It does however generalize the intercropping observations in regard to the two surveys and the potentially confounding proximity to buildings quite well, as is shown in the table below.
 
 ```{r}
 # Classification rules
 inspectDT(rules(class))
 ```
 
-# Top-10 staple food crop association rules
+# Summary: Top-10 staple food crop association rules
 
 This next chunk flags the main (identified) staple food crop association rules for Tanzania and Rwanda. These should guide and prioritize any subsequent surveys or experimental investigations of staple food systems (or versions thereof).
 
@@ -333,9 +334,7 @@ The main takeaways of this notebook are the following:
 
 * At first glance Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to population density, as indicated by the proximity of buildings in croplands. Staple food cropping systems in proximity to buildings tend to be more complex and diverse in both Tanzania and Rwanda. This relationship appears to generalize the subsequent association rules quite well.
 
-* ...
-
-* Association rules can be readily incorporated into subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in more depth with additional notebooks.
+* Association rules can be readily incorporated into any subsequent spatial machine learning and or geostatistical prediction procedures. We shall explore those possibilities in more depth with additional notebooks.
 
 *  There are also other analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various clustering approaches (e.g., [Schubert and Rousseeuw, 2019](https://link.springer.com/chapter/10.1007%2F978-3-030-32047-8_16)), which we could use for the modeling the data that were presented here. We have not included these in this notebook to keep things relatively concise but might explore those options in additional notebooks at a later stage.
 
