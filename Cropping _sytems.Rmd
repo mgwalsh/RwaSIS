@@ -326,7 +326,7 @@ trans <- as(rules, "transactions")
 itemFrequencyPlot(trans, topN = 10, ylab = "Support (rel. frequency)", cex.lab = 1.2, cex.names = 0.8)
 ```
 
-# Main takeaways
+# Takeaways
 
 The main takeaways of this notebook are the following:
 
