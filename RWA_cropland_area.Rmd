@@ -325,7 +325,7 @@ fname <- paste("./RW_GS20/Results/", labs, "_clist.rds", sep = "")
 saveRDS(clist, fname)
 ```
 
-# Model stacking with `caretEnsemble`
+# Model stacking with `caret`
 
 This next chunk fits a model ensemble with the glmStepAIC function from the MASS library using the validation dataframe (gs_val). You could explore other meta-model options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
