@@ -30,7 +30,7 @@ To actually run the notebook, you will need to load the packages indicated in th
 
 ```{r}
 # Package names
-packages <- c("osfr", "downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "klaR", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("osfr", "downloader", "tidyr", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "klaR", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -42,7 +42,7 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (labels), 48 raster covariates (features) and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html). 
+The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (labels), 48 raster covariates (features) and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html).
 
 ```{r results = 'hide'}
 # Set working directory
@@ -60,8 +60,8 @@ download("https://www.dropbox.com/s/fhusrzswk599crn/RWA_level5.zip?raw=1", "RWA_
 unzip("RWA_level5.zip", overwrite = T)
 shape <- shapefile("gadm36_RWA_5.shp")
 
-# Data raster stack download from OSF at: https://osf.io/xts2y/
-osf_retrieve_file("xts2y") %>% osf_download(conflicts = "overwrite")
+# Data raster stack download from OSF at: https://osf.io/hp6v7/
+osf_retrieve_file("hp6v7") %>% osf_download(conflicts = "overwrite")
 unzip("RW_250m_2020.zip", overwrite = T)
 glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
