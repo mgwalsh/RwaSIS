@@ -16,7 +16,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # Introduction
 
-Soil erosion is the natural process of soil removal by rainfall, running water, and/or wind. Of these geological forces, erosion by running water is by far the most important in Rwanda's watersheds. In croplands, the susceptibility of any soil to erosion depends on physical and chemical characteristics of soils (erodibility), vegetation cover, topographic position (slope length and gradient), the intensity (erosivity) of rainfall, and the resulting velocity (transport capacity) of runoff water [Cohen et al., (2004)](https://www.researchgate.net/publication/235936792_Empirical_reformulation_of_the_Universal_Soil_Loss_Equation_for_erosion_risk_assessment_in_a_tropical_watershed). 
+Soil erosion is the natural process of soil removal by rainfall, running water, and/or wind. Of these geological forces, erosion by running water is potentially the most important in Rwanda's watersheds. In croplands, the susceptibility of any soil to erosion depends on physical and chemical characteristics of soils (erodibility), vegetation cover, topographic position (slope length and gradient), the intensity (erosivity) of rainfall, and the resulting velocity (transport capacity) of runoff water [Cohen et al., (2004)](https://www.researchgate.net/publication/235936792_Empirical_reformulation_of_the_Universal_Soil_Loss_Equation_for_erosion_risk_assessment_in_a_tropical_watershed). 
 
 Sedimentation (or sorted soil particle deposition) occurs when eroded soil accumulates where water flows are slowed. Sedimentation and its associated environmental impacts (e.g., phosphorus, nitrogen and heavy metal) pollution are most pronounced where rivers (e.g., the Akagera River flowing into Lake Victoria, the Sebeya River flowing into Lake Kivu, etc.), or more generally where streams enter any lowland lakes, ponds, and wetlands. The natural geologic processes of erosion and sedimentation are frequently accelerated by upstream land use practices and urban development. However, the associated risk factors remain poorly described in Rwanda.
 
@@ -57,6 +57,8 @@ We will be using a workflow based on the concept of strong rules. *"Strong rules
 * *Lift* is calculated as the ratio of the joint probability of two crops A and B, divided by the product of their probabilities i.e., `P(A,B)/(P(A)P(B))`. If the two items are statistically independent, then the joint probability of the two items will be the same as the product of their probabilities. In other words, `P(A,B) = P(A)P(B)`, which makes the lift factor = 1. Worth mentioning is that anti-correlations can yield lift values that are less than 1, which correspond to mutually exclusive crops combinations that rarely occur together.
 
 Typically, association rules are considered to be interesting if they satisfy at least both support and confidence thresholds. These thresholds can/should be set by subject matter specialists e.g., agronomists and/or nutritionists. Note that there are some good, short tutorials available on YouTube that you might wish to consult to clarify the terminology in this context (e.g., https://www.youtube.com/watch?v=WGlMlS_Yydk).
+
+[Mitasova et. al, 2007](https://doi.org/10.1080/02693799608902101) 
 
 # Takeaways
 
