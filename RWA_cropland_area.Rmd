@@ -1,11 +1,11 @@
 ---
-title: Workflows for predictive cropland area mapping 
+title: Workflows for predictive land cover mapping and small-area estimation 
 author: M.G. Walsh
 date: "`r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
     toc: true
-    toc_depth: 1
+    toc_depth: 2
     fig_caption: true
     css: style.css
 ---
@@ -22,11 +22,11 @@ Quantifying the geographical extent, location and spatial dynamics of croplands,
 
 The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover those issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial features in hand.
 
-The main intent of this notebook is to illustrate starter code guidelines for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI, based on GeoSurvey observations. I use Rwanda's most recent GeoSurvey data and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).
+*The main intent of this notebook is to illustrate starter code guidelines for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).*
 
-# General data setup
+# Data setup
 
-To actually run the notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble Rwanda-wide GeoSurvey observations, link those to the spatial data and then model them using machine learning algorithms [MLA](https://en.wikipedia.org/wiki/Outline_of_machine_learning) and/or [geostatistics](https://en.wikipedia.org/wiki/Geostatistics). The notebook itself is maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
+To actually run this notebook, you will need to load the packages indicated in the chunk directly below. This allows you to assemble the Rwanda-wide GeoSurvey observations, link those to the spatial data and then model them using machine learning algorithms [MLA](https://en.wikipedia.org/wiki/Outline_of_machine_learning) and/or [geostatistics](https://en.wikipedia.org/wiki/Geostatistics). The notebook itself is versioned and maintained on my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd), and you can fork and modify it from there as you see fit.
 
 ```{r}
 # Package names
@@ -42,7 +42,9 @@ if (any(installed_packages == FALSE)) {
 invisible(lapply(packages, library, character.only = TRUE))
 ```
 
-The next chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (labels), 48 raster covariates (features) and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html). 
+## Data downloads
+
+This chunk downloads the data, which are needed to run this example. The downloads contain the most recent GeoSurvey observations (labels), 48 raster covariates (features) and the administrative boundaries of Rwanda, which were sourced from [GADM](https://gadm.org/download_country_v3.html). 
 
 ```{r results = 'hide'}
 # Set working directory
@@ -66,14 +68,20 @@ unzip("RW_250m_2020.zip", overwrite = T)
 glist <- list.files(pattern="tif", full.names = T)
 grids <- stack(glist)
 
-# Download figures
+# Download figures at: https://osf.io/yu8ts/
 osf_retrieve_file("yu8ts") %>% osf_download(conflicts = "overwrite")
 unzip("GeoSurvey_figs.zip", overwrite = T)
 ```
 
-## GeoSurvey data assembly
+The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland occupies virtually the entire quadrat. The applied if-else rule is that if cropland is present, then `ccount` is set to a count between 1-16 depending on the amount of cropland cover that is present within the quadrat. If cropland is absent, then `ccount` is set to 0. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these land cover archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
-This chunk assembles the observations from *q* = 23,199 (250 × 250 m) GeoSurvey [quadrats](https://en.wikipedia.org/wiki/Quadrat), which were collected by 6 experienced image interpreters between 2^nd^ April - 18^th^ July of 2019. It also calculates building counts and cropland grid proportions from the associated point location geojson variables (`bloc` & `cgrid`). I'll use the resulting *cropland grid count* (`ccount`) variable for small area cropland estimation later on in the notebook.
+```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%'}
+knitr::include_graphics("./RW_GS20/GeoSurvey_examples.png")
+```
+
+## Data assembly
+
+The following chunks assemble the GeoSurvey observations from *q* = 23,199 (250 × 250 m) [quadrats](https://en.wikipedia.org/wiki/Quadrat), which were collected by 6 experienced image interpreters between 2^nd^ April - 18^th^ July of 2019. It also calculates building counts and cropland grid proportions from the associated point location variables (`bloc` & `cgrid`). I'll use the resulting *cropland grid count* (`ccount`) variable for small area cropland estimation later on in the notebook.
 
 ```{r, results='hide'}
 # Attach GADM-L5 administrative unit names from shape
@@ -111,7 +119,9 @@ ba$bcount <- 0
 bp <- cbind(bp, bcount)
 geos <- rbind(ba, bp)
 geos <- geos[order(geos$time),] ## sort in original sample order
+```
 
+```{r, results = 'hide'}
 # Cropland grid count
 cp <- geos[which(geos$CP == "Y"), ] ## identify quadrats with cropland
 cp$cgrid <- as.character(cp$cgrid)
@@ -130,13 +140,7 @@ geos <- rbind(ca, cp)
 geos <- geos[order(geos$time), ] ## sort back into original random sample order
 ```
 
-The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland occupies virtually the entire quadrat. The applied if-else rule is that if cropland is present, then `ccount` is set to a count between 1-16 depending on the amount of cropland cover that is present within the quadrat. If cropland is absent, then `ccount` is set to 0. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these land cover archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
-
-```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%'}
-knitr::include_graphics("./RW_GS20/GeoSurvey_examples.png")
-```
-
-## Gridded data
+## Grids
 
 The processed Rwanda grid data (in the `grids` raster stack) were derived and reprojected from their primary open sources. You can also download the entire stack directly at [RwaSIS grids](https://osf.io/hp6v7/). The short descriptions of the included rasters, and their sources are provided in the table immediately below.
 
@@ -160,9 +164,7 @@ These Rwanda-wide (actually Africa-wide) features will change over time and I wi
 
 The main notion here is that the occurrence and distribution of croplands must always be associated with the distribution of humans and their built infrastructure, but also constrained or facilitated by changes in typically much slower environmental factors such as climate, [ecological succession](https://en.wikipedia.org/wiki/Ecological_succession), topography, parent materials and soils. Note that all of these change and interact over space-time and should be, but are currently not adequately monitored across Africa.
 
-## Combined Rwanda GeoSurvey dataframe
-
-This next chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify the GeoSurvey locations is available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
+This chunk reprojects the GeoSurvey data to the [Lambert Azimuthal Equal Area (LAEA)](https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection) grid of the AfSIS raster variables and then writes out the combined dataframe `RW_GS_data.csv` into your `./RW_GS20/Results` directory, if you'd like to process those outputs in software other than R. It also generates a location map of where in Rwanda those 23k+ GeoSurvey observations were obtained. The spatially balanced sampling frame that was used to specify the GeoSurvey locations is available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_sample.R).
 
 ```{r}
 # Project GeoSurvey coords to grid CRS
@@ -189,13 +191,16 @@ saveWidget(w, 'RW_GS_sample_locs.html', selfcontained = T) ## save widget
 w ## plot widget 
 ```
 
-# Ensemble learning based mapping with `caret` and `caretEnsemble`
+# Ensemble based learning and mapping with `caret` and `caretEnsemble`
 
-The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined / stacked) on an *independent validation dataset*. As shown in the figure below there are four conceptual steps to run this workflow:
+The following chunks calibrate cropland presence/absence observations using different machine learning algorithms (MLAs) to various spatial feature inputs using the [caret](https://topepo.github.io/caret/) and [caretEnsemble](https://cran.r-project.org/web/packages/caretEnsemble/index.html) packages. The main idea is to train several potentially competing algorithms with [k-fold cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)). At the end of the model training processes, the various models are ensembled (combined / stacked) on an *independent validation dataset*. As shown in the figure below there are four conceptual steps to run these workflows:
 
 1. Label vetting (quality control) for a sub-sample of all of the GeoSurvey observations that were logged by GeoSurveyors. This step is generally used to assess classification error rates for the different GeoSurveyors, particularly for *crowd-sourced* GeoSurveys. It can also be used to establish a quality controlled validation dataset manually should that be deemed necessary.
+
 2. Calibration and model stacking, which involve calibrating several potentially contrasting MLAs with cross-validation. I shall use a combination of generalized linear, bagging, boosting and neural network base models here. 
+
 3. Ensemble predictions are subsequently based on a stacked model that is applied to and tested on an independent validation dataset. This step provides robust statistical estimates of how the different models in the prediction stack should be weighted against one-another.
+
 4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed.
 
 ```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="GeoSurvey land cover prediction workflow.", out.width = '70%'}
@@ -227,9 +232,13 @@ fcal <- gs_cal[ ,19:38,42:67]
 
 Note again that I am using previously vetted cropland presence/absence (`CP`) as an example. This produces probability maps of where in Rwanda croplands are likely to occur versus where they are unlikely to be present. You can also substitute other GeoSurvey variables as labels and specify those with the `labs` variable in the script-chunk above. While these additional variables are included in the `RW_soil_data.csv` data file, I shall leave those for you to explore. Presented next are some starter models, which I consider to be *contrasting* both in terms of the gridded features that are used, as well as the MLAs that are used in fitting the observational data to those.
 
-## Spatial trend model with `caret`
+# Machine learning models {.tabset .tabset-pills}
 
-This is a simple spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
+Click on the tabs to view individual models and their stacked predictions ...
+
+## Spatial trend
+
+This is a spatially smoothed *generalized additive model* applying the `gam` function on the `CP` observations at different sampling locations in Rwanda, based only on their distance to the fixed LAEA datum georeference. It is similar to [kriging](https://en.wikipedia.org/wiki/Kriging) with cross-validation, but is simpler and much faster to compute in this context. I use the standard `caret` syntax here to illustrate the general specification, output and prediction steps.
 
 ```{r}
 # Select spatial covariates
@@ -259,9 +268,9 @@ fname <- paste("./RW_GS20/Results/", labs, "_gm.rds", sep = "")
 saveRDS(gm, fname)
 ```
 
-## Central place theory model with `caret`
+## Central places
 
-Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. Also note that I always save the current models as [`.Rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows me to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
+Central places (*sensu* [Central place theory](https://en.wikipedia.org/wiki/Central_place_theory)) are influential variables for predicting of where croplands are likely to occur (or not, e.g. in, city centers, forest reserves or national parks). The model below focuses on central place variables such as distances to major and minor roads, urban & rural settlements, parks & reserves, cell towers & electricity networks among other largely anthropically controlled / infrastructure variables. Also note that I always save the current models as [`.Rds`](https://riptutorial.com/r/example/3650/rds-and-rdata--rda--files) files. This allows us to load the models at a later stage to e.g., re-run various analyses and/or to integrate previously fitted models into new scripts and notebooks.
 
 ```{r, results='hide'}
 # Select central place covariates
@@ -291,9 +300,9 @@ fname <- paste("./RW_GS20/Results/", labs, "_cp.rds", sep = "")
 saveRDS(cp, fname)
 ```
 
-## Fitting additional models with `caretEnsemble`
+## Ensemble MLAs
 
-The next chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work by following links at: 
+This chunk fits 4 additional models that use the that use all of gridded calibration data with 10-fold cross-validation. You can learn more about how these algorithms work by following links at: 
 [MASS](https://cran.r-project.org/web/packages/MASS/index.html),
 [randomForest](https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest), [xgboost](https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r/)
 and [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf). You can use `caretEnsemble` instead of `caret` as long as the feature variables (`grids` in this case), and the `trainControl` methods are the same for each model in the `caretList` function. This shortens the script-length of this notebook but does not otherwise affect the overall `caret` functionality. Note however that the calculations take a bit of time to run on a normal 8-core, 16 Gb memory computer. This is not a big problem for a relatively small ROI like Rwanda, but it might be computationally challenging for larger countries like the DRC, Tanzania or Ethiopia. I fit these models with 10-fold cross-validation and default-tuning of the relevant [hyperparameters](https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)).
@@ -325,9 +334,9 @@ fname <- paste("./RW_GS20/Results/", labs, "_clist.rds", sep = "")
 saveRDS(clist, fname)
 ```
 
-# Model stacking with `caret`
+## Model stacking
 
-This next chunk fits a model ensemble with the glmStepAIC function from the MASS library using the validation dataframe (gs_val). You could explore other meta-model options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
+This chunk fits a model ensemble with the glmStepAIC function from the MASS library using the validation dataframe (gs_val). You could explore other meta-model options here, but I think that this approach provides a reasonable combination and weighting of the 6 models that were produced in the previous calibration / training steps. Again, the fitting is done with cross-validation.
 
 ```{r, results = 'hide'}
 # Stacking setup
@@ -372,7 +381,7 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-# Receiver operator chararacteristics 
+## Model evaluation 
 
 A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performance of the stacked model (`st`) on the validation dataframe. This next chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
 
@@ -389,6 +398,8 @@ cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
+
+## Classification
 
 The ROC curve can then be used to threshold the spatial predictions to create a cropland mask map. Pixels above, or below the threshold are classified as either having cropland present, or absent. This is useful for additional prediction accuracy checks. It also provides a cropland mask that is useful for planning of any subsequent ground sampling campaigns that involve croplands as the main ROI (e.g., for predictive soil mapping and/or laying out agronomic management response trials). The next chunk sets the relevant ROC threshold based on the validation set kappa statistic and calculates the cropland mask and writes out the 8 prediction grids to a geotif file, which can be imported to a GIS of your choice. It also generates an overview map of the cropland occurrence probabilities.
 
@@ -410,18 +421,19 @@ projection(gsdat) <- projection(grids)
 gspre <- extract(gspreds, gsdat)
 gsout <- as.data.frame(cbind(gsdat, gspre))
 gsout$mzone <- ifelse(gsout$mk == 1, "Y", "N")
-# confusionMatrix(data = gsout$mzone, reference = gsout$CP, positive = "Y") ## run this for extra stats
 fname <- paste("./RW_GS20/Results/","RW_", labs, "_out.csv", sep = "")
 write.csv(gsout, fname, row.names = F)
+```
 
+```{r}
 # Project st.pred to EPSG:3857
 st <- 1-st.pred
-msk <- mask < 1
-stm <- mask(st, msk, maskvalue = TRUE)
-stl <- projectRaster(stm, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+# msk <- mask < 1
+# stm <- mask(st, msk, maskvalue = TRUE)
+stl <- projectRaster(st, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # set color pallette
-pal <- colorBin("Greens", domain = 0:1, na.color = "transparent") 
+pal <- colorBin("Reds", domain = 0:1, na.color = "transparent") 
 
 # render map
 w <- leaflet() %>% 
@@ -431,7 +443,9 @@ w <- leaflet() %>%
 w ## plot widget
 ```
 
-# Small area estimation (SAE)
+## {-}
+
+# Small area estimates (SAE)
 
 The term *"small area"* generally refers to small administrative areas such as e.g., *regions, districts, sectors, cells and/or villages* ... in the Rwandan context. It may also refer to any other *small domain* within a given ROI. If, for example, a ground survey has been carried out for e.g., a whole a country, the sample size within any particular smaller sub-area may be too small to generate precise area estimates from the data. To deal with this problem, [SAE](https://en.wikipedia.org/wiki/Small_area_estimation) uses additional data, such as GeoSurvey predictions, which will have much denser spatial coverage than e.g., a typical country-wide ground survey. This section of the notebook illustrates some of the classic approaches to this common estimation problem (e.g., see the article by [Battese & Fuller, 1982](https://www.une.edu.au/__data/assets/pdf_file/0017/15542/emetwp15.pdf)).
 
@@ -451,7 +465,7 @@ m1.area <- m1.pred*6.25 ## calculates and maps cropland area (ha) estimates per 
 anova(m0, m1) ## anova comparison
 ```
 
-While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. We could also try to fit this by including the individual base model predictions to derive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for the cropland area predictions.
+While the national-level estimate of cropland proportion (`m0`) is not affected much, its precision as measured by the residual deviance comparison between the two models (`m0` vs `m1`) is. You could also try to fit this by including the individual base model predictions to derive predictions similar to those of the stacked (`st`) model. This could introduce an alternative SAE weighting scheme for further consideration and testing. The main point here is to consider the main stacking options for the cropland area predictions.
 
 ```{r}
 # Post-stratified spatial model with base model GeoSurvey cropland occurrence predictions
@@ -463,7 +477,7 @@ anova(m1, m2) ## anova comparison
 
 The slightly lower deviance of the `m2` model for area predictions indicates that it might be preferable. Note however that the difference is small enough and has not been validated. So, I would still go with the `m1` prediction for this particular illustration, based on the [parsimony principle](https://en.wikipedia.org/wiki/Occam%27s_razor).
 
-The next chunk calculates small area estimates for the 30 national *districts* and 417 *sectors located in districts* that are reporting cropland area information to the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda. Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions in the respective small area models provide potentially useful information for sub-national planning purposes.
+The next chunk calculates small area estimates for the 30 national *districts* and 417 *sectors located within districts* that are reporting cropland area information to e.g., the Ministry of Agriculture ([MINAGRI](https://www.minagri.gov.rw/)) in Rwanda. Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions in the respective small area models provide potentially useful information for sub-national planning purposes.
 
 ```{r}
 # Small area hierarchical random-effect estimates by 417 sectors in 30 districts
@@ -472,40 +486,60 @@ m4 <- glmer(cbind(ccount, 16-ccount) ~ st + (1|district/sector), family = binomi
 summary(m4)
 ```
 
-Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions (`m4`, above) in the respective small area models provide potentially useful information for sub-national planning purposes.
+Again, the inclusion of the country-wide GeoSurvey cropland occurrence predictions (`m4`, above) in the respective small area models provide potentially useful information for sub-national planning.
 
 ```{r}
 anova(m3, m4) ## anova comparison
 ```
 
+# Additional interpretations {.tabset .tabset-pills}
+
+## Building densities
+
+In Rwanda agricultural activities are generally conducted in close proximity to buildings and rural settlements, though generally not in urban areas (e.g., the city of Kigali). The map below shows the relationship between modeled building densities (`bcount`) in relation to Rwanda's main [electrical grid](https://www.usaid.gov/powerafrica/rwanda) infrastructure. This is a good depiction of where people reside in Rwanda. There is an additional R-script available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_dens.R) that does the relevant calculations, generates the spatial building density predictions including geotif files, and their uncertainties. Also, again note that this is the main anthropic variable driving cropland expansions and the associated land management interventions and environmental problems. 
+
+```{r, echo = FALSE, fig.align="center", fig.cap = "Predicted building counts (no. buildings ha^-1^) relative to the main electrical grid in Rwanda (2020).", out.width = '90%'}
+knitr::include_graphics("./RW_GS20/BD_grid.png")
+```
+
+## Woody vegetation
+
+In Rwanda dense woody vegetation (> 60%) generally occurs only in protected areas such as national parks and/or nature reserves.
+
+## Land cover
+
+This map shows the current AfSIS land cover classification for Rwanda (in 8 categories for the year 2020) and their associated area estimates. The map was derived using a combination of the occurrence (presence / absence) of buildings, croplands and dense (> 60%) woody vegetation cover using the ensemble prediction approaches described in the main notebook text. Note that the cropland region of interest area is highlighted by the red rectangles in the map legend table. 
+
+```{r, echo = FALSE, fig.align="center", fig.cap = "AfSIS GeoSurvey land cover classification and area estimates for Rwanda (LCC, 2020).", out.width = '95%'}
+knitr::include_graphics("./RW_GS20/LCC.png")
+```
+
+## Conservation structures
+
+The map below shows the areas where soil conservation structures are predicted to occur based on the current GeoSurvey observations of terraces and other structures such as contour bunds. The map was derived using a combination of geospatial variables using the ensemble prediction approaches described in the main notebook text.
+
+```{r, echo = FALSE, }
+
+```
+
+## Related notebooks
+
+You can also check out related notebooks on Github for additional context and content including:
+
+*
+
+## {-}
+
 # Takeaways
 
 The main takeaways of this notebook are the following:
 
-* This notebook produces highly precise and accurate (>95%) spatial predictions of the observed occurrence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., see [Rocca, 2019](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205)).
+* This notebook produces precise and accurate (>95%) spatial predictions of the observed occurrence (presence / absence) and the associated *small cropland areas* in Rwanda based on a completely reproducible, standard ensemble machine learning workflow (e.g., see [Rocca, 2019](https://towardsdatascience.com/ensemble-methods-bagging-boosting-and-stacking-c9214a10a205)).
 
-* The workflow can be flexibly extended to map other land cover variables (e.g., the distribution and density of buildings, dense woody vegetation cover, built-up infrastructures and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs with new observations, geodata and/or MLAs.
+* The workflow can be flexibly extended to map other land cover variables (e.g., the distribution and density of buildings, dense woody vegetation cover, built-up or soil conservation infrastructure and crop type distributions, among others). It can also be rapidly extended to cover new geographies and ROIs with new observations, geodata and/or MLAs.
 
-* The workflow outputs can be used to improve the precision and accuracy of small cropland area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost compared to conventional land cover mapping practices.
+* The workflow outputs can be used to improve the precision and accuracy of small land cover area estimates, and depending on the availability of properly time-stamped GeoSurveys and their associated remote sensing data, also for cropland area monitoring and change detection workflows, both operationally and at low cost compared to conventional land cover mapping practices.
 
-* The predictions will in these introductory examples covered by this notebook will be updated as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
+* The predictions in the introductory examples covered by this notebook will be updated as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
 
-Any questions or comments about this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
-
-# Addenda {.tabset}
-
-## LCC
-
-
-## Conservation structures
-
-
-## Buildings
-
-
-## Woody vegetation
-
-
-
-
-
+Any questions or comments about this notebook are most welcome via [AfSIS](mailto:mgw.africasoils.info).
