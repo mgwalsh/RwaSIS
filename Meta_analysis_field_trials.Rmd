@@ -1,12 +1,13 @@
 ---
 title: Meta-analysis of agricultural lime application effects on crop yields from field trial data
 author: M.G. Walsh, R. Manners, J.V. Silva, S. Gameda and S. Aston
-date: "`r format(Sys.time(), '%d, %B, %Y')`"
+date: "Last updated on: `r format(Sys.time(), '%d, %B, %Y')`"
 output:
   html_document:
     toc: true
     toc_depth: 2
     fig_caption: true
+    number_sections: true
     css: style.css
 ---
 
@@ -16,13 +17,13 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # Introduction
 
-Soil acidity affects soil nutrient availability, rhizobial and other microbial activity and is generally thought to reduce crop root growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5). Also see the associated notebooks about Rwanda's [cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [maize & bean distributions](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium, such as various ammonium nitrates, urea, manure and compost, will decrease soil pH over time (also consult the advice provided by [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime) about this). 
+Soil acidity affects soil nutrient availability, rhizobial and other microbial activity and is generally thought to reduce crop root growth and yield. For example, in Rwanda virtually all of the currently surveyed cropland soils are acid (pH < 7 in water) and ~64% are strongly acid (with pH < 5.5). Also see the associated notebooks about Rwanda's [Rwanda cropland soil pH](https://github.com/mgwalsh/Soils/blob/master/PSM_guide.Rmd) and its [maize & bean distributions](https://github.com/mgwalsh/RwaSIS/blob/master/RW_priority_crops.Rmd). Moreover, commonly used nitrogen fertilizers that supply ammonium directly or that react in the soil to produce ammonium, such as various ammonium nitrates, urea, manure and compost, will decrease soil pH over time (also consult the advice provided by [PennState Extension](https://extension.psu.edu/soil-acidity-and-aglime) about this). Note that more localized areas of soil acidity also occur in Burundi, Kenya and Tanzania.
 
 The application of [Agricultural lime (aglime)](https://en.wikipedia.org/wiki/Agricultural_lime) can be used to mitigate the effects of soil acidity on nutrient availability, reduced microbial activity, and the occurrence of [Aluminium](https://www.sciencedirect.com/science/article/pii/B9780128031582000011) and/or [Manganese](https://www.tandfonline.com/doi/abs/10.1080/01904169809365409) toxicities. The rocks and minerals from which agricultural lime is derived, primarily [Limestone](https://en.wikipedia.org/wiki/Limestone), but also [Chalk](https://en.wikipedia.org/wiki/Chalk), is primarily composed of calcium (CaO) and/or magnesium (MgO) oxides, which are readily measured by e.g., [X-ray fluorescence](https://en.wikipedia.org/wiki/X-ray_fluorescence). Limestone is typically pulverized and/or chemically altered to produce different aglime products of varying efficacy in increasing soil pH and crop yields. Similar to chemical fertilizers, the use of aglime also generates significant greenhouse gas emissions in its production, to-farm-gate transport and through its field application, which should be minimized on that basis.
 
-*The main objective of this notebook is to illustrate the use of standard meta-analysis techniques for assessing the effects of aglime applications on maize and bean yields in Rwanda.The main question that is posed is: "By how much could maize and bean yields be increased with lime applications?" Rwanda was selected for this illustration because of the high prevalence of acid soils within its croplands, as well as the availability of a relatively large, recent, multi-year, field trial dataset that is suitable for this purpose. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Meta_analysis_field_trials.Rmd), and you can fork and modify it from there as you see fit.*
+*The main objective of this notebook is to illustrate the use of meta-analysis techniques for assessing the effects of aglime applications on maize and bean yields in Rwanda. The main question that is posed is: "By how much could maize and bean yields be increased with lime applications?" Rwanda was selected for this illustration because of the high prevalence of acid soils within its croplands, as well as the availability of a relatively large, recent, multi-season, field trial dataset that is suitable for this purpose. The reason for including data from Burundi, Kenya and Tanzania is to borrow information across seasons and trial sites from similar environments and experiments. The notebook itself is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Meta_analysis_field_trials.Rmd), and you can fork and modify it from there as you see fit.*
 
-A [Meta-analysis (MA)](https://en.wikipedia.org/wiki/Meta-analysis) is an analytical approach that uses statistical techniques to combine the results from different studies to obtain quantitative estimates of the overall effects of particular interventions or variables on defined outcomes. Generally, the aim is to derive a pooled estimate of a common outcome variable, based on the relevant sources of variation across studies. The scope of MAs is defined by the type of population, the types of interventions (and their controls or comparators), and the types of outcomes that are of interest. The acronym PICO (population, interventions, comparators and outcomes) helps to serve as a reminder of these (e.g., see the [Cochrane Handbook](https://training.cochrane.org/handbook)). We will follow the Cochrane guidance here and will go through some of the relevant analysis steps including exploratory data analysis ([EDA](https://en.wikipedia.org/wiki/Exploratory_data_analysis)), [outlier detection](https://en.wikipedia.org/wiki/Anomaly_detection), [data modeling](https://en.wikipedia.org/wiki/Data_modeling) and interpretation.
+A [Meta-analysis (MA)](https://en.wikipedia.org/wiki/Meta-analysis) is an analytical approach that uses statistical techniques to combine the results from different studies to obtain quantitative estimates of the overall effects of particular interventions or variables on defined outcomes. Generally, the aim is to derive a estimates of a common outcome variable, based on the relevant sources of variation across studies. The scope of MAs is defined by the type of population, the types of interventions (and their controls or comparators), and the types of outcomes that are of interest. The acronym PICO (population, interventions, comparators and outcomes) helps to serve as a reminder of these (e.g., see the [Cochrane Handbook](https://training.cochrane.org/handbook)). We will follow the Cochrane guidance here and will go through some of the relevant analysis steps including exploratory data analysis ([EDA](https://en.wikipedia.org/wiki/Exploratory_data_analysis)), [outlier detection](https://en.wikipedia.org/wiki/Anomaly_detection), [data modeling](https://en.wikipedia.org/wiki/Data_modeling) and model interpretation.
 
 # Data set up
 
@@ -30,7 +31,7 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r, results = 'hide'}
 # Package names
-packages <- c("osfr", "dplyr", "MASS", "quantreg", "arm")
+packages <- c("osfr", "dplyr", "DT", "quantreg", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -50,137 +51,222 @@ dir.create("RW_lime", showWarnings=F)
 setwd("./RW_lime")
 dir.create("Results")
 
-# Trial data download from OSF at: https://osf.io/ngmjy/
-osf_retrieve_file("ngmjy") %>% osf_download(conflicts = "overwrite")
-lime <- read.table("RW_1AF_lime.csv", header=T, sep=",")
-```
+# Trial data download from OSF at: https://osf.io/37hev/
+osf_retrieve_file("37hev") %>% osf_download(conflicts = "overwrite")
+lime <- read.table("OAF_lime.csv", header=T, sep=",")
 
-The below is the structure of the resulting dataframe that we shall be using. The only variable, which has not been properly cleaned yet in these data is the crop variety indicator (`crop_var`). We will not be using that in this notebook. However, we have included it for reference and any potential updates in future versions of this notebook (e.g., see [Jaleta et al., 2020](https://doi.org/10.1371/journal.pone.0235484) as to why this might be important).
+# Construct ordered season variable
+lime$season <- factor(paste(lime$year, lime$season, sep = "_"))
+```
 
 ```{r, echo = FALSE}
 str(lime)
 ```
 
-# Population, interventions, comparators and outcome (PICO)
+## Population, interventions, comparators and outcome (PICO)
 
-The data we will be using in this notebook were generated by the [One Acre Fund (1AF)](https://oneacrefund.org/). Two separate field studies were conducted by 1AF as part of their soil acidity management intervention testing and monitoring activities in Rwanda during 2016-2017 and 2019-2020. They consist of 2,166 individual (multi-location, on-farm) trials with n = 10,426 crop yield (kg ha^-1^) measurements × `crop` × `lime` × `fert` treatments, to assess the effects of aglime applications on crop yields against the relevant control yields i.e., those without a lime application. The 2 studies were conducted in 20 Level-4 administrative units (or so-called "Cells" in Rwanda), two of which overlap temporally by `study`. Crop yield measurements were generally repeated over at least 2 cropping seasons in each study, defined by the relevant `trial_age` × `cell` × `crop` × `lime` × `fert` treatment combinations. Note that this combination also defines the main PICO definitions that are analyzed here. Note that the collective variable label `crop = "bean"` that is used here refers to [Phaseolus vulgaris L.](https://en.wikipedia.org/wiki/Phaseolus_vulgaris) including the "common", "climbing" or "bush" bean cultivars that were used in the trials. 
-
-## PICO Tables
-
-It is common practice in meta-analysis that the first table of e.g., a [Cochrane review article](https://www.cochranelibrary.com/), often referred to as “Table 1”, summarizes the descriptive statistics of the characteristics of the study populations that are stratified by the main individual treatment / comparator variables. The [`aggregate`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/aggregate) function in the R [`stats`](https://www.rdocumentation.org/packages/stats/versions/3.6.2) package is convenient in this context. We use it here to summarize both the fixed treatment (`trial_age` × `crop` × `lime` × `fert`) and the associated random effects (`trial_age` × `cell`) that would go into data model specifications. The following chunks generate the associated example crop yield quantile tables.
-
-```{r}
-# main fixed PICO effects on yields (kg / ha)
-fix <- aggregate(lime$yield, list(lime$trial_age, lime$lime, lime$fert, lime$crop), 
-                 FUN = quantile, probs = c(0.025, 0.5, 0.975))
-colnames(fix) <- c("trial_age", "lime", "fert", "crop", "Q")
-fix
+```{r, echo = FALSE, results = 'hide'}
+length(unique(lime$season))
+length(unique(lime$site))
+length(unique(lime$trt_desc))
+length(unique(lime$tid))
 ```
 
+The data we will be using in this notebook were generated by the [One Acre Fund (1AF)](https://oneacrefund.org/) in Rwanda, Burundi, Kenya and Tanzania. They consist of 3,817 individual (multi-location, on-farm) trials with n = 13,303 crop yield (kg ha^-1^) measurements in various `crop` × `lime` × `fert` treatment combinations. The trials were conducted in 67, Level-4 administrative units over 11 cropping seasons between 2014-2020. Note that the collective label `crop = "bean"` that is used here refers to [Phaseolus vulgaris L.](https://en.wikipedia.org/wiki/Phaseolus_vulgaris) including the "common", "climbing" or "bush" bean cultivars that were used in the trials. The directed acyclic graph ([DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)) below shows what we think is the causal structure of the main interventions and varying effects on crop yield responses (*sensu* the [Production function models](https://en.wikipedia.org/wiki/Production_function)) in the population of trials being considered here. 
+
+```{r PICO_dag, echo=FALSE, fig.align="center", fig.cap="Crop yield production function DAG. Intervention variables in grey (or green); varying/random effects in white; in green, the intervention variable of interest; the main outcome variable of interest in blue (graphed with: http://dagitty.net/dags.html).", out.width = '65%'}
+knitr::include_graphics("./RW_lime/OAF_trial_DAG.png")
+```
+
+## Trial data frame assembly
+
+It is common practice in meta-analysis that the tables of e.g., a [Cochrane review article](https://www.cochranelibrary.com/) summarize the descriptive statistics of the characteristics of the study populations, stratified by the main exposure/treatment variables by trials. The [`aggregate`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/aggregate) function in the R [`stats`](https://www.rdocumentation.org/packages/stats/versions/3.6.2) package is convenient in this context. We use it here to shape the intervention and the varying effects into a consistent PICO data frame. You could also use the [`dplyr`](https://www.rdocumentation.org/packages/dplyr/versions/0.7.8) package for this.
+
 ```{r}
-# random effects on yields (kg / ha)
-ran <- aggregate(lime$yield, list(lime$trial_age, lime$cell), FUN = quantile, probs = c(0.025, 0.5, 0.975))
-colnames(ran) <- c("trial_age", "cell", "Q")
-ran
+# Trial-level summary of crop yields (kg / ha)
+pn <- aggregate(lime$yield, list(lime$country, lime$tid, lime$season, lime$site, lime$crop, lime$fert,
+                lime$lime), FUN = length)
+
+pm <- aggregate(lime$yield, list(lime$country, lime$tid, lime$season, lime$site, lime$crop, lime$fert,
+                lime$lime), FUN = mean)
+
+pico <- cbind(pn, round(pm[,8], digits = 0))
+colnames(pico) <- c("country", "trial_id", "season", "site", "crop", "fertilizer", "lime", "n", "yield")
+datatable(pico, selection = 'multiple')
+
+# Write out PICO data summary table
+write.csv(pico, "./RW_lime/Results/1AF_pico.csv", row.names = FALSE)
 ```
 
 ## Outlier screening
 
-The PICO tables (above) show crop yield outliers (e.g., see the Bihembe cell above) that should be examined, flagged and potentially screened before proceeding to any data modeling and/or machine learning steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. There are also substantial trial drop-outs in the follow-up years (of 2017 & 2020, i.e., at `trial_age = 1`), in both studies based on ... 
-
-```{r}
-age <- aggregate(lime$yield, list(lime$trial_age, lime$study), FUN = length)
-colnames(age) <- c("trial_age", "study", "n")
-age
-```
-
-Because of the lack of georeferencing of the individual trials it is not possible to tell which individual trials dropped-out during the second year in each study. Also, new trials may have come into the studies during the follow-up period that were not recorded as such. While the fairly large proportion of dropouts is somewhat concerning, we have no way of telling precisely where or how they may have occurred in these multi-year studies. 
-
-Zeros and extreme values in the recorded data are much more readily identified. The simplest and shortest way of doing this is to consider the yield percentiles by the main fixed PICO factors. We can examine these with [quantile regression](https://mran.microsoft.com/snapshot/2018-04-30/web/packages/quantreg/quantreg.pdf) as follows in the next chunk. Based on the results, we can subsequently decide which (if any) of the extreme values to screen from further analyses.
+The PICO summary table (above) shows crop yield outliers (e.g., see the Bihembe cell in the data table above) that should be examined, flagged and potentially screened before proceeding to any data modeling steps. There are also quite a few zero yields, which may be due to censoring, lack of follow-up and/or local crop failures. However, the causes of these are not discernible from the data. Because of the lack of georeferencing of the individual trials it is not possible to tell exactly which individual trials dropped-out during the second year in each study. Also, new trials may have come into the studies during the follow-up period that were not recorded as such. While the fairly large proportion of dropouts is somewhat concerning, we have no way of telling where and/or how they may have occurred in these multi-year experiments. Zeros and extreme values in the recorded data are much more readily identified. The simplest and shortest way of doing this is to consider the yield percentiles by the main intervention factors. We can examine these with [quantile regression](https://mran.microsoft.com/snapshot/2018-04-30/web/packages/quantreg/quantreg.pdf) as follows in the next chunk. Based on the results, we can subsequently decide which (if any) of the extreme values to screen from further analyses.
 
 ```{r}
 # First remove the zeros ... they are not useful in this context
-lime <- lime[which(lime$yield > 0), ]
+lime <- lime[which(pico$yield > 0), ]
 
 # Then fit the quantile regressions
-out.rq <- rq(yield ~ factor(trial_age) + factor(crop) + factor(lime) * factor(fert), tau = c(0.025, 0.975),
-            data = lime)
-out.val <- as.data.frame(predict(out.rq, lime))
+out.rq <- rq(yield ~ factor(crop) + factor(lime) * factor(fertilizer), tau = c(0.025, 0.975),
+            data = pico)
+out.val <- as.data.frame(predict(out.rq, pico))
 colnames(out.val) <- c("lo", "hi") 
 out.rq
 ```
 
 ```{r}
 # You can always cbind the out.val predictions for further processing with e.g., ...
-lime <- cbind(lime, out.val)
+pico <- cbind(pico, out.val)
 
 # Which is useful for outlier screening with e.g., <dplyr>
-lime <- lime %>% mutate(out = case_when(yield < lo | yield > hi ~ 'y', TRUE ~ 'n'))
-
-# Write the data out to your Results directory
-write.csv(lime, "./RW_lime/Results/RW_lime_trials.csv", row.names = FALSE)
+pico <- pico %>% mutate(out = case_when(yield < lo | yield > hi ~ 'y', TRUE ~ 'n'))
 ```
 
-Circa 5% of the total crop yield measurements at the distributional (low and high) tail ends are flagged as extreme values ... which is what we were going for in this exploratory example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test.
+Circa 5% of the total crop yield measurements at the distributional (low and high) tail ends are flagged as extreme values ... which is what we were going for in this exploratory example. You can always adjust the percentile values in the `out.rq` regressions above. Another convenient thing about this approach is that you could also use additional PICO and/or other factors in those regressions for more comprehensive extreme value explorations. We shall leave those for you to test. 
+
+Shown below are the are the outlier-screened distribution yield plots for maize and bean crops, with or without lime and/or fertilizer amendments. The figure indicates that the overall soil liming effects on crop yields were modest across trials, not accounting for local variation at the sub-national scale,  ... essentially meaning that there does not appear to be a large generalizeable liming effect in these particular studies. The most substantial effects are related to fertilizer applications relative to the control yields.
+
+```{r, fig.align = "center", figures-side, fig.show='hold', out.width="50%", fig.cap = "Cumulative distributions of maize and bean yields. In grey the control yields (no lime and no fertilizers), in blue, the addition of DAP, Urea and/or CAN fertilizers, in red, the addition of both lime and fertilizers. Note that for beans there is also a 4^th^ option in green, which represents the application of lime without fertilizer."}
+
+# Screen outliers
+out <- subset(pico, out=="n", select=c(lime, fertilizer, crop, yield))
+
+# Maize yields
+m0 <- subset(out, lime=="n" & fertilizer=="n" & crop=="maize", select=c(yield)) 
+m2 <- subset(out, lime=="n" & fertilizer=="y" & crop=="maize", select=c(yield)) 
+m3 <- subset(out, lime=="y" & fertilizer=="y" & crop=="maize", select=c(yield)) 
+
+par(pty="s", mar=c(4,4,1,1))
+plot(ecdf(m0$yield), main="", xlab="Maize yield (kg/ha)", ylab="Cum. proportion of observations", 
+     xlim=c(0, 10000), verticals=T, lty=1, lwd=2, cex.lab=1.3, col="dark grey", do.points=F)
+abline(0.5,0, lty=1, col="dark grey")
+plot(ecdf(m2$yield), add=T, verticals=T, lty=1, lwd=2, col="dodger blue", do.points=F)
+plot(ecdf(m3$yield), add=T, verticals=T, lty=1, lwd=2, col="tomato", do.points=F)
+
+# Bean yields
+b0 <- subset(out, lime=="n" & fertilizer=="n" & crop=="beans", select=c(yield)) 
+b1 <- subset(out, lime=="y" & fertilizer=="n" & crop=="beans", select=c(yield))
+b2 <- subset(out, lime=="n" & fertilizer=="y" & crop=="beans", select=c(yield)) 
+b3 <- subset(out, lime=="y" & fertilizer=="y" & crop=="beans", select=c(yield)) 
+
+par(pty="s", mar=c(4,4,1,1))
+plot(ecdf(b0$yield), main="", xlab="Bean yield (kg/ha)", ylab="Cum. proportion of observations", 
+     xlim=c(0, 4000), verticals=T, lty=1, lwd=2, cex.lab=1.3, col="dark grey", do.points=F)
+abline(0.5,0, lty=1, col="grey")
+plot(ecdf(b1$yield), add=T, verticals=T, lty=1, lwd=2, col="dark green", do.points=F)
+plot(ecdf(b2$yield), add=T, verticals=T, lty=1, lwd=2, col="dodger blue", do.points=F)
+plot(ecdf(b3$yield), add=T, verticals=T, lty=1, lwd=2, col="tomato", do.points=F)
+```
 
 # Multilevel models
 
-Many surveys, such as this one, will have difficulties in obtaining representative samples of individual trials across the relevant geographical areas of interest. However, with proper statistical adjustment of the relevant variance components (random effects), non-representative surveys can be used to generate and monitor crop yields more accurately. A multilevel model is a hierarchical linear regression model, which assumes that the data being analyzed are drawn from a hierarchy of different populations whose differences relate to that hierarchy. 
+Many yield surveys, such as this one, face logistical difficulties in obtaining representative samples of individual trials across the relevant sub-national areas of interest. However, with appropriate statistical adjustments of the relevant variance components (varying/random effects), they can be used to generate and monitor crop yields more precisely. We use multilevel models ([MLM](https://en.wikipedia.org/wiki/Multilevel_model)) in this context. MLMs are hierarchical regression models that assume that the data being analyzed are drawn from a hierarchy of different sub-populations whose differences relate to that hierarchy. While we cannot build models for the individual trials here, we will run some initial MLMs that are grouped by `season` and `site` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package.
 
-While we cannot build response models for individual trials because these were not identified (georeferenced) or tracked over time in these studies, we will run some initial multilevel models that are grouped by `cell` and `trial_age` using the [`lme4`](https://cran.r-project.org/web//packages/lme4/lme4.pdf) package on the main PICO variables for the 2 studies. The following chunk provides some examples, which could be amended once all of the individual trial PICO have been specified.
+## Base yields
 
 ```{r}
 # Note that we will use the outlier removed data here
-lime <- lime[which(lime$out == 'n'), ]
+cont <- subset(pico, lime=="n",  select=c(site, season, crop, yield)) 
 
-m0 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study),
-           data = lime)
+c0 <- lmer(yield ~ factor(crop)-1 + (1|season) + (1|site),
+           data = cont)
 
-m1 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime) * factor(fert) + (1|study:cell) +
-          (1|cell:trial_age) + (1|cell:crop), data = lime)
+c1 <- lmer(yield ~ factor(crop)-1 + (1|season) + (1|site) + (1|season:site),
+           data = cont)
 
-m2 <- lmer(log(yield) ~ factor(trial_age) + factor(crop) * factor(lime_amt) * factor(fert) + (1|study:cell) +
-          (1|cell:trial_age) + (1|cell:crop), data = lime)
-
-anova(m0, m1, m2)
+anova(c0, c1)
 ```
 
-Model `m1` is clearly preferable to the overly simple `m0` model based on the respective AIC, BIC and logLik comparisons in the between model `anova`. The `m2` model, provides a slightly better fit to the data than `m1`. However, the choice between the `m1` and `m2` models appears to be a matter of preference as they differ only in terms of the number of classes that were used to describe the lime treatment levels. The `m2` also has a singularity problem in the REML formulation based on these data. Because of the overall meta-analysis study design and for reasons of parsimony, we prefer model `m1`. The estimated [production function](https://en.wikipedia.org/wiki/Production_function) coefficients for the `m1` model are shown directly below.   
+```{r, echo = FALSE}
+display(c1)
+```
+
+## Treated yields
+
+```{r}
+t0 <- lmer(yield ~ factor(crop) + factor(lime) * factor(fertilizer) + (1|season) + (1|site),
+           data = pico)
+
+t1 <- lmer(yield ~ factor(crop) + factor(lime) * factor(fertilizer) + (1|season) + (1|site) +
+          (1|season:site), data = pico)
+
+anova(t0, t1)
+```
+
+```{r, echo = FALSE}
+display(t1)
+```
 
 ```{r}
 # Write the fits
-lime$m1 <- exp(fitted(m1, lime))
-yq <- rq(yield~m1, tau=c(0.025,0.5,0.975), data = lime) ## quantile regression fit
-display(m1)
+pico$yhat <- fitted(t1)
+yq <- rq(yield~yhat, tau=c(0.05,0.5,0.95), data = pico) ## quantile regression fit
+yq
 ```
 
-We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple PICO-based multilevel model can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this plot is not intended as a prediction of what out-of-sample trials might look like ... it just shows an unvalidated fit to the data.
+We can also plot the model fit to the trial data with the following chunk. This demonstrates that a fairly simple MLM can explain a substantial amount of the variation in a fairly complex dataset. However, also note that this plot is not intended as a posterior prediction of what out-of-sample trials might look like. It just shows an unvalidated fit to the data.
 
-```{r, fig.align = "center", fig.cap = "Quantile regression plot of modeled vs observed crop yields in Rwanda. The blue lines are the 2.5% and 97.5% quantile regression estimates. The red line is the robust median fit."}
+```{r, fig.align = "center", fig.cap = "Quantile regression plot of fitted vs observed vs expected crop yields. The blue lines are the 5% and 95% quantile regression estimates. The red line is the robust median fit."}
 
 par(pty="s", mar=c(4,4,1,1))
-plot(yield~m1, xlab="Production function fit", ylab="Observed yield (kg / ha)", cex.lab=1.3, 
-     xlim=c(0,10000), ylim=c(0,10000), lime)
+plot(yield~yhat, xlab="Expected yield (kg / ha)", ylab="Observed yield (kg / ha)", cex.lab=1.3, 
+     xlim=c(0,12000), ylim=c(0,12000), pico)
 
-curve(yq$coefficients[2]*x+yq$coefficients[1], add=T, from=0, to=10000, col="blue", lwd=2)
-curve(yq$coefficients[4]*x+yq$coefficients[3], add=T, from=0, to=10000, col="red", lwd=2)
-curve(yq$coefficients[6]*x+yq$coefficients[5], add=T, from=0, to=10000, col="blue", lwd=2)
+curve(yq$coefficients[2]*x+yq$coefficients[1], add=T, from=0, to=12000, col="dodger blue", lwd=2)
+curve(yq$coefficients[4]*x+yq$coefficients[3], add=T, from=0, to=12000, col="tomato", lwd=2)
+curve(yq$coefficients[6]*x+yq$coefficients[5], add=T, from=0, to=12000, col="dodger blue", lwd=2)
 abline(c(0,1), col="grey", lwd=1)
 ```
 
-Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO-differences and very importantly also the spatial variation for the more contingent factors in yield outcomes that were considered here. 
+Other multilevel model specifications and analyses (e.g., see [Multilevel regression case studies](https://bookdown.org/jl5522/MRP-case-studies/)) in this context are certainly possible e.g., by also including variables such as crop varieties and genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)), seasonality, spot vs broadcast application, etc. But, the data would need to be collected and assembled to better reflect their specific PICO-differences and very importantly also the spatial variation for the more contingent factors of yield outcomes that were considered here.
+
+## Results for the Rwanda trials
+
+The main reason for fitting the MLMs that were used here has to do with borrowing information from other, similar trials ...
+
+```{r, fig.align = "center", expected_yield, fig.show='hold', out.width="50%", fig.cap = "Cumulative distributions of expected maize and bean yields. In grey the control yields (no lime and no fertilizers), in blue, the addition of DAP, Urea and/or CAN fertilizers, in red, the addition of both lime and fertilizers."}
+
+# Select Rwanda
+rwa <- subset(pico, country=="RWA", select=c(lime, fertilizer, crop, yield, yhat))
+
+# Maize yields
+m0 <- subset(rwa, lime=="n" & fertilizer=="n" & crop=="maize", select=c(yhat)) 
+m2 <- subset(rwa, lime=="n" & fertilizer=="y" & crop=="maize", select=c(yhat)) 
+m3 <- subset(rwa, lime=="y" & fertilizer=="y" & crop=="maize", select=c(yhat)) 
+
+par(pty="s", mar=c(4,4,1,1))
+plot(ecdf(m0$yhat), main="", xlab="Expected maize yield (kg/ha)", ylab="Cum. proportion of observations", 
+     xlim=c(0, 10000), verticals=T, lty=1, lwd=2, cex.lab=1.3, col="dark grey", do.points=F)
+abline(0.5,0, lty=1, col="dark grey")
+plot(ecdf(m2$yhat), add=T, verticals=T, lty=1, lwd=2, col="dodger blue", do.points=F)
+plot(ecdf(m3$yhat), add=T, verticals=T, lty=1, lwd=2, col="tomato", do.points=F)
+
+# Bean yields
+b0 <- subset(rwa, lime=="n" & fertilizer=="n" & crop=="beans", select=c(yhat)) 
+b2 <- subset(rwa, lime=="n" & fertilizer=="y" & crop=="beans", select=c(yhat)) 
+b3 <- subset(rwa, lime=="y" & fertilizer=="y" & crop=="beans", select=c(yhat)) 
+
+par(pty="s", mar=c(4,4,1,1))
+plot(ecdf(b0$yhat), main="", xlab="Expected bean yield (kg/ha)", ylab="Cum. proportion of observations", 
+     xlim=c(0, 4000), verticals=T, lty=1, lwd=2, cex.lab=1.3, col="dark grey", do.points=F)
+abline(0.5,0, lty=1, col="grey")
+plot(ecdf(b2$yhat), add=T, verticals=T, lty=1, lwd=2, col="dodger blue", do.points=F)
+plot(ecdf(b3$yhat), add=T, verticals=T, lty=1, lwd=2, col="tomato", do.points=F)
+```
 
 # Main case-study conclusion and takeaways
 
-*Based on the two recent crop yield studies that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful were insufficient to warrant recommending that these types of interventions should be applied at a either a national or local scale for maize or bean crops.*
+*Based on the two recent crop yield experiments that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda. The data, though extensive, practical and very useful were insufficient to warrant recommending that these types of interventions should be applied at a either a national or local scale for maize or bean crops.*
 
 The main takeaways of this notebook are the following:
 
-* In the two studies presented the application of lime showed only modest positive effects on either maize or bean crop yields that were observed over a two year period vis-à-vis their respective control yields. The fairly low lime application rates in these trials may not have been sufficient to overcome the exchangeable (reserve) acidity constraints nor to effectively alter soil pH over the 2-year duration of the trials.
+* In the two trials presented the application of lime showed modest positive intervention effects on bean crop yields that were observed over a two year period vis-à-vis their respective control yields. The fairly low lime application rates in these trials may not have been sufficient to overcome the exchangeable (reserve) acidity constraints nor to effectively alter soil pH over the relatively short 2-year duration of the trials.
 
-* The simple initial question posed: "By how much could maize and bean yields be increased with lime applications?", could not be satisfactorily answered in this notebook. From the presented data we can only infer that there were modest yield improvements in some of the surveyed administrative units. What we do not know is if these local improvements warrant the associated lime application costs to farmers, in those places, over the long-term.
+* As might be expected, space-time-crop interactions, e.g., the `cell:trial_age` and `cell:crop` random effects are likely to dominate production function based estimation and inference. These warrant more systematic investigations. One way of doing that would be to provide the georeference of each individual trial. A reanalysis of the data that are presented here, could be done quickly. 
 
-* The associated analyses run fast (< 1 min) on a normal, 8 core, 16 GB memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as additional and/or new survey and trial data become available in Rwanda or elsewhere. 
+* The simple initial question posed: "By how much could maize and bean yields be increased with lime applications?", could not be satisfactorily answered by the data presented in this notebook. We can only infer that there were modest yield improvements in some of the surveyed administrative units. What we do not know is if these local improvements warrant the associated lime application and environmental costs to farmers, in those places, over the long-term.
+
+* The associated analyses run fast (< 1 min) on a normal, 8 core, 16 GB memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as additional and/or new survey and trial data become available in Rwanda or elsewhere.
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
@@ -188,15 +274,15 @@ Any questions, comments or corrections related to this notebook are most welcome
 
 * Put all raw survey and experiment data on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set up the forms in Excel (or anything else) and deploy the forms for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then systematically georeference, time stamp, and photograph all individual field trials and survey locations. 
 
-* East Africa is certainly not Nebraska or Brazil. Intercropping with local varieties occurs virtually everywhere in Rwanda's smallholder production systems and elsewhere in East Africa. Our recommendation is to start conducting agricultural input trials in ways that actually reflect those facts rather than on the basis of monocropping practices.
+* East Africa is certainly not Nebraska, South Africa or Brazil. *Polycropping* or *intercropping* with local staple food varieties occurs virtually everywhere in Rwanda's smallholder production crop systems and elsewhere in East Africa (see: [Mixed Farming Systems](https://osf.io/7rt6c/)). Our recommendation is to start conducting agricultural input trials in ways that actually reflect those facts rather than on the basis of largely unrealistic *monocropping* practices.
 
-* Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need a spectrometer to do that, though it might help ... also with other related soil properties. Good [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for ~50 U$ on Amazon.
+* Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need spectrometers to do that, though it might help ... also with other related soil properties. Good [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for ~50 U$ on Amazon.
 
-* Systematically document the crop varieties that are used in trials. This would help in assessing genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
+* Systematically document the crop varieties that are used in trials. This would help in assessing additional genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
-* Specify lime provenance data. Aglime sources in Rwanda (e.g., see [Sirikare et. al., 2012](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)) and elsewhere are quite variable in terms of their calcium carbonate equivalents (CCE), Ca/Mg ratios, fineness and estimated extractable limestone source reserves (also see [Nduwumuremyi et. al., 2013](https://doi.org/10.5897/JSSEM2013.0386)).
+* Specify lime provenance data. Aglime sources in Rwanda (e.g., see [Sirikare et. al., 2012](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)) and elsewhere are quite variable in terms of their calcium carbonate equivalents (CCE), Ca/Mg ratios, fineness and estimated extractable limestone source reserves (also see [Nduwumuremyi et al., 2013](https://doi.org/10.5897/JSSEM2013.0386)).
 
 * Generate more efficient agronomic response trial designs. Conducting field trials can be a quite expensive operational undertaking. Therefore, the quality of the recorded data is also an important consideration, and sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, latin-hypercube, or other) trial designs than the ones that were used to generate the data here. This would save money and may improve data quality.
 
-* Put all of the data and analysis code on Github and/or OSF ... unless there are actual [IRB](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/institutional-review-boards-frequently-asked-questions) and/or privacy concerns. Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help you more easily!
+* Put all of the data and analysis code on Github and/or OSF ... unless there are actual [IRB](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/institutional-review-boards-frequently-asked-questions) and/or privacy concerns. Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help more easily!
 
