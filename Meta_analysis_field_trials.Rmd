@@ -94,7 +94,7 @@ pico <- cbind(pn, round(pm[,8], digits = 0))
 colnames(pico) <- c("country", "trial_id", "season", "site", "crop", "fertilizer", "lime", "n", "yield")
 datatable(pico, selection = 'multiple')
 
-# Write out PICO data summary table
+# Write out file
 write.csv(pico, "./RW_lime/Results/1AF_pico.csv", row.names = FALSE)
 ```
 
@@ -138,7 +138,7 @@ m3 <- subset(out, lime=="y" & fertilizer=="y" & crop=="maize", select=c(yield))
 
 par(pty="s", mar=c(4,4,1,1))
 plot(ecdf(m0$yield), main="", xlab="Maize yield (kg/ha)", ylab="Cum. proportion of observations", 
-     xlim=c(0, 10000), verticals=T, lty=1, lwd=2, cex.lab=1.3, col="dark grey", do.points=F)
+     xlim=c(0, 12000), verticals=T, lty=1, lwd=2, cex.lab=1.3, col="dark grey", do.points=F)
 abline(0.5,0, lty=1, col="dark grey")
 plot(ecdf(m2$yield), add=T, verticals=T, lty=1, lwd=2, col="dodger blue", do.points=F)
 plot(ecdf(m3$yield), add=T, verticals=T, lty=1, lwd=2, col="tomato", do.points=F)
@@ -212,8 +212,7 @@ We can also plot the model fit to the trial data with the following chunk. This 
 
 par(pty="s", mar=c(4,4,1,1))
 plot(yield~yhat, xlab="Expected yield (kg / ha)", ylab="Observed yield (kg / ha)", cex.lab=1.3, 
-     xlim=c(0,12000), ylim=c(0,12000), pico)
-
+     xlim=c(0, 12000), ylim=c(0, 12000), pico)
 curve(yq$coefficients[2]*x+yq$coefficients[1], add=T, from=0, to=12000, col="dodger blue", lwd=2)
 curve(yq$coefficients[4]*x+yq$coefficients[3], add=T, from=0, to=12000, col="tomato", lwd=2)
 curve(yq$coefficients[6]*x+yq$coefficients[5], add=T, from=0, to=12000, col="dodger blue", lwd=2)
@@ -236,7 +235,7 @@ rwad$delta <- rwad$yhat - rwad$bhat
 
 ## Expected yield differences
 
-This is the calculation for the expected yield differences (`delta` = treated yield - base yield) for maize as compared to the fertilizer only treatment, which is the designated comparator intervention in this case.
+This is the calculation for the expected yield differences (`delta` = treated yield - base yield) for maize as compared to the fertilizer only treatments, which are the designated comparator interventions in this case.
 
 ```{r}
 # Expected yield differences (delta) for maize with lime additions over fertilizer only
@@ -290,7 +289,7 @@ We can only do this direct comparison for `maize` as `beans` were not considered
 kenb <- subset(cont, country=="KEN", select=c(trial_id, bhat))
 keny <- subset(pico, country=="KEN", select=c(trial_id, site, lime, fertilizer, crop, yield, yhat))
 kend <- merge(keny, kenb, by = "trial_id")
-kend$delta <- kend$yhat - kend$bhat
+kend$delta <- kend$yhat - kend$yhat
 ```
 
 ```{r, echo = FALSE, fig.align = "center", yield_comparison, fig.show='hold', out.width="50%", fig.cap = "Cumulative distributions of expected maize yields in Rwanda and Kenya. In grey yields without lime and fertilizers, in blue, the addition of DAP, Urea and/or CAN fertilizers, in red, the addition of both lime and fertilizers."}
@@ -315,6 +314,27 @@ plot(ecdf(k3$yhat), add=T, verticals=T, lty=1, lwd=2, col="tomato", do.points=F)
 
 The main question that this raises is about the efficacy and the farm-level economics of applying lime, particularly in small-holder production system in East Africa. Similar blind alleys and magic bullets have been pursued before without evidence of any large scale impacts.
 
+## Rwanda site indices
+
+The intent of the next chunks is to illustrate that some of the `sites` used in the Rwanda trials may be more (or less) responsive to liming interventions than others, accounting for the relevant comparators.
+
+```{r}
+sl <- aggregate(rwad$delta, list(rwad$site), FUN = length)
+sm <- aggregate(rwad$delta, list(rwad$site), FUN = mean)
+ss <- aggregate(rwad$delta, list(rwad$site), FUN = sd)
+si <- cbind(sl, sm$x, ss$x)
+colnames(si) <- c("site", "n", "delta", "sd")
+```
+
+```{r, fig.align = "center", site_index, fig.cap = "Expected overall crop yield differences (`delta`) to lime applications (in kg/ha) between trial sites in Rwanda. The thick parts of the lines represent 1 standard deviation from the mean difference values; the thin parts of lines represent 2 standard deviations around the mean (i.e., the 95% confidence interval)."}
+
+par(pty="s")
+coefplot(si$delta, si$sd, varnames = si$site, xlim = c(-600, 600), cex.pts = 2, cex.var = 0.9,
+         CI = 2, main="")
+```
+
+Notice that the 95% CIs for the expected site-level lime response effects for the Rwanda trials are wide, and that all but one site (`nyakarera`) include 0 delta. This indicates that even at a site-level the expected yield gains from lime applications were also modest on average in these trials.
+
 # Main meta-analysis conclusions and takeaways
 
 *Based on the crop yield trials that were analyzed here, we currently would not be able to justify nor recommend investments in wide-spread aglime applications in the maize and bean cropping systems of Rwanda, relative to their comparators (fertilizer applications only). The data, though extensive, practical and very useful, were insufficient to warrant recommending that these types of interventions should be applied at a national scale for either maize or bean crops.*
@@ -323,27 +343,27 @@ The main takeaways of this notebook are the following:
 
 * In the trials presented, the application of lime showed modest positive intervention effects on crop yields that were observed over 11 cropping seasons vis-à-vis their respective comparator yields. The fairly low lime application rates in these trials may not have been sufficient to overcome the exchangeable (reserve) acidity constraints nor to effectively alter soil pH.
 
-* As might be expected and demonstrated, space-time-crop interactions, i.e., the `season/site` varying effects are likely to dominate production function estimates and inference. However, these warrant more systematic investigations. One initial way of doing that would be to provide the georeference of each individual trial. A reanalysis of the data that are presented here, could subsequently be done quickly. 
+* As might be expected and demonstrated, space-time-crop interactions, i.e., the `season/site` varying effects are likely to dominate production function estimates and inference. However, these warrant more systematic investigations. One initial way of doing that would be to include the georeference of each individual trial. Amendments to and reanalyses of the data that are presented here could subsequently be accomplished quickly. 
 
-* The simple initial question posed: "By how much could maize and bean yields be increased with lime applications?", can be answered using the causal modeling approach that was used here. What we do not know is if these *"improvements"* warrant the associated lime application and environmental costs to farmers, in the most affected places, and over the long-term.
+* The simple initial question posed: "By how much could maize and bean yields be increased with lime applications?", can be answered using the causal modeling approach that was used here. What we do not know is if these additional inputs warrant the associated lime application and environmental costs to farmers, in the most affected places, and over the long-term.
 
 * The associated analyses run fast (< 2 min) on a normal, 8 core, 16 GB memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as additional and/or new survey and trial data become available in Rwanda or elsewhere. We will post additional material for calculating full [Bayesian posterior predictions](https://www.bayesrulesbook.com/chapter-8.html) in a future notebook. These take much longer to run.
 
 # Addendum: Recommended field trial protocol adjustments
 
-* Should you be interested in more than unreplicated case studies, ensure that individual experimental designs can actually be harmonized for more efficient and reliable learning. This bears careful thinking about the relevant PICO factors prior to initiating any additional liming projects and trials. This notebook provides prior information about how to go about that process.
+* Should you be interested in more than unreplicated case studies, ensure that individual experimental designs can actually be harmonized for more efficient and reliable learning. This bears careful thinking about the relevant PICO factors prior to initiating any additional liming projects and trials. This notebook generates the needed prior information for such a process.
 
-* Once those factors have been thought through, then generate more efficient agronomic response trial designs. Conducting field trials is a quite expensive operational undertaking. The quality of the recorded data is also an important consideration, and sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, latin-hypercube, or other) trial designs than the ones that were used to generate the data that was used here. This would save money, improve data quality, and might also improve statistical inference and learning.
+* Once those factors have been thought through, more efficient agronomic response trial designs can be generated. Conducting field trials is a quite expensive operational undertaking. The quality of the recorded data is also an important consideration, and sometimes less is more this context. We encourage you to explore leaner, more optimized (e.g., d-optimized, latin-hypercube, or other) trial designs than the ones that were used to generate the data that were used here. This would save money, improve data quality, and might also improve statistical inference and learning.
 
 * Put all raw survey and experimental designs on KoBoToolbox. Just go to [KoBoToolbox](https://www.kobotoolbox.org/), set up the forms in Excel (or anything else) and deploy the forms for your surveys and experiments using [ODK](https://opendatakit.org/) ... both are free and easy to use! Then systematically georeference, time stamp, photograph and monitor all individual field trials and/or survey locations. 
 
-* East Africa is certainly not Nebraska, South Africa or Brazil. *Polycropping* or *intercropping* with local staple food varieties occurs virtually everywhere in Rwanda's smallholder production crop systems and elsewhere in East Africa (see: [Mixed Farming Systems](https://osf.io/7rt6c/)). Our recommendation is to start conducting agricultural input trials in ways that actually reflect those facts rather than on the basis of largely unrealistic *monocropping* practices.
+* East Africa is certainly not Nebraska, South Africa or Brazil. *Polycropping* or *intercropping* with local staple food varieties occurs virtually everywhere in Rwanda's smallholder production cropping systems and elsewhere in East Africa (see: [Mixed Farming Systems](https://osf.io/7rt6c/)). Our recommendation is to start conducting agricultural input trials in ways that actually reflect those facts rather than on the basis of largely unrealistic *monocropping* practices.
 
 * Repeat soil acidity (pH & exchangeable acidity) measurements over time. You don't really need spectrometers to do that, though it might help ... also with other related soil properties. Good [pH probes](https://www.amazon.com/ph-probe/s?k=ph+probe) sell for ~50 U$ on Amazon.
 
 * Systematically document the crop varieties that are used in trials. This would help in assessing additional genotype × environment interactions ([GE](https://en.wikipedia.org/wiki/Gene%E2%80%93environment_interaction)) that plant breeders need to assess, recommend, and develop acid tolerant crop varieties in different places. 
 
-* Specify lime provenance data. Aglime sources in Rwanda (e.g., see [Sirikare et. al., 2012](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)) and elsewhere are quite variable in terms of their calcium carbonate equivalents (CCE), Ca/Mg ratios, fineness and estimated extractable limestone source reserves (also see [Nduwumuremyi et al., 2013](https://doi.org/10.5897/JSSEM2013.0386)).
+* Consistently specify lime provenance data. Aglime sources in Rwanda (e.g., see [Sirikare et. al., 2012](https://ruforum.org/sites/default/files/Sirikare%20et%20al.pdf)) and elsewhere are quite variable in terms of their calcium carbonate equivalents (CCE), Ca/Mg ratios, fineness and estimated extractable limestone source reserves (also see [Nduwumuremyi et al., 2013](https://doi.org/10.5897/JSSEM2013.0386)).
 
 * Put all of the data and analysis code on Github and/or OSF ... unless there are actual [IRB](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/institutional-review-boards-frequently-asked-questions) and/or privacy concerns. Make the data and the code truly [FAIR](https://en.wikipedia.org/wiki/FAIR_data) so that others can attempt to help more easily!
 
