@@ -103,10 +103,10 @@ datatable(pico, rownames = FALSE, select = "multiple")
 * `season` - year and season (a or b) 
 * `site` - Site name (22 sites in Rwanda, 42 sites in total including Kenya and Tanzania)
 * `crop` - Crop type (maize or beans)
-* `n` - total number of trials per site & crop type
-* `lime` - average lime application rates (t ha^-1^ CCE) per site and crop type
-* `yi` - mean yield response (treated - control, in kg ha^-1^) per site and crop type
-* `vi` - variance of yield response (SE^2^ of the mean yield response) per site and crop type
+* `n` - total number of trials per `season`, `site` & `crop` type
+* `lime` - average lime application rates (t ha^-1^ CCE) per `season`, `site`, & `crop` type
+* `yi` - mean yield response (treated - control, in kg ha^-1^) per `season`, `site` & `crop` type
+* `vi` - variance of yield response (SE^2^ of the mean yield response) per `season`, `site` & `crop` type
 
 # Meta-analyses
 
