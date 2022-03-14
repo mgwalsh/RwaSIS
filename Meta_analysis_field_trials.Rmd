@@ -7,7 +7,7 @@ output:
     toc: true
     toc_depth: 1
     fig_caption: true
-    css: style.css
+    css: style1.css
 ---
 
 ```{r setup, echo = FALSE}
@@ -20,7 +20,7 @@ Soil acidity affects soil nutrient availability, rhizobial and other microbial a
 
 The application of [Agricultural lime (aglime)](https://en.wikipedia.org/wiki/Agricultural_lime) can be used to mitigate the effects of soil acidity on nutrient availability, reduced microbial activity, and the occurrence of [Aluminium](https://www.sciencedirect.com/science/article/pii/B9780128031582000011) and/or [Manganese](https://www.tandfonline.com/doi/abs/10.1080/01904169809365409) toxicities. The rocks and minerals from which agricultural lime is derived, primarily [Limestone](https://en.wikipedia.org/wiki/Limestone), but also [Chalk](https://en.wikipedia.org/wiki/Chalk), is primarily composed of calcium (CaO) and/or magnesium (MgO) oxides, which are readily measured by e.g., [X-ray fluorescence](https://en.wikipedia.org/wiki/X-ray_fluorescence). Limestone is typically pulverized and/or chemically altered to produce different aglime products of varying efficacy in increasing soil pH and crop yields. Similar to chemical fertilizers, the use of aglime also generates significant greenhouse gas emissions in its production, to-farm-gate transport and through its field application, which should be minimized.
 
-A [Meta-analysis](https://en.wikipedia.org/wiki/Meta-analysis) is an analytical approach that uses statistical techniques to combine the results from different studies to obtain quantitative estimates of the overall effects of particular interventions on defined outcomes. Generally, the aim is to derive a estimates of a common outcome variable, based on the relevant sources of variation across studies. The scope of meta-analyses is defined by the type of population, the types of interventions, their comparators, and the types of outcomes that are of interest. The acronym PICO (population, interventions, comparators and outcomes) helps to serve as a reminder of these (e.g., see the [Cochrane Handbook](https://training.cochrane.org/handbook)). We will follow the Cochrane guidance here and will go through some of the relevant analysis steps including data setup, [exploratory data analysis](https://en.wikipedia.org/wiki/Exploratory_data_analysis), [data modeling](https://en.wikipedia.org/wiki/Data_modeling) and model interpretation. 
+A [Meta-analysis](https://en.wikipedia.org/wiki/Meta-analysis) is an analytical approach that uses statistical techniques to combine the results from different studies to obtain quantitative estimates of the overall effects of particular interventions on defined outcomes. Generally, the aim is to derive estimates of a common outcome variable, based on the relevant sources of variation across studies. The scope of meta-analyses is defined by the type of population, the types of interventions, their comparators, and the types of outcomes that are of interest. The acronym PICO (population, interventions, comparators and outcomes) helps to serve as a reminder of these (e.g., see the [Cochrane Handbook](https://training.cochrane.org/handbook)). We will follow the Cochrane guidance here and will go through some of the relevant analysis steps including data setup, [exploratory data analysis](https://en.wikipedia.org/wiki/Exploratory_data_analysis), [data modeling](https://en.wikipedia.org/wiki/Data_modeling) and model interpretation. 
 
 The main question that is posed here is: **"By how much could crop yields be increased with aglime applications?"** The relevant PICO eligibility definitions for addressing this question are:
 
@@ -37,7 +37,7 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r, results = 'hide'}
 # Package names
-packages <- c("osfr", "dplyr", "quantreg", "DT", "metafor")
+packages <- c("osfr", "dplyr", "stringi", "quantreg", "DT", "metafor", "metaviz")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -61,6 +61,7 @@ dir.create("Results")
 osf_retrieve_file("7mt6k") %>% osf_download(conflicts = "overwrite")
 lime <- read.table("1AF_lime.csv", header=T, sep=",")
 lime$season <- paste(lime$year, lime$season, sep="")
+lime$site <- stri_trans_totitle(lime$site) 
 ```
 
 ```{r, echo = FALSE}
@@ -80,14 +81,15 @@ colnames(trial) <- c("trial_id","country", "season", "site","year","crop","lime_
 trial$delta <- trial$treated_yield - trial$control_yield
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results = 'hide'}
 rwa <- subset(trial, country=="RWA", select=c(trial_id, control_yield, treated_yield, delta))
 rqd <- rq(I(treated_yield/1000)~I(control_yield/1000), tau=c(0.025,0.5,0.975), data=rwa)
+rqd
 ```
 
-We can plot the `delta` values out to obtain a feel for the distribution of the aglime lime yield comparisons for the `r length(unique(rwa$trial_id))` OAF aglime trials that we consider to be eligible under our PICO definition for Rwanda.
+We can plot the `delta` values out to obtain a feel for the distribution of the aglime yield effect comparisons for the `r length(unique(rwa$trial_id))` OAF aglime trials that we consider to be eligible under our PICO definition for Rwanda.
 
-```{r, fig.align = 'center', fig.show='hold', out.width="50%", fig.cap = "Figure 1: Plots showing the relationships between aglime intervention and fertilizer only comparator crop yields for PICO eligible liming trials conducted in Rwanda."}
+```{r, fig.align = 'center', fig.show='hold', out.width="50%", fig.cap = "**Figure 1:** Plots showing the relationships between aglime intervention and fertilizer only comparator crop yields for PICO eligible liming trials conducted in Rwanda."}
 
 par(pty="s", mar=c(4,4,1,1))
 plot(I(treated_yield/1000)~I(control_yield/1000), rwa, xlim = c(0,15), ylim = c(0,15),
@@ -98,7 +100,7 @@ curve(rqd$coefficients[2]*x+rqd$coefficients[1], add=T, from=0, to=15, col="dodg
 curve(rqd$coefficients[4]*x+rqd$coefficients[3], add=T, from=0, to=15, col="red", lwd=2)
 curve(rqd$coefficients[6]*x+rqd$coefficients[5], add=T, from=0, to=15, col="dodger blue", lwd=2)
 
-plot(ecdf(rwa$delta/1000), main="", xlab="Aglime yield difference (t/ha)", ylab="ECDF", xlim=c(-6,6),
+plot(ecdf(rwa$delta/1000), main="", xlab="Aglime yield effect (t/ha)", ylab="ECDF", xlim=c(-6,6),
      verticals=T, lty=1, lwd=2, cex.lab=1.3, col="tomato", do.points=F)
 abline(0.5,0, lty=1, col="grey")
 ```
@@ -152,19 +154,19 @@ rm0
 rb0
 ```
 
-```{r, fig.align = 'center', fig.show='hold', fig.cap = "Figure 2: Forest plots showing the mean difference maize (top) and bean (bottom) yields in response to lime treatments in Rwanda based on random effects models. Note that the dashed line around the RE model polygon (diamond) at the bottom of each plot indicates the 95% prediction interval for the combined outcomes, which in both cases includes 0."}
+```{r, fig.align = 'center', fig.show='hold', fig.height = 8, fig.cap = "**Figure 2:** Forest plots showing the mean difference maize (top) and bean (bottom) yields in response to lime treatments in Rwanda based on random effects models. Note that the dashed line around the RE model polygon (diamond) at the bottom of each plot indicates the 95% prediction interval for the combined outcomes, which in both cases includes 0."}
 
 labs <- paste(pico$country, pico$season, pico$site, pico$crop, sep = ", ")
-op <- par(cex=0.8, font=4)
-par(pty="s", mar=c(4,4,1,1))
+op <- par(cex=0.9, font=4)
+par(mar=c(4,4,1,1))
 
 # Maize
 forest(rm0, slab = labs, header="Country, Season, Site, Crop", 
-       xlab = "Maize yield difference (kg/ha)", digits = 0, addpred=TRUE)
+       xlab = "Maize yield effect (kg/ha)", digits = 0, addpred=TRUE)
 
 # Beans
 forest(rb0, slab = labs, header="Country, Season, Site, Crop", 
-       xlab = "Bean yield difference (kg/ha)", digits = 0, addpred=TRUE)
+       xlab = "Bean yield effect (kg/ha)", digits = 0, addpred=TRUE)
 ```
 
 We can also look at the moderator effects of the average liming rates (t/ha) that were applied at the different sites across the Rwanda trials with mixed-effects models.
@@ -183,7 +185,7 @@ ry1
 
 Below is an example of a bubble plot showing the observed yield differences of the individual trial sites plotted against a quantitative moderator variable i.e., in this case the average lime application rate yield effects that are grouped by `season`, `site` and `crop` type in Rwanda. The size of the points is proportional to the precision (inverse variance) weights that individual studies received in the analysis, with larger points receiving more weight. Based on the mixed-effects meta-regression models above, the predicted average yield response as a function of the lime application rate is also shown in the plot, with the corresponding 95% confidence interval. Note the heterogeneity between trials that received between 1 - 1.5 (t ha^-1^ CCE) lime applications.
 
-```{r, echo = FALSE, fig.align = 'center', fig.show='hold', out.width="75%", fig.cap = "Figure 3: Lime application rate effects on mean yield differences in Rwanda based on a site-level mixed-effects model."}
+```{r, echo = FALSE, fig.align = 'center', fig.show='hold', out.width="75%", fig.cap = "**Figure 3:** Lime application rate effects on mean yield differences in Rwanda based on a site-level mixed-effects model."}
 
 par(pty="s", mar=c(4,4,1,1))
 regplot(ry1, mod = "lime", xlim=c(0.5,2.5), predlim=c(0.5,2.5), 
@@ -204,11 +206,11 @@ ry2
 
 **The main takeaways from this notebook are the following:**
 
-* In the OAF trials presented, the application of lime showed only small positive intervention effects on crop yields (~350 kg ha^-1^ per metric ton ha^-1^ of lime added), which were observed over 8 cropping seasons relative to their respective comparator yields. The fairly low average lime application rates (see Figure 2) in these trials may not have been sufficient to overcome the exchangeable (reserve) acidity constraints nor to effectively alter soil pH. However, testing for specific lime dose-response relationships would require additional and more systematically collected intervention and comparator data.
+* In the OAF trials presented, the application of lime showed only small positive intervention effects on crop yields (~350 kg ha^-1^ per metric ton ha^-1^ of lime added), which were observed over `r length(unique(pico$season))` cropping seasons relative to their respective comparator yields. The fairly low average lime application rates (see Figure 2) in these trials may not have been sufficient to overcome the exchangeable (reserve) acidity constraints nor to effectively alter soil pH. However, testing for specific lime dose-response relationships would require additional and more systematically collected intervention and comparator data. See the additional guidance about soil spectral test based [liming recommendations](https://osf.io/2v46w/) at this link. Just download the html file to display it in your browser.
 
-* As is demonstrated, site-level varying effects are likely to dominate production function estimates and inference. These warrant more systematic investigations. The heterogeneity of the trials that were reported here is high (I^2^ > 80%, e.g., see `model ry1` and Figure 2), indicating that additional subgroup and/or moderator analyses are/would be needed to more consistently differentiate between both interventions and comparators in the underlying trial designs. One initial way of correcting for that uncertainty would be to include the georeference of each individual on-farm trial. Amendments to and reanalyses of the data that are presented here could subsequently be accomplished quickly. This would also assist in developing spatially explicit models for lime responses in the future.
+* As is demonstrated, site-level varying effects are likely to dominate production function estimates and inference. These warrant more systematic investigations. The heterogeneity of the trials that were reported here is high (I^2^ > 80%, e.g., see `model ry1` results and Figures 2 & 3), indicating that additional subgroup and/or moderator analyses are/would be needed to more consistently differentiate between both interventions and comparators in the underlying trial designs. One initial way of correcting for that uncertainty would be to include the georeference of each individual on-farm trial. Amendments to and reanalyses of the data that are presented here could subsequently be accomplished quickly. This would also assist in developing spatially explicit models for lime responses in the future.
 
-* The simple initial question posed: *"By how much could crop yields be increased with aglime applications?"*, can be answered using the approach and workflow that was used in this notebook. Additional crops, lime application treatments and georeferenced trials could be readily amended to the PICO framework and the associated analyses that were presented here.
+* The simple initial question that was posed: *"By how much could crop yields be increased with aglime applications?"*, can be answered using the approach and workflow that was used in this notebook. Additional crops, lime application treatments and georeferenced trials could be readily amended to the PICO framework and the associated analyses that were presented here.
 
 * The workflow runs fast (< 2 min) on a normal, 8 core, 16 GB memory computer and could be further automated for the purpose of EDAs, outlier screening, monitoring and data modeling as additional and/or new trial data become available in Rwanda or elsewhere. We will post additional material for calculating full [Bayesian posterior predictions](https://www.bayesrulesbook.com/chapter-8.html) in a future notebook. These take much longer to run.
 
