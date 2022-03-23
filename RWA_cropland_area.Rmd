@@ -7,7 +7,7 @@ output:
     toc: true
     toc_depth: 2
     fig_caption: true
-    css: style.css
+    css: style1.css
 ---
 
 ```{r, echo=FALSE}
@@ -18,11 +18,11 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 Quantifying the geographical extent, location and spatial dynamics of croplands, rural and urban settlements and different types of vegetation cover provides essential information for monitoring and managing human dominated (*anthropic*) ecosystems and landscapes. Large portions of Africa remain *terra incognita* in this context. The main reason for monitoring [land cover](https://en.wikipedia.org/wiki/Land_cover) is to assess where in a particular country or region of interest ([ROI](https://en.wikipedia.org/wiki/Region_of_interest)) significant impacts of humans on ecosystem services can be expected, and *vice versa*.
 
-[GeoSurvey](https://geosurvey.qed.ai/) is a platform for collecting and analyzing land cover observations. High resolution satellite images and/or other aerial (e.g., aircraft or drone) imagery can be systematically and rapidly labeled by either trained image interpreters and/or by vetted *crowds* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations can result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for monitoring [land use](https://nca2018.globalchange.gov/chapter/5/). When supplied with properly time-stamped imagery, GeoSurvey can also be used for monitoring ecosystem and landscape changes. 
+[GeoSurvey](https://geosurvey.qed.ai/) is an application for collecting and analyzing land cover observations. High resolution satellite images and/or other aerial (e.g., aircraft or drone) imagery can be systematically and rapidly labeled by either trained image interpreters and/or by vetted *crowds* of [Citizen Scientists](https://en.wikipedia.org/wiki/Citizen_science). When done with care, these observations can result in large, well-structured, properly labeled, geospatial data sets that are suitable for machine learning and geostatistical predictions of land cover and in some instances for monitoring [land use](https://nca2018.globalchange.gov/chapter/5/). When supplied with properly time-stamped imagery, GeoSurvey can also be used for monitoring ecosystem and landscape changes. 
 
 The detailed manual for conducting your own GeoSurveys is available at: [GeoSurvey manual](https://docs.google.com/document/d/1y-HYUSYpDVESPdmEcl3I2kuL0bwrT41wMiq0zE9uzOs/edit). The manual should definitely be consulted to obtain more information about how GeoSurvey can be used to carry out potentially high value surveys of remote areas. There is also a great slide deck available [here](https://docs.google.com/presentation/d/1vBQ-By8LLvyJQzMBFaqUuRwFFeL7Y8QXUtBifx-3jn4/edit#slide=id.g14d47405c8_0_0), which illustrates different land cover and use labeling approaches. I'll not cover those issues in this notebook and will assume that you already have well-designed GeoSurvey data and collocated spatial features in hand.
 
-*The main intent of this notebook is to illustrate starter code guidelines for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).*
+The main goal of this notebook is to illustrate starter code guidelines for predictive land cover mapping and the associated statistical small area estimates [SAE](https://www.census.gov/srd/csrm/SmallArea.html) for variables such as cropland area, building densities, settlement occurrences and woody vegetation cover that define the anthropic land cover types in a given country or any other ROI. I use Rwanda's most recent GeoSurvey data and the associated gridded (raster) features to illustrate the general approach and the main data analysis steps. Rwanda, being a small country, is convenient for this illustration because the script will run reasonably fast and will hopefully not test your patience ... too much. You can also try other African GeoSurvey datasets, which are openly available via the [GeoSurvey workflow repository on OSF](https://osf.io/vxc97/).
 
 # Data setup
 
@@ -30,7 +30,9 @@ To actually run this notebook, you will need to load the packages indicated in t
 
 ```{r}
 # Package names
-packages <- c("osfr", "downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets", "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet", "klaR", "dplyr", "doParallel", "dismo", "arm")
+packages <- c("osfr", "downloader", "jsonlite", "rgdal", "sp", "raster", "leaflet", "DT", "htmlwidgets",
+              "caret", "caretEnsemble", "mgcv", "MASS", "randomForest", "xgboost", "nnet",
+              "klaR", "dplyr", "doParallel", "dismo", "arm")
 
 # Install packages
 installed_packages <- packages %in% rownames(installed.packages())
@@ -75,7 +77,8 @@ unzip("GeoSurvey_figs.zip", overwrite = T)
 
 The figure below attempts to clarify the basic GeoSurvey observation and tagging approach with 4 archetypal (250 × 250 m) quadrats from Rwanda (i.e., the blue squares in the figure). The upper left portion of the figure shows all of the tagged buildings in a quadrat where buildings are present. The upper right of the figure shows an example of a cropland grid count where cropland occupies virtually the entire quadrat. The applied if-else rule is that if cropland is present, then `ccount` is set to a count between 1-16 depending on the amount of cropland cover that is present within the quadrat. If cropland is absent, then `ccount` is set to 0. The lower left shows a quadrat with dense woody vegetation (> 60% cover). The lower right is an example of a *grassland* quadrat in which buildings, cropland and dense woody vegetation cover are absent. Note that mixtures of these land cover archetypes occur frequently (e.g., buildings and/or dense woody vegetation and croplands), at this spatial scale and can be accounted for in the subsequent data analysis and prediction steps. 
 
-```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%'}
+```{r geosurvey_examples, echo=FALSE, fig.align="center", fig.cap="**Figure 1:** Examples of archetypal GeoSurvey quadrats observed over Rwanda.", out.width = '95%'}
+
 knitr::include_graphics("./RW_GS20/GeoSurvey_examples.png")
 ```
 
@@ -203,7 +206,8 @@ The following chunks calibrate cropland presence/absence observations using diff
 
 4. Model prediction results are subsequently placed back into the gridded feature stack for model refitting and/or updating. This step is also really useful for improving model performance over time with new data and/or for developing predictions at higher spatial resolution where needed.
 
-```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="GeoSurvey land cover prediction workflow.", out.width = '70%'}
+```{r training_validation_approach, echo=FALSE, fig.align="center", fig.cap="**Figure 2:** GeoSurvey land cover prediction workflow.", out.width = '70%'}
+
 knitr::include_graphics("./RW_GS20/geosurvey_prediction_workflow.png")
 ```
 
@@ -381,7 +385,7 @@ saveRDS(st, fname)
 summary(st)
 ```
 
-## Model evaluation 
+## Stack prediction 
 
 A [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) provides information about a classification test's performance. The closer the apex of the curve toward the upper left corner, the greater the discriminatory  ability  of the test (i.e., the  true-positive rate (*Sensitivity*) is high and the false-positive rate (1 - *Specificity*) is low. I use it here to assess the classification performance of the stacked model (`st`) on the validation dataframe. This next chunk does the calculations and plots the ROC curve using the [dismo](https://cran.r-project.org/web/packages/dismo/dismo.pdf) package. Areas under the ROC curve [AUC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) of 1 discriminate perfectly. AUC values of 0.5 are no better than a random guess. 
 
@@ -394,7 +398,7 @@ cpa <- subset(cp_val, cp_val=="N", select=c(Y))
 cp_eval <- evaluate(p=cpp[,1], a=cpa[,1]) ## calculate ROC on validation set
 ```
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, fig.cap = "Cropland classification ROC curve for the validation set."}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, fig.cap = "**Figure 3:** Cropland classification ROC curve for the validation set."}
 par(pty="s", mar=c(4,4,1,1))
 plot(cp_eval, 'ROC') ## plot ROC curve
 ```
@@ -498,35 +502,19 @@ anova(m3, m4) ## anova comparison
 
 In Rwanda agricultural activities are generally conducted in close proximity to buildings and rural settlements, though generally not in urban areas (e.g., the city of Kigali). The map below shows the relationship between modeled building densities (`bcount`) in relation to Rwanda's main [electrical grid](https://www.usaid.gov/powerafrica/rwanda) infrastructure. This is a good depiction of where people reside in Rwanda. There is an additional R-script available on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RW_GS_dens.R) that does the relevant calculations, generates the spatial building density predictions including geotif files, and their uncertainties. Also, again note that this is the main anthropic variable driving cropland expansions and the associated land management interventions and environmental problems. 
 
-```{r, echo = FALSE, fig.align="center", fig.cap = "Predicted building counts (no. buildings ha^-1^) relative to the main electrical grid in Rwanda (2020).", out.width = '90%'}
+```{r, echo = FALSE, fig.align="center", fig.cap = "**Figure 4:** Predicted building counts (no. buildings ha^-1^) relative to the main electrical grid in Rwanda (2020).", out.width = '90%'}
+
 knitr::include_graphics("./RW_GS20/BD_grid.png")
 ```
-
-## Woody vegetation
-
-In Rwanda dense woody vegetation (> 60%) generally occurs only in protected areas such as national parks and/or nature reserves.
 
 ## Land cover
 
 This map shows the current AfSIS land cover classification for Rwanda (in 8 categories for the year 2020) and their associated area estimates. The map was derived using a combination of the occurrence (presence / absence) of buildings, croplands and dense (> 60%) woody vegetation cover using the ensemble prediction approaches described in the main notebook text. Note that the cropland region of interest area is highlighted by the red rectangles in the map legend table. 
 
-```{r, echo = FALSE, fig.align="center", fig.cap = "AfSIS GeoSurvey land cover classification and area estimates for Rwanda (LCC, 2020).", out.width = '95%'}
+```{r, echo = FALSE, fig.align="center", fig.cap = "**Figure 5:** AfSIS GeoSurvey land cover classification and area estimates for Rwanda (LCC, 2020).", out.width = '95%'}
+
 knitr::include_graphics("./RW_GS20/LCC.png")
 ```
-
-## Conservation structures
-
-The map below shows the areas where soil conservation structures are predicted to occur based on the current GeoSurvey observations of terraces and other structures such as contour bunds. The map was derived using a combination of geospatial variables using the ensemble prediction approaches described in the main notebook text.
-
-```{r, echo = FALSE, }
-
-```
-
-## Related notebooks
-
-You can also check out related notebooks on Github for additional context and content including:
-
-*
 
 ## {-}
 
@@ -542,4 +530,4 @@ The main takeaways of this notebook are the following:
 
 * The predictions in the introductory examples covered by this notebook will be updated as additional ground data for the occurrence of e.g., specific crops, cropping systems and soil / site surveys become available for Rwanda over the coming year via the ongoing [RwaSIS project](https://minagri.prod.risa.rw/updates/news-details/rwanda-launches-soil-information-service-project-to-improve-agriculture-productivity). 
 
-Any questions or comments about this notebook are most welcome via [AfSIS](mailto:mgw.africasoils.info).
+Any questions or comments about this notebook are most welcome via [AfSIS](mailto:mgw.africasoils.info). You can download the entire markdown document from my [Github](https://github.com/mgwalsh/RwaSIS/blob/master/RWA_cropland_area.Rmd). 
