@@ -344,6 +344,7 @@ RW_rules_rhs <- apriori(crops_RW, parameter = list(target = "rules", support = 0
 RW_rules_rhs <- subset(RW_rules_rhs, subset = lift > 1.5)
 RW_rules_rhs <- RW_rules_rhs[!is.redundant(RW_rules_rhs)]
 RW_rules_rhs <- sort(RW_rules_rhs, by = "support")
+RW_rules <- DATAFRAME(RW_rules_rhs)
 ```
 
 ```{r, fig.align ='center', out.width = "80%", fig.cap = "**Figure 6: **Association rule graph for the main staple crop combinations found in Rwanda."}
@@ -373,6 +374,7 @@ TZ_rules_rhs <- apriori(crops_TZ, parameter = list(target = "rules", support = 0
 TZ_rules_rhs <- subset(TZ_rules_rhs, subset = lift > 1.5)
 TZ_rules_rhs <- TZ_rules_rhs[!is.redundant(TZ_rules_rhs)]
 TZ_rules_rhs <- sort(TZ_rules_rhs, by = "support")
+TZ_rules <- DATAFRAME(TZ_rules_rhs)
 ```
 
 ```{r, echo = FALSE, fig.align = "center", out.width = "80%", fig.cap = "**Figure 7:** Association rule graph of the main staple crop combinations found in Tanzania."}
@@ -390,7 +392,7 @@ The main message here is that the ARs observed in Rwanda are clearly quite diffe
 
 ## Mixed cropping in proximity to buildings
 
-The main difference might be that staple crops in Rwanda are typically grown in much closer proximity to buildings than those in Tanzania; that is, broadly reflecting [allee](https://en.wikipedia.org/wiki/Allee_effect) (or positive population density dependence) effects. Alternatively, in Tanzania this could be a remnant [Ujamaa](https://en.wikipedia.org/wiki/Ujamaa#Ujamaa_village_structure) effect. During the 1960's - 1980's, Ujamaa villages in Tanzania were widely constructed in particular ways to emphasize community and economic self-reliance. The village was structured with homes in the center in rows with a school and a town hall as the center complex. These villages were typically surrounded by larger communal agricultural farms, which were often monocropped. The most current land cover map of Tanzania appears to reflect this historical pattern (see section 4). 
+The main difference might be that staple crops in Rwanda are typically grown in much closer proximity to buildings than those in Tanzania; that is, broadly reflecting [allee](https://en.wikipedia.org/wiki/Allee_effect) (or positive population density dependence) effects. Alternatively, in Tanzania this could be a remnant [Ujamaa](https://en.wikipedia.org/wiki/Ujamaa#Ujamaa_village_structure) effect. During the 1960's - 1980's, Ujamaa villages in Tanzania were widely constructed in particular ways to emphasize community and economic self-reliance. The village was structured with homes in the center in rows with a school and a town hall as the center complex. These villages were typically surrounded by larger communal agricultural farms, which were often monocropped. The most current land cover map of Tanzania appears to reflect this historical pattern (see section 3). 
 
 The next chunks explore the AR patterns of mixed staple systems in 50 m proximity to buildings in the the 2 surveys. 
 
@@ -485,15 +487,15 @@ Figure 10 and its AR table represents one of the central data mining results exp
 
 * This notebook explores a relatively large ($n$ = `r nrow(staple_df)`) survey dataset of 20 staple food crop occurrences (presence/absence) in 0.25 ha circular plots (PSUs) collected on spatially representative cropland sampling frames in Rwanda and Tanzania. The data were designed suitable for baseline staple crop mapping and crop diversity monitoring activities. The data include ground-survey observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower.
 
-* Maize is the most common staple and yam is the least common across the two nationally representative surveys from Rwanda and Tanzania (see Figures 2 & 3 for their respective rankings). Wheat, rice and potatoes only occur rarely in both Rwanda and Tanzania; i.e., at <10% of the current nationally representative observations. Note that these crops have been identified as priorities for further agronomic research in Rwanda by [RAB](https://www.rab.gov.rw/index.php?id=158) in addition to maize, beans, cassava and banana as part of an ongoing Crop Intensification Program ([CIP](https://www.rab.gov.rw/index.php?id=188)). [TARI](https://www.tari.go.tz/) have identified sunflower, rice and wheat in addition to maize and livestock as their main research priorities.
+* Maize is the most common staple and yam is the least common across the two nationally representative surveys from Rwanda and Tanzania (see Figures 3 & 4 for their respective rankings). Wheat, rice and potatoes only occur rarely in both Rwanda and Tanzania; i.e., at <10% of the current nationally representative observations. Note that these crops have been identified as priorities for further agronomic research in Rwanda by [RAB](https://www.rab.gov.rw/index.php?id=158) in addition to maize, beans, cassava and banana as part of an ongoing Crop Intensification Program ([CIP](https://www.rab.gov.rw/index.php?id=188)). [TARI](https://www.tari.go.tz/) have identified sunflower, rice and wheat in addition to maize and livestock as their main research priorities.
 
 * Mixed staple cropping systems predominate Rwanda's and Tanzania's croplands. Poststratified survey analyses indicate that the vast majority of survey PSUs are mixed in Rwanda and Tanzania. These results warrant recognition of, and changes in, agricultural input and land management practices (e.g., nutrient, lime, tame pasture/fodder and water management) and research priorities, which are currently not being considered.
 
 * Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to differences in rural population densities in the two countries, as indicated by differences in the proximity to buildings. Staple food cropping systems in proximity to buildings will generally be more complex in both Rwanda and Tanzania. This relationship appears to generalize the subsequent ARs involved in regional crop diversification processes quite well.
 
-* We used association rule (AR) mining workflows to explore dominant staple food crop combinations that are both prevalent and potentially informative; that is, ARs that exhibit adequate support, confidence and lift to consider them to be of generalizable interest for identifying staple crop diversification pathways in both countries.
+* We used association rule (AR) mining workflows to explore [spatial microdata](https://spatial-microsim-book.robinlovelace.net/) of predominant staple food crop combinations that are both prevalent and potentially informative; that is, ARs that exhibit adequate support, confidence and lift to consider them to be of generalizable interest for identifying staple crop diversification pathways in both countries.
 
-* Notably, of the 2^20^-1 potential staple crop combinations that might occur at random, we have identified `r nrow(RW_rules_rhs)` ARs in Rwanda and `r nrow(TZ_rules_rhs)` ARs in Tanzania, which are both prevalent and potentially interesting for agricultural and human dietary diversity management. 
+* Notably, of the 2^20^-1 potential staple crop combinations that might occur at random, we have identified `r nrow(RW_rules)` ARs in Rwanda and `r nrow(TZ_rules)` ARs in Tanzania, which are both prevalent and potentially interesting for agricultural and human dietary diversity management. 
 
 * From the exploratory analyses it is quite clear that ARs in both national surveys depend strongly on the proximity to buildings. Specifically, there is a subset of 10 indicator staple crops including cattle, goats, sheep, poultry, maize, sorghum, beans, sweet potato and banana that are strongly associated with the occurrence of buildings (see Figure 9 and its AR table).
 
