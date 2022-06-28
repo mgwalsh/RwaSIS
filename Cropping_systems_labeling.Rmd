@@ -24,15 +24,15 @@ Staple foods make up the dominant food energy and nutrient intake in a populatio
 
 Many supermarket chains in the US and elsewhere are using these types of rule-based approaches. This is why, for example, aisles in US supermarkets are arranged the way that they are ... milk (a frequently bought item) is nearly always located toward the rear of the store to encourage impulse buying. Impulse purchase items, such as various baked goods and chewing gum, are placed toward the front of the store. Tonic is often close to gin, jam is close to bread and peanut butter and chips are close to salsa. [Diapers and beer](https://www.theregister.com/2006/08/15/beer_diapers/) for targeting young fathers is a parable, but it's funny. There are also usually coupons or other offers for items that are likely to be purchased together. When browsing what is on offer look for products on either the top or bottom of the shelves as the eye-level shelves tend to be more pricey. 
 
-The picture below is a screen-shot of the latest shopping recommendations from the [Alexa Shopping List app](https://www.smarthome.news/how-tos/amazon/alexa-shopping-lists) ... "Suggested For You" for the Walsh family based on their shopping list history over a circa eight month period while in the US. MGW takes full credit for the vodka purchases, which were largely the result of compiling this and various other notebooks over this period. Also note that the frequency of any specific purchase association rules are not strongly indicated ... e.g., $\{milk, apples, garlic, etc\} \Rightarrow \{vodka\}$!
+Items that are purchased together as part of a shopping list present a special class of labeling problems for machine learning and various statistical applications because they contain multiple labels, which may be interdependent. The figure below illustrates the structure of multi-label data relative to binary and multi-class data types that occur more frequently in [data mining](https://en.wikipedia.org/wiki/Data_mining) and [object detection](https://en.wikipedia.org/wiki/Object_detection) tasks.
 
 <br>
-```{r alexa, echo=FALSE, fig.align="center", fig.cap="**Alexa's current shopping list recommendations for the Walsh family.**", out.width = '25%'}
+```{r, echo=FALSE, fig.align="center", fig.cap="**Main differences between binary, multi-class and multi-label data types.**", out.width = '75%'}
 
-knitr::include_graphics("./Food_system/Alexa.png")
+knitr::include_graphics("./Food_system/classification.png")
 ```
 
-The majority of East African food production systems are analogous to a supermarket and itemized shopping list situation in which fields tend to be [mixed](https://www.fao.org/3/Y0501E/y0501e03.ht) with several staple food crops grown simultaneously or in close sequence, rather than being [monocropped](https://en.wikipedia.org/wiki/Monocropping) as they are in e.g., Iowa and South Africa. Even quite small, 0.25 ha, cropland areas are commonly planted with multiple staple food crops during any given season (see the pictures below). However, which specific crops are grown together in a given small area, and how these combinations may be evolving due to various internal and environmental forces remain uncertain and largely unquantified. We'll use ARs in this notebook to explore cropping systems based on the occurrence of 20 staple crop indicator species that can subsequently be used for crop mapping and diversity monitoring applications.
+The majority of East African food production systems resemble an itemized shopping list situation in which fields tend to be [mixed](https://www.fao.org/3/Y0501E/y0501e03.ht) with several staple food crops grown simultaneously or in close sequence, rather than being [monocropped](https://en.wikipedia.org/wiki/Monocropping) as they are in e.g., Iowa and South Africa. Even quite small, 0.25 ha, cropland areas are commonly planted with several staple food crops during any given season (see the pictures below). However, which specific crops are grown together in a given small area, and how these combinations may be evolving due to various internal and environmental forces remain uncertain and largely unquantified. We'll use ARs in this notebook to explore cropping systems based on the occurrence of 20 staple crop indicator species that can subsequently be used for crop mapping and diversity monitoring applications.
 
 <br>
 ```{r mixed_photos, echo=FALSE, fig.align="center", fig.cap="**Examples of mixed staple cropping systems in Rwanda.**", out.width = '90%'}
@@ -40,7 +40,7 @@ The majority of East African food production systems are analogous to a supermar
 knitr::include_graphics("./Food_system/Photos.png")
 ```
 
-The main objective of this notebook is to introduce code for labeling, exploration and discovery of different mixed staple food cropping systems in Rwanda and Tanzania. The data we use include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. Note that most of these crops (except for sorghum, cow pea and yam) are exotic to Africa. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.
+The main objective of this notebook is to introduce code for labeling, exploration and discovery of different mixed staple food cropping systems in Rwanda and Tanzania. The data we use include georeferenced observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana/plantain, sugarcane, and sunflower. Note that most of these crops (except for sorghum, cow pea and yam) are exotic to Africa. The markdown notebook presented here is maintained on [Github](https://github.com/mgwalsh/RwaSIS/blob/master/Cropping%20_sytems.Rmd), and you can fork and alter it from there for your reference, and as you see fit.
 
 # Data setup
 
@@ -79,7 +79,7 @@ staple$mixed <- as.logical(staple$mixed)
 
 # Spatial distribution of mixed staple systems
 
-In this section, we evaluate how the occurrence of mixed-systems varies between surveys, in proximity to buildings, within administrative regions, equal area grid cells and the most recent (2020) GeoSurvey-based land cover prediction maps for Rwanda and Tanzania. This allows us to provide better sub-regional estimates of mixed vs mono-cropped systems as well as a start toward mapping where specific cropping systems are likely to occur in these landscapes. We will cover more detailed spatial modeling in a subsequent notebook.
+In this section, we initially evaluate how the occurrence of mixed-systems varies between surveys, in proximity to buildings, within administrative regions, equal area grid cells and the most recent (2020) GeoSurvey-based land cover prediction maps for Rwanda and Tanzania. This allows us to provide better sub-regional estimates of mixed vs mono-cropped systems as well as a start toward mapping where specific cropping systems are likely to occur in these landscapes. We will cover these with more detailed spatial modeling in a subsequent notebook.
 
 ## Spatial data links
 
@@ -161,7 +161,7 @@ colnames(crops_TZ)[1] <- "L1"
 ardf <- rbind(crops_TZ, crops_RW)
 ```
 
-We can also stratify on an equal area grid (our preferred option), which has the operational advantage that grid cells do not change as administrative regions tend to do in East Africa e.g., prior to and/or shortly after elections. The artefacts that develop on the basis of samples from changing administrative units can be difficult to reconcile in any subsequent monitoring applications. As we show below, there is always an option to analyze both irregular and regular areas of interest of course. The next chunk sets this up and binds the grid cell IDs (GIDs) to the data. Note that while we use a 20 km^2^ grid cell resolution here for illustration, this can be easily adjusted as new data become available.
+We can also stratify on an equal area grid (our preferred option), which has the operational advantage that grid cells do not change as administrative regions tend to do in East Africa e.g., prior to and/or shortly after elections. The artefacts that develop on the basis of samples from changing administrative units can be difficult to reconcile in any subsequent monitoring applications. As we show below, there is always an option to analyze both irregular and regular regions of interest of course. The next chunk sets this up and binds the grid cell IDs (GIDs) to the data. Note that while we use a 20 km^2^ grid cell resolution here for illustration, this can be easily adjusted as new data become available.
 
 ```{r}
 # Define unique grid ID's (GID)
@@ -214,7 +214,7 @@ The (`m4`) classifier fits the data quite well. Based on the poststratified resu
 
 # Staple crop association rules
 
-In the previous section we showed that mixed staple cropping systems dominate this part of East Africa, but we still do not know which staple species and crop combinations those mixed systems contain. To address this question, we will be using a data mining process based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). The three main metrics of interest in the application of strong rules are: *support*, *confidence* and *lift*.
+In the previous section we showed that mixed staple cropping systems predominate in this part of East Africa. However, we still do not know which staple species and crop combinations those mixed systems contain. To address this question, we will be using a data mining process based on the concept of strong rules. *"Strong rules"* were introduced by [Agrawal et al., (1993)](https://dl.acm.org/doi/10.1145/170036.170072) in the context of [affinity analysis](https://en.wikipedia.org/wiki/Affinity_analysis). The three main metrics of interest in the application of strong rules are: *support*, *confidence* and *lift*.
 
 * **Support** tells us the proportion of instances where crops $A$ and $B$ co-occur in $n$ observations. Support helps identify crop combinations that are sufficiently frequent to be of interest (e.g., maize in combination with beans). Conversely, it also tells us about the various combinations that were only rarely observed.
 
@@ -224,7 +224,7 @@ $$supp(A \Rightarrow B)=\dfrac{A \cup B}{n}$$
 
 $$conf(A \Rightarrow B)=\dfrac{supp(A \Rightarrow B)}{supp(A)}$$
 
-* **Lift** of a rule is the ratio of the observed support to that expected if $A$ and $B$ were independent. Lift values > 1 indicate positive associations. Anti-correlations will generate lift values that are < 1 correspond to crop combinations that rarely occur together.
+* **Lift** of a rule is the ratio of the observed support to that expected if $A$ and $B$ were independent. Lift values > 1 indicate positive associations. Anti-correlations will generate lift values that are < 1 and correspond to crop combinations that rarely occur together.
 
 $$lift(A \Rightarrow B)=\dfrac{supp(A \Rightarrow B)}{supp(A)\ supp(B) }$$
 
@@ -244,6 +244,19 @@ crops <- DATAFRAME(trans)
 crops <- crops[, 1]
 staple_df <- cbind(staple, crops)
 staple_df <- staple_df[which(staple_df$sdiv > 0), ] # filters-out PSUs without any staple indicators
+```
+
+<br>
+The crop variables represent the presence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`build = TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops that will be used here. They do however include other crops such as tea, coffee, pineapple, sisal, cotton, orchards, etc, which are much more rare. We have excluded those from the subsequent analyses. The next chunk defines 5 staple crop types including: livestock, cereals, pulses, roots & tubers and other staple crops.
+
+```{r}
+# Define staple crop types 
+staple_df <- staple_df %>%
+  mutate(lvst = (catt == 'TRUE' | shee == 'TRUE' | goat == 'TRUE' | poul == 'TRUE')) %>%
+  mutate(cere = (maiz == 'TRUE' | whea == 'TRUE' | sorg == 'TRUE' | rice == 'TRUE')) %>%
+  mutate(puls = (bean == 'TRUE' | cpea == 'TRUE' | pige == 'TRUE' | soyb == 'TRUE' | gnut == 'TRUE')) %>%
+  mutate(root = (pota == 'TRUE' | spot == 'TRUE' | cass == 'TRUE' | yam == 'TRUE')) %>%
+  mutate(othe = (bana == 'TRUE' | cane == 'TRUE' | sunf == 'TRUE'))  
 
 # Write out the dataframe
 write.csv(staple_df, "./Food_system/Results/TZ_RW_staple_food_items.csv", row.names = FALSE)
@@ -252,10 +265,7 @@ write.csv(staple_df, "./Food_system/Results/TZ_RW_staple_food_items.csv", row.na
 glimpse(staple_df)
 ```
 
-<br>
-The crop variables represent the presence (`TRUE/FALSE`) of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower. There are also variables identifying the lat/lon (EPSG:3857) of the survey observations, if buildings were present within 50 m radius of the recorded survey location (`build = TRUE/FALSE`), and the number of staple crops that were observed in the respective 0.25 ha cropland quadrats (0 - 12). Systems where staple diversity `sdiv = 0` are croplands that do not contain any of the staple crops that will be used here. They do however include other crops such as tea, coffee, pineapple, sisal, cotton, orchards, etc, which are much more rare. We have excluded those from the subsequent analyses.
-
-An overview map of where the PSUs were collected in Tanzania and Rwanda is generated with the next chunk. You can click and zoom into the individual locations that have been surveyed thus far. Note that mixed systems are shown in red, monocropped systems are shown in blue. When you click on any particular PSU, a popup will show the different staple crops that were observed at that location.
+An overview map of where the PSUs were collected in Rwanda and Tanzania is generated with the next chunk. You can click and zoom into the individual locations that have been surveyed thus far. Note that mixed systems are shown in red, monocropped systems are shown in blue. When you click on any particular PSU, a popup will show the different staple crops that were observed at that location.
 
 ```{r}
 col <- ifelse(staple_df$mixed == "TRUE", "red", "blue")
@@ -279,7 +289,7 @@ w ## plot widget
 
 This section provides some initial EDAs for these data.
 
-```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "**Figure 3:** Relative frequencies of individual staple food crops in Tanzania and Rwanda."}
+```{r, fig.align = "center", fig.height = 4, fig.width = 7, fig.cap = "**Figure 3:** Relative frequencies of individual staple food crops in Rwanda and Tanzania."}
 
 itemFrequencyPlot(trans, topN = 20, ylab = "Relative frequency", cex.lab = 1.2, col = "grey")
 ```
@@ -300,7 +310,7 @@ crops_TZ <- as(crops_TZ, "transactions")
 
 ... and then plot a comparison of the different crop distributions in the 2 national surveys with:
 
-```{r fig.align = "center", fig.show = 'hold', fig.height = 8 , fig.width = 7, fig.cap = "**Figure 4:** Differences in support for staple food crop occurrences in Tanzania and Rwanda."}
+```{r fig.align = "center", fig.show = 'hold', fig.height = 8 , fig.width = 7, fig.cap = "**Figure 4:** Differences in support for staple food crop occurrences in Rwanda and Tanzania."}
 
 par(mfrow = c(2,1))
 itemFrequencyPlot(crops_RW, ylab = "Relative frequency", main = "Rwanda", 
@@ -392,7 +402,7 @@ The main message here is that the ARs observed in Rwanda are clearly quite diffe
 
 ## Mixed cropping in proximity to buildings
 
-The main difference might be that staple crops in Rwanda are typically grown in much closer proximity to buildings than those in Tanzania; that is, broadly reflecting [allee](https://en.wikipedia.org/wiki/Allee_effect) (or positive population density dependence) effects. Alternatively, in Tanzania this could be a remnant [Ujamaa](https://en.wikipedia.org/wiki/Ujamaa#Ujamaa_village_structure) effect. During the 1960's - 1980's, Ujamaa villages in Tanzania were widely constructed in particular ways to emphasize community and economic self-reliance. The village was structured with homes in the center in rows with a school and a town hall as the center complex. These villages were typically surrounded by larger communal agricultural farms, which were often monocropped. The most current land cover map of Tanzania appears to reflect this historical pattern (see section 3). 
+The main difference might be that staple crops in Rwanda are typically grown in much closer proximity to buildings than those in Tanzania; that is, broadly reflecting [allee](https://en.wikipedia.org/wiki/Allee_effect) (or positive population density dependence) effects. Alternatively, in Tanzania this could be a remnant [Ujamaa](https://en.wikipedia.org/wiki/Ujamaa#Ujamaa_village_structure) effect. During the 1960's - 1980's, Ujamaa villages in Tanzania were widely constructed in particular ways to emphasize community and economic self-reliance. The villages were structured with homes in the center in rows, with a school and a town hall as the center complex. The villages were typically surrounded by larger communal agricultural farms, which were often monocropped. The most current land cover map of Tanzania appears to reflect this historical pattern (see section 3, Figure 1). 
 
 The next chunks explore the AR patterns of mixed staple systems in 50 m proximity to buildings in the the 2 surveys. 
 
@@ -479,33 +489,33 @@ plot(build_rhs, method = "graph", col ="black")
 inspectDT(build_rhs)
 ```
 
-Figure 10 and its AR table represents one of the central data mining results explored in this notebook. These ARs identify the primary [mutualist](https://en.wikipedia.org/wiki/Mutualism_(biology)) staple crop species for humans in Rwanda and Tanzania. Given that there is significant population growth in both countries, the crop associations that are identified may provide an evolutionary preview of cropping systems in Rwanda and Tanzania, at least over a short 20 year term. They may also be quite useful for crop diversification priority setting for both subsistence and commercial agriculture in the two countries.
+Figure 10 and its AR table represents one of the central data mining results explored in this notebook. These ARs identify the primary [mutualist](https://en.wikipedia.org/wiki/Mutualism_(biology)) staple crop species for humans in Rwanda and Tanzania. Given that there is significant population growth in both countries, the crop associations that are identified may provide an evolutionary preview of cropping systems in Rwanda and Tanzania, at least over a short 20 year term. They may also be quite useful for crop diversification priority setting for both subsistence and commercial agriculture in the two countries. Also note the left-to-right trend in the AR graph which reflects the main mixed cropping system differences between the two countries (with some overlap) and potentially their evolution in regard to population growth.
 
 # Main takeaways
 
 * Dietary diversity and balance have long been recognized as key elements of high quality diets by nutritionists, and a variety of foods across and within food groups is recommended in most dietary guidelines. Similarly, staple crop diversity (richness and evenness) is also generally recognized by agronomists and animal scientists as a buffer against various food production risks. Even supermarkets recognize that selling a diverse set of products will tend to attract more customers and throughput.
 
-* This notebook explores a relatively large ($n$ = `r nrow(staple_df)`) survey dataset of 20 staple food crop occurrences (presence/absence) in 0.25 ha circular plots (PSUs) collected on spatially representative cropland sampling frames in Rwanda and Tanzania. The data were designed to be suitable for baseline staple crop mapping and crop diversity monitoring activities. They include ground-survey observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana, sugarcane, and sunflower.
+* This notebook explores a relatively large ($n$ = `r nrow(staple_df)`) survey dataset of 20 staple food crop occurrences (presence/absence) in 0.25 ha circular plots (PSUs) collected on spatially representative cropland sampling frames in Rwanda and Tanzania. The data were designed to be suitable for baseline staple crop mapping and crop diversity monitoring activities. They include ground-survey observations of the occurrence of: cattle, sheep, goats, poultry, maize, wheat, sorghum, rice, bean, cowpea, pigeon pea, soybean, groundnut, Irish potato, sweet potato, cassava, yam, banana/plantain, sugarcane, and sunflower.
 
-* Maize is the most common staple and yam is the least common across the two nationally representative surveys from Rwanda and Tanzania (see Figures 3 & 4 for their respective rankings). Wheat, rice and potatoes only occur rarely in both Rwanda and Tanzania; i.e., at <10% of the current nationally representative observations. Note that these crops have been identified as priorities for further agronomic research in Rwanda by [RAB](https://www.rab.gov.rw/index.php?id=158) in addition to maize, beans, cassava and banana as part of an ongoing Crop Intensification Program ([CIP](https://www.rab.gov.rw/index.php?id=188)). [TARI](https://www.tari.go.tz/) have identified sunflower, rice and wheat in addition to maize and livestock as their main research priorities.
+* Maize is the most common staple and yam is the least common across the two nationally representative surveys from Rwanda and Tanzania (see Figures 3 - 5 for their respective rankings). Wheat, rice and potatoes only occur rarely in both Rwanda and Tanzania; i.e., at <10% of the current nationally representative observations. Note that these crops have been identified as priorities for further agronomic research in Rwanda by [RAB](https://www.rab.gov.rw/index.php?id=158) in addition to maize, beans, cassava and banana as part of an ongoing Crop Intensification Program ([CIP](https://www.rab.gov.rw/index.php?id=188)). [TARI](https://www.tari.go.tz/) have identified sunflower, rice and wheat in addition to maize and livestock as their main research priorities.
 
-* Mixed staple cropping systems predominate Rwanda's and Tanzania's croplands. Poststratified survey analyses indicate that the vast majority of survey PSUs are mixed in Rwanda and Tanzania. These results warrant recognition of, and changes in, agricultural input and land management practices (e.g., nutrient, lime, tame pasture/fodder and water management) and research priorities, which are currently not being considered.
+* Mixed staple cropping systems predominate Rwanda's and Tanzania's croplands. Post-stratified survey analyses indicate that the vast majority of survey PSUs are mixed in Rwanda and Tanzania. These results warrant recognition of, and changes in, agricultural input and land management practices (e.g., nutrient, lime, tame pasture/fodder and water management) and research priorities, which are currently not being addressed.
 
 * Rwanda's staple food production systems appear to be more diverse than those typically found in Tanzania. However, this observation appears to be largely related to differences in rural population densities in the two countries, as indicated by differences in the proximity to buildings. Staple food cropping systems in proximity to buildings will generally be more complex in both Rwanda and Tanzania. This relationship appears to generalize the subsequent ARs involved in regional crop diversification processes quite well.
 
 * We used association rule (AR) mining workflows to explore [spatial microdata](https://spatial-microsim-book.robinlovelace.net/) of predominant staple food crop combinations that are both prevalent and potentially informative; that is, ARs that exhibit adequate support, confidence and lift to consider them to be of generalizable interest for identifying staple crop diversification pathways in both countries.
 
-* Notably, of the 2^20^-1 potential staple crop combinations that might occur at random, we have identified `r nrow(RW_rules)` ARs in Rwanda and `r nrow(TZ_rules)` ARs in Tanzania, which are both prevalent and potentially interesting for agricultural and human dietary diversity management. 
+* Notably, there are 2^20^-1 potential staple crop combinations that might occur at random with 20 indicator species. One could spend a lot of time generating all those potential combinations with SQL queries. We have identified `r nrow(RW_rules)` ARs in Rwanda and `r nrow(TZ_rules)` ARs in Tanzania, which are both prevalent and potentially interesting for agricultural and human dietary diversity management. The code of the notebook that is presented here runs in < 1 minute on a normal laptop.
 
-* From the exploratory analyses it is quite clear that ARs in both national surveys depend strongly on the proximity to buildings. Specifically, there is a subset of 10 indicator staple crops including cattle, goats, sheep, poultry, maize, sorghum, beans, sweet potato and banana that are strongly associated with the occurrence of buildings (see Figure 10 and its AR table).
+* From the exploratory analyses it is quite clear that ARs in both national surveys depend strongly on the proximity to buildings. Specifically, there is a subset of 10 [indicator](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/indicator-species) staple crops including cattle, goats, sheep, poultry, maize, sorghum, beans, sweet potato and banana/plantain that are strongly associated with the occurrence of buildings (see Figure 10 and its AR table).
 
-* The staple food AR models, which are considered in this notebook are fairly complex and will require more learning to unpack completely, especially for any rare staple crops. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
+* The staple food AR models, which are considered in this notebook are still fairly complex and will require more learning to unpack completely, especially for any rare staple crops. Nonetheless, the processes for proceeding are well grounded in a relatively simple algorithm, which provides fast, sensible results, and workable outputs for additional exploratory and predictive analyses.
 
 * The ground observations of the surveys that are presented here are easy to conduct over large areas, and only require access to a motorcycle and a smart phone ... preferably using guided / instructed crowds of public and private extension personnel that are located in a given geography and cropping season.
 
 * Association rules can be readily incorporated into any subsequent spatial machine learning and/or geostatistical predictions. We shall explore those possibilities in more depth with additional notebooks.
 
-*  There are also other data analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)) as well as various [collaborative filtering](https://en.wikipedia.org/wiki/Collaborative_filtering) approaches, which we could use for the mining the data that were presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in additional notebooks at a later stage. 
+*  There are also other data analysis options, such as graphical interaction models ([Højsgaard, Edwards and Lauritzen, 2012](https://link.springer.com/book/10.1007/978-1-4614-2299-0)), various [collaborative filtering](https://en.wikipedia.org/wiki/Collaborative_filtering), or [multilabel classification](https://journal.r-project.org/archive/2017/RJ-2017-012/RJ-2017-012.pdf) approaches, which we could use for the mining the data that were presented here. We have not included these in this notebook to keep things relatively concise, but we might explore those options in additional notebooks at a later stage. 
 
 Any questions, comments or corrections related to this notebook are most welcome via [AFSIS](mailto:mgw.africasoils.info).
 
